@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Collapsible Fieldsets</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Hide all fieldset content except legend when NOT expanded */
+    /* Target direct children that are NOT the legend */
+    fieldset:not(.expanded) > :not(legend) {
+      display: none;
+      
+    }
+
+    /* Explicitly show content when expanded */
+    /* This targets common element types within an expanded fieldset */
+     fieldset.expanded > label,
+     fieldset.expanded > textarea,
+     fieldset.expanded > input:not([type="checkbox"]):not([type="radio"]), /* Target text/other inputs */
+     fieldset.expanded > fieldset, /* Ensure nested fieldsets are displayed */
+     fieldset.expanded > div.form-check { /* Ensure checkbox/radio wrappers are displayed */
+         display: block; /* Or appropriate display like flex/grid if needed */
+     }
+
+
+    /* Style for legends */
+    legend {
+      cursor: pointer;
+      position: relative;
+      padding-right: 25px; /* Space for the arrow */
+      font-weight: bold;
+      /* Added for accessibility and visual indication on focus */
+      outline: none;
+      /* Remove default fieldset border radius on top corners */
+      border-radius: 0;
+      /* Ensure legend itself doesn't collapse margins of subsequent elements */
+      display: block; /* Make the click area span the width */
+      width: 100%; /* Make the click area span the width */
+      border-bottom: 1px solid #ddd; /* Optional: Add a separator line */
+      margin-bottom: 0; /* Remove default legend bottom margin */
+      padding-bottom: 8px; /* Add padding below legend */
+      padding-top: 8px; /* Add padding above legend */
+      line-height: 1.5; /* Better vertical alignment with arrow */
+    }
+
+     /* Optional: Add some vertical space between collapsed fieldsets */
+     fieldset + fieldset {
+         margin-top: 1rem;
+     }
+
+
+    /* Arrow indicator - Down by default using unicode escape */
+    legend::after {
+      content: "\25BC"; /* Down triangle unicode */
+      position: absolute;
+      right: 5px; /* Adjust position */
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9em;
+      transition: transform 0.3s ease, content 0.3s ease; /* Transition content change too */
+      display: inline-block; /* Ensure pseudo-element behaves predictably */
+      line-height: 1; /* Ensure consistent vertical centering for arrow */
+    }
+
+    /* Up arrow when expanded using unicode escape */
+    fieldset.expanded legend::after {
+      content: "\25B2"; /* Up triangle unicode */
+      /* Maintain vertical alignment */
+      transform: translateY(-50%);
+    }
+
+    /* Optional: Style for focus state */
+    legend:focus {
+        box-shadow: 0 0 0 .25rem rgba(13,110,253,.25); /* Bootstrap focus style */
+        z-index: 1; /* Ensure focus ring is visible */
+    }
+
+     /* Add some margin/padding for elements within expanded fieldset for better spacing */
+    fieldset.expanded > :not(legend):first-of-type {
+        margin-top: 1rem; /* Add space above the very first element */
+    }
+
+    fieldset.expanded > :not(legend) + :not(legend) {
+         margin-top: 0.5rem; /* Add space between subsequent sibling inputs/labels/divs */
+    }
+
+     /* Ensure nested fieldsets get proper top margin when they appear */
+     /* Adjust margin-bottom on nested fieldsets themselves (already using Bootstrap mb-3) */
+     fieldset.expanded > fieldset {
+        /* Bootstrap mb-3 adds bottom margin */
+        margin-top: 1rem; /* Add margin above the nested fieldset when it becomes visible */
+     }
+     fieldset.expanded fieldset > legend::after {
+    content: "\25BC";
+     }
+     fieldset.expanded fieldset.expanded > legend::after {
+    content: "\25B2"; /* Upward arrow for expanded child */
+}
+
+
+
+  </style>
+</head>
+<body class="container py-4">
+
+<form action="" method="post" id="patientEvaluationForm">
+    <!-- Physical Examination -->
+    <!-- Added expanded class to one fieldset to show it open on load as an example -->
+    <fieldset class="physical-examination expanded">
+        <legend>Physical Examination</legend>
+        <label for="observations">Observations:</label>
+        <textarea name="observations" id="observations" class="form-control" placeholder="Enter observations..."></textarea>
+        <label for="palpation">Palpation:</label>
+        <textarea name="palpation" id="palpation" class="form-control" placeholder="Enter palpation details..."></textarea>
+        <label for="muscle-tone">Muscle Tone:</label>
+        <textarea name="muscle-tone" id="muscle-tone" class="form-control" placeholder="Describe muscle tone..."></textarea>
+        <label for="muscle-power">Muscle Power:</label>
+        <textarea name="muscle-power" id="muscle-power" class="form-control" placeholder="Describe muscle power..."></textarea>
+        <label for="reflexes">Reflexes:</label>
+        <textarea name="reflexes" id="reflexes" class="form-control" placeholder="Describe reflexes..."></textarea>
+    
+    <!-- Developmental Milestones -->
+    <!-- Kept mt-4 for spacing between top-level fieldsets -->
+    <fieldset class="developmental-milestones mt-4">
+        <legend>Developmental Milestones</legend>
+        <!-- Gross motor-evaluation Skills -->
+        <!-- Keep mb-3 for spacing between nested fieldsets -->
+        <fieldset class="gross-motor-evaluation-skills mb-3">
+            <legend>Gross motor-evaluation Skills</legend>
+            <!-- Added form-check class to div wrappers -->
+            <div class="form-check"><input type="checkbox" id="head-control" name="gross_motor-evaluation_skills[]" value="Head Control" class="form-check-input"> <label class="form-check-label" for="head-control">Head Control</label></div>
+            <div class="form-check"><input type="checkbox" id="rolling" name="gross_motor-evaluation_skills[]" value="Rolling" class="form-check-input"> <label class="form-check-label" for="rolling">Rolling</label></div>
+            <div class="form-check"><input type="checkbox" id="reaching" name="gross_motor-evaluation_skills[]" value="Reaching" class="form-check-input"> <label class="form-check-label" for="reaching">Reaching</label></div>
+            <div class="form-check"><input type="checkbox" id="crawling" name="gross_motor-evaluation_skills[]" value="Crawling" class="form-check-input"> <label class="form-check-label" for="crawling">Crawling</label></div>
+            <div class="form-check"><input type="checkbox" id="sitting" name="gross_motor-evaluation_skills[]" value="Sitting" class="form-check-input"> <label class="form-check-label" for="sitting">Sitting</label></div>
+            <div class="form-check"><input type="checkbox" id="standing" name="gross_motor-evaluation_skills[]" value="Standing" class="form-check-input"> <label class="form-check-label" for="standing">Standing</label></div>
+            <div class="form-check"><input type="checkbox" id="kneeling" name="gross_motor-evaluation_skills[]" value="Kneeling" class="form-check-input"> <label class="form-check-label" for="kneeling">Kneeling</label></div>
+            <div class="form-check"><input type="checkbox" id="one-legged-kneeling" name="gross_motor-evaluation_skills[]" value="One-legged Kneeling" class="form-check-input"> <label class="form-check-label" for="one-legged-kneeling">One-legged Kneeling</label></div>
+            <div class="form-check"><input type="checkbox" id="one-leg-standing" name="gross_motor-evaluation_skills[]" value="One-leg Standing" class="form-check-input"> <label class="form-check-label" for="one-leg-standing">One-leg Standing</label></div>
+            <div class="form-check"><input type="checkbox" id="jumping" name="gross_motor-evaluation_skills[]" value="Jumping" class="form-check-input"> <label class="form-check-label" for="jumping">Jumping</label></div>
+            <div class="form-check"><input type="checkbox" id="stairs-climbing" name="gross_motor-evaluation_skills[]" value="Stairs Climbing" class="form-check-input"> <label class="form-check-label" for="stairs-climbing">Stairs Climbing</label></div>
+        </fieldset>
+        <!-- Speech -->
+        <fieldset class="speech-skills mb-3">
+            <legend>Speech Skills</legend>
+            <!-- Added form-check class to div wrappers -->
+            <div class="form-check"><input type="checkbox" id="babbling" name="speech_skills[]" value="Babbling" class="form-check-input"> <label class="form-check-label" for="babbling">Babbling</label></div>
+            <div class="form-check"><input type="checkbox" id="single-words" name="speech_skills[]" value="Single Words" class="form-check-input"> <label class="form-check-label" for="single-words">Single Words</label></div>
+            <div class="form-check"><input type="checkbox" id="two-word-phrases" name="speech_skills[]" value="Two-Word Phrases" class="form-check-input"> <label class="form-check-label" for="two-word-phrases">Two-Word Phrases</label></div>
+            <div class="form-check"><input type="checkbox" id="sentences" name="speech_skills[]" value="Sentences" class="form-check-input"> <label class="form-check-label" for="sentences">Speaking Sentences</label></div>
+        </fieldset>
+        <!-- Language -->
+        <fieldset class="language-skills mb-3">
+            <legend>Language Skills</legend>
+             <!-- Added form-check class to div wrappers -->
+            <div class="form-check"><input type="checkbox" id="following-simple-instructions" name="language_skills[]" value="Following Simple Instructions" class="form-check-input"> <label class="form-check-label" for="following-simple-instructions">Following Simple Instructions</label></div>
+            <div class="form-check"><input type="checkbox" id="understanding-questions" name="language_skills[]" value="Understanding Questions" class="form-check-input"> <label class="form-check-label" for="understanding-questions">Understanding Questions</label></div>
+            <div class="form-check"><input type="checkbox" id="naming-objects" name="language_skills[]" value="Naming Objects" class="form-check-input"> <label class="form-check-label" for="naming-objects">Naming Objects</label></div>
+        </fieldset>
+        <!-- Fine motor-evaluation Skills -->
+        <fieldset class="fine-motor-evaluation-skills mb-3">
+            <legend>Fine motor-evaluation Skills</legend>
+            <!-- Added form-check class to div wrappers -->
+            <div class="form-check"><input type="checkbox" id="grasping-objects" name="fine_motor-evaluation_skills[]" value="Grasping Objects" class="form-check-input"> <label class="form-check-label" for="grasping-objects">Grasping Objects</label></div>
+            <div class="form-check"><input type="checkbox" id="stacking-blocks" name="stacking-blocks" value="Stacking Blocks" class="form-check-input"> <label class="form-check-label" for="stacking-blocks">Stacking Blocks</label></div>
+            <div class="form-check"><input type="checkbox" id="holding-crayons" name="fine_motor-evaluation_skills[]" value="Holding Crayons" class="form-check-input"> <label class="form-check-label" for="holding-crayons">Holding Crayons</label></div>
+            <div class="form-check"><input type="checkbox" id="drawing-shapes" name="fine_motor-evaluation_skills[]" value="Drawing Shapes" class="form-check-input"> <label class="form-check-label" for="drawing-shapes">Drawing Shapes</label></div>
+        </fieldset>
+        <!-- Social Skills -->
+        <fieldset class="social-skills mb-3">
+            <legend>Social Skills</legend>
+            <!-- Added form-check class to div wrappers -->
+            <div class="form-check"><input type="checkbox" id="smiling" name="social_skills[]" value="Smiling" class="form-check-input"> <label class="form-check-label" for="smiling">Smiling</label></div>
+            <div class="form-check"><input type="checkbox" id="playing-with-others" name="social_skills[]" value="Playing with Others" class="form-check-input"> <label class="form-check-label" for="playing-with-others">Playing with Others</label></div>
+            <div class="form-check"><input type="checkbox" id="sharing" name="social_skills[]" value="Sharing" class="form-check-input"> <label class="form-check-label" for="sharing">Sharing</label></div>
+            <div class="form-check"><input type="checkbox" id="expressing-emotions" name="social_skills[]" value="Expressing Emotions" class="form-check-input"> <label class="form-check-label" for="expressing-emotions">Expressing Emotions</label></div>
+        </fieldset>
+        <!-- Cognitive Skills -->
+        <fieldset class="cognitive-skills mb-3">
+            <legend>Cognitive Skills</legend>
+            <!-- Added form-check class to div wrappers -->
+            <div class="form-check"><input type="checkbox" id="recognizing-faces" name="cognitive_skills[]" value="Recognizing Faces" class="form-check-input"> <label class="form-check-label" for="recognizing-faces">Recognizing Faces</label></div>
+            <div class="form-check"><input type="checkbox" id="problem-solving" name="cognitive_skills[]" value="Problem Solving" class="form-check-input"> <label class="form-check-label" for="problem-solving">Problem Solving</label></div>
+            <div class="form-check"><input type="checkbox" id="memory-development" name="cognitive_skills[]" value="Memory Development" class="form-check-input"> <label class="form-check-label" for="memory-development">Memory Development</label></div>
+            <div class="form-check"><input type="checkbox" id="attention-span" name="cognitive_skills[]" value="Attention Span" class="form-check-input"> <label class="form-check-label" for="attention-span">Attention Span</label></div>
+        </fieldset>
+    </fieldset>
+    <fieldset class="neurological-evaluation mt-4">
+        <legend>Neurological Evaluation</legend>
+        <label for="conciousness">Consciousness:</label>
+        <textarea name="conciousness" id="conciousness" class="form-control" placeholder="Describe level of consciousness..."></textarea>
+        <label for="cranial-nerves">Cranial Nerves:</label><input type="text" name="cranial_nerves" id="cranial-nerves" class="form-control" placeholder="Describe cranial nerves...">
+        <label for="gait-evaluation">Gait evaluation:</label>
+        <textarea name="gait-evaluation" id="gait-evaluation" class="form-control" placeholder="Describe gait evaluation..."></textarea>
+        <label for="balance-evaluation">Balance evaluation:</label>
+        <textarea name="balance-evaluation" id="balance-evaluation" class="form-control" placeholder="Describe balance evaluation..."></textarea>
+        <label for="motor-evaluation">motor-evaluation</label>
+        <textarea name="motor-evaluation" id="motor-evaluation" class="form-control" placeholder="Describe motor-evaluation..."></textarea>
+        <!-- Corrected closing label tag -->
+        <label for="sensory-evaluation">Sensory-evaluation:</label><input type="text" name="sensory-evaluation" id="sensory-evaluation" class="form-control" placeholder="Describe sensory-evaluation...">
+        <label for="coordination-evaluation">Coordination evaluation:</label>
+        <textarea name="coordination-evaluation" id="coordination-evaluation" class="form-control" placeholder="Describe coordination evaluation..."></textarea>
+        <!-- Corrected for/id mismatch and closing label tag -->
+        <label for="others">Others:</label><input type="text" name="others" id="others" class="form-control" placeholder="Describe if there are other findings...">
+    </fieldset>
+    <fieldset class="DAP mt-4">
+        <legend>Diagnosis treatment and plan</legend>
+        <label for="diagnosis">Diagnosis:</label>
+        <input type="text" name="diagnosis" id="diagnosis" class="form-control" placeholder="Enter diagnosis...">
+        <label for="treatment">Treatment:</label>
+        <input type="text" name="treatment" id="treatment" class="form-control" placeholder="Enter treatment...">
+        <label for="plan">Plan:</label>
+        <input type="text" name="plan" id="plan" class="form-control" placeholder="Enter plan...">
+    </fieldset>
+    </fieldset>
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-success">Submit</button>
+        <button type="reset" class="btn btn-danger">Reset</button>
+    </div>
+</form>
+
+<script>
+    // Toggle each fieldset on legend click
+    document.querySelectorAll("fieldset").forEach((fieldset) => {
+        const legend = fieldset.querySelector("legend");
+        if (!legend) return;
+
+        // Add ARIA attributes and make legend focusable for accessibility
+        legend.setAttribute("role", "button");
+        legend.setAttribute("tabindex", "0");
+        // Set initial aria-expanded state based on if it has the 'expanded' class
+        legend.setAttribute("aria-expanded", fieldset.classList.contains("expanded"));
+
+        legend.addEventListener("click", () => {
+            // Toggle the expanded class
+            fieldset.classList.toggle("expanded");
+
+            // Update aria-expanded attribute
+            const isExpanded = fieldset.classList.contains("expanded");
+            legend.setAttribute("aria-expanded", isExpanded);
+        });
+
+        // Allow toggling with Enter or Space key when legend is focused
+        legend.addEventListener("keydown", (event) => {
+            // Check if the event target is the legend itself to avoid triggering on elements *within* the legend if any were added
+            if (event.target === legend && (event.key === "Enter" || event.key === " ")) {
+                event.preventDefault(); // Prevent default space/enter action (like scrolling)
+                legend.click(); // Simulate a click to trigger the toggle
+            }
+        });
+    });
+</script>
+</body>
+</html>

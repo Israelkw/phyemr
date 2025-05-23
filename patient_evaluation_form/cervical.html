@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cervical Assessment Form (Collapsible)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Hide all fieldset content except legend when NOT expanded */
+    fieldset:not(.expanded) > :not(legend) {
+      display: none;
+    }
+
+    /* Explicitly show content when expanded */
+     fieldset.expanded > label,
+     fieldset.expanded > textarea,
+     fieldset.expanded > input:not([type="checkbox"]):not([type="radio"]),
+     fieldset.expanded > select,
+     fieldset.expanded > fieldset,
+     fieldset.expanded > div,
+     fieldset.expanded > p.fw-bold {
+         display: block;
+     }
+
+    legend {
+      cursor: pointer; position: relative; padding-right: 25px; font-weight: bold;
+      outline: none; border-radius: 0; display: block; width: 100%;
+      border-bottom: 1px solid #ddd; margin-bottom: 0; padding-bottom: 8px;
+      padding-top: 8px; line-height: 1.5;
+    }
+
+     fieldset + fieldset { margin-top: 1rem; }
+
+    legend::after {
+      content: "\25BC"; position: absolute; right: 5px; top: 50%;
+      transform: translateY(-50%); font-size: 0.9em;
+      transition: transform 0.3s ease, content 0.3s ease;
+      display: inline-block; line-height: 1;
+    }
+    fieldset.expanded legend::after { content: "\25B2"; transform: translateY(-50%); }
+    legend:focus { box-shadow: 0 0 0 .25rem rgba(13,110,253,.25); z-index: 1; }
+
+    fieldset.expanded > :not(legend):first-of-type { margin-top: 1rem; }
+    fieldset.expanded > :not(legend) + :not(legend) { margin-top: 0.5rem; }
+    
+    fieldset.expanded > div + div { margin-top: 0.75rem; }
+    fieldset.expanded > p.fw-bold + div { margin-top: 0.5rem; }
+    fieldset.expanded > div + p.fw-bold { margin-top: 1rem; }
+    fieldset.expanded > div.form-check + input.form-control { margin-top: 0.25rem; } /* For remarks directly after a checkbox group's last item */
+
+
+     fieldset.expanded > fieldset { margin-top: 1rem; }
+     fieldset.expanded fieldset > legend::after { content: "\25BC"; }
+     fieldset.expanded fieldset.expanded > legend::after { content: "\25B2"; }
+  </style>
+</head>
+<body class="container py-4">
+
+<form action="#" method="post" id="cervicalAssessmentForm">
+
+    <fieldset class="expanded mt-0">
+        <legend>Cervical - Strength</legend>
+
+        <p class="fw-bold mb-1">Finger flex</p>
+        <div class="mb-2">
+            <label for="C_P1_B1" class="form-label">Right:</label>
+            <select id="C_P1_B1" name="C_P1_B1" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B2" class="form-label">Left:</label>
+            <select id="C_P1_B2" name="C_P1_B2" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B13" class="form-label">Remark:</label>
+            <input type="text" id="C_P1_B13" name="C_P1_B13" class="form-control form-control-sm" placeholder="B13 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Shoulder abd</p>
+        <div class="mb-2">
+            <label for="C_P1_B3" class="form-label">Right:</label>
+            <select id="C_P1_B3" name="C_P1_B3" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B4" class="form-label">Left:</label>
+            <select id="C_P1_B4" name="C_P1_B4" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B14" class="form-label">Remark:</label>
+            <input type="text" id="C_P1_B14" name="C_P1_B14" class="form-control form-control-sm" placeholder="B14 details...">
+        </div>
+        
+        <p class="fw-bold mb-1">Wrist ext</p>
+        <div class="mb-2">
+            <label for="C_P1_B5" class="form-label">Right:</label>
+            <select id="C_P1_B5" name="C_P1_B5" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B6" class="form-label">Left:</label>
+            <select id="C_P1_B6" name="C_P1_B6" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B15" class="form-label">Remark:</label>
+            <input type="text" id="C_P1_B15" name="C_P1_B15" class="form-control form-control-sm" placeholder="B15 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Wrist flex</p>
+        <div class="mb-2">
+            <label for="C_P1_B7" class="form-label">Right:</label>
+            <select id="C_P1_B7" name="C_P1_B7" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B8" class="form-label">Left:</label>
+            <select id="C_P1_B8" name="C_P1_B8" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B16" class="form-label">Remark:</label>
+            <input type="text" id="C_P1_B16" name="C_P1_B16" class="form-control form-control-sm" placeholder="B16 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Elbow flex</p>
+        <div class="mb-2">
+            <label for="C_P1_B9" class="form-label">Right:</label>
+            <select id="C_P1_B9" name="C_P1_B9" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B10" class="form-label">Left:</label>
+            <select id="C_P1_B10" name="C_P1_B10" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B17" class="form-label">Remark:</label>
+            <input type="text" id="C_P1_B17" name="C_P1_B17" class="form-control form-control-sm" placeholder="B17 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Finger add</p>
+        <div class="mb-2">
+            <label for="C_P1_B11" class="form-label">Right:</label>
+            <select id="C_P1_B11" name="C_P1_B11" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B12" class="form-label">Left:</label>
+            <select id="C_P1_B12" name="C_P1_B12" class="form-select form-select-sm">
+                <option value="" selected disabled hidden>Select</option>
+                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B18" class="form-label">Remark:</label>
+            <input type="text" id="C_P1_B18" name="C_P1_B18" class="form-control form-control-sm" placeholder="B18 details...">
+        </div>
+        
+        <div class="mb-2">
+            <label for="C_P1_B19_strength_remark" class="form-label">Overall Strength Remark (B19):</label>
+            <input type="text" id="C_P1_B19_strength_remark" name="C_P1_B19_strength_remark" class="form-control form-control-sm" placeholder="B19 details...">
+        </div>
+    </fieldset>
+
+    <fieldset class="mt-4">
+        <legend>ROM Cervical</legend>
+        <div class="mb-2">
+            <label for="C_P1_B20" class="form-label">Forward bend (N=60°) (B20):</label>
+            <input type="text" id="C_P1_B20" name="C_P1_B20" class="form-control form-control-sm" placeholder="B20 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B21" class="form-label">Backward bend (N=60°) (B21):</label>
+            <input type="text" id="C_P1_B21" name="C_P1_B21" class="form-control form-control-sm" placeholder="B21 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Rotation (N=90°)</p>
+        <div class="mb-2">
+            <label for="C_P1_B22" class="form-label">Right (B22):</label>
+            <input type="text" id="C_P1_B22" name="C_P1_B22" class="form-control form-control-sm" placeholder="B22 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B24" class="form-label">Left (B24):</label>
+            <input type="text" id="C_P1_B24" name="C_P1_B24" class="form-control form-control-sm" placeholder="B24 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B26" class="form-label">Remark (B26):</label>
+            <input type="text" id="C_P1_B26" name="C_P1_B26" class="form-control form-control-sm" placeholder="B26 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Sidebend (N=45°)</p>
+        <div class="mb-2">
+            <label for="C_P1_B23" class="form-label">Right (B23):</label>
+            <input type="text" id="C_P1_B23" name="C_P1_B23" class="form-control form-control-sm" placeholder="B23 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B25" class="form-label">Left (B25):</label>
+            <input type="text" id="C_P1_B25" name="C_P1_B25" class="form-control form-control-sm" placeholder="B25 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P1_B27" class="form-label">Remark (B27):</label>
+            <input type="text" id="C_P1_B27" name="C_P1_B27" class="form-control form-control-sm" placeholder="B27 details...">
+        </div>
+        
+        <div class="mb-2">
+            <label for="C_P1_B28_rom_remark" class="form-label">Overall ROM Cervical Remark (B28):</label>
+            <input type="text" id="C_P1_B28_rom_remark" name="C_P1_B28_rom_remark" class="form-control form-control-sm" placeholder="B28 details...">
+        </div>
+    </fieldset>
+
+    <fieldset class="mt-4">
+        <legend>Biomechanical</legend>
+        <p class="fw-bold mb-1">Facet upglide</p>
+        <div class="mb-2">
+            <label for="C_P2_B29_facet_upglide" class="form-label">Value for B29:</label>
+            <input type="text" id="C_P2_B29_facet_upglide" name="C_P2_B29_facet_upglide" class="form-control form-control-sm" placeholder="B29 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P2_B30_facet_upglide" class="form-label">Value for B30:</label>
+            <input type="text" id="C_P2_B30_facet_upglide" name="C_P2_B30_facet_upglide" class="form-control form-control-sm" placeholder="B30 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Facet downglide</p>
+        <div class="mb-2">
+            <label for="C_P2_B31_facet_downglide" class="form-label">Value for B31:</label>
+            <input type="text" id="C_P2_B31_facet_downglide" name="C_P2_B31_facet_downglide" class="form-control form-control-sm" placeholder="B31 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P2_B32_facet_downglide" class="form-label">Value for B32:</label>
+            <input type="text" id="C_P2_B32_facet_downglide" name="C_P2_B32_facet_downglide" class="form-control form-control-sm" placeholder="B32 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Suboccipital restriction</p>
+        <div class="mb-2">
+            <label for="C_P2_B33_suboccipital" class="form-label">Value for B33:</label>
+            <input type="text" id="C_P2_B33_suboccipital" name="C_P2_B33_suboccipital" class="form-control form-control-sm" placeholder="B33 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P2_B34_suboccipital" class="form-label">Value for B34:</label>
+            <input type="text" id="C_P2_B34_suboccipital" name="C_P2_B34_suboccipital" class="form-control form-control-sm" placeholder="B34 details...">
+        </div>
+
+        <div class="mb-2">
+            <label for="C_P2_B35_biomechanical_remark" class="form-label">Remark (Biomechanical) (B35):</label>
+            <input type="text" id="C_P2_B35_biomechanical_remark" name="C_P2_B35_biomechanical_remark" class="form-control form-control-sm" placeholder="B35 details...">
+        </div>
+    </fieldset>
+
+    <fieldset class="mt-4">
+        <legend>Test</legend>
+        <p class="fw-bold mb-1">Cervical compression</p>
+        <div class="mb-2">
+            <label for="C_P2_B36_cerv_comp" class="form-label">Value for B36:</label>
+            <input type="text" id="C_P2_B36_cerv_comp" name="C_P2_B36_cerv_comp" class="form-control form-control-sm" placeholder="B36 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P2_B37_cerv_comp" class="form-label">Value for B37:</label>
+            <input type="text" id="C_P2_B37_cerv_comp" name="C_P2_B37_cerv_comp" class="form-control form-control-sm" placeholder="B37 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Cervical distraction</p>
+        <div class="mb-2">
+            <label for="C_P2_B38_cerv_dist" class="form-label">Value for B38:</label>
+            <input type="text" id="C_P2_B38_cerv_dist" name="C_P2_B38_cerv_dist" class="form-control form-control-sm" placeholder="B38 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P2_B39_cerv_dist" class="form-label">Value for B39:</label>
+            <input type="text" id="C_P2_B39_cerv_dist" name="C_P2_B39_cerv_dist" class="form-control form-control-sm" placeholder="B39 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Cranial nerve test</p>
+        <div class="mb-2">
+            <label for="C_P2_B40_cranial_nerve" class="form-label">Value for B40:</label>
+            <input type="text" id="C_P2_B40_cranial_nerve" name="C_P2_B40_cranial_nerve" class="form-control form-control-sm" placeholder="B40 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P2_B41_cranial_nerve" class="form-label">Value for B41:</label>
+            <input type="text" id="C_P2_B41_cranial_nerve" name="C_P2_B41_cranial_nerve" class="form-control form-control-sm" placeholder="B41 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Thoracic T123 Restricted rotation</p>
+        <div class="mb-2">
+            <label for="C_P2_B42_thoracic_rot" class="form-label">Value for B42:</label>
+            <input type="text" id="C_P2_B42_thoracic_rot" name="C_P2_B42_thoracic_rot" class="form-control form-control-sm" placeholder="B42 details...">
+        </div>
+        <div class="mb-2">
+            <label for="C_P2_B43_thoracic_rot" class="form-label">Value for B43:</label>
+            <input type="text" id="C_P2_B43_thoracic_rot" name="C_P2_B43_thoracic_rot" class="form-control form-control-sm" placeholder="B43 details...">
+        </div>
+
+        <div class="mb-2">
+            <label for="C_P2_B44_test_remark" class="form-label">Remark (Test) (B44):</label>
+            <input type="text" id="C_P2_B44_test_remark" name="C_P2_B44_test_remark" class="form-control form-control-sm" placeholder="B44 details...">
+        </div>
+    </fieldset>
+
+    <fieldset class="mt-4">
+        <legend>Muscle flexibility</legend>
+        <p class="fw-bold mb-1">These structures presented tender when elongated:</p>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P2_Flex_UpperTrap_chk" name="C_P2_Flex_UpperTrap_chk" value="checked">
+                <label class="form-check-label" for="C_P2_Flex_UpperTrap_chk">Upper trap</label>
+            </div>
+            <input type="text" id="C_P2_Flex_UpperTrap_txt" name="C_P2_Flex_UpperTrap_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P2_Flex_LevScap_chk" name="C_P2_Flex_LevScap_chk" value="checked">
+                <label class="form-check-label" for="C_P2_Flex_LevScap_chk">Lev. Scap</label>
+            </div>
+            <input type="text" id="C_P2_Flex_LevScap_txt" name="C_P2_Flex_LevScap_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P2_Flex_SCM_chk" name="C_P2_Flex_SCM_chk" value="checked">
+                <label class="form-check-label" for="C_P2_Flex_SCM_chk">SCM</label>
+            </div>
+            <input type="text" id="C_P2_Flex_SCM_txt" name="C_P2_Flex_SCM_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P2_Flex_SupTrapezius_chk" name="C_P2_Flex_SupTrapezius_chk" value="checked">
+                <label class="form-check-label" for="C_P2_Flex_SupTrapezius_chk">Superior trapezius</label>
+            </div>
+            <input type="text" id="C_P2_Flex_SupTrapezius_txt" name="C_P2_Flex_SupTrapezius_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P2_Flex_Scalene_chk" name="C_P2_Flex_Scalene_chk" value="checked">
+                <label class="form-check-label" for="C_P2_Flex_Scalene_chk">Scalene</label>
+            </div>
+            <input type="text" id="C_P2_Flex_Scalene_txt" name="C_P2_Flex_Scalene_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P2_Flex_Infraspinatus_chk" name="C_P2_Flex_Infraspinatus_chk" value="checked">
+                <label class="form-check-label" for="C_P2_Flex_Infraspinatus_chk">Infraspinatus</label>
+            </div>
+            <input type="text" id="C_P2_Flex_Infraspinatus_txt" name="C_P2_Flex_Infraspinatus_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P2_Flex_Supraspinatus_chk" name="C_P2_Flex_Supraspinatus_chk" value="checked">
+                <label class="form-check-label" for="C_P2_Flex_Supraspinatus_chk">Supraspinatus</label>
+            </div>
+            <input type="text" id="C_P2_Flex_Supraspinatus_txt" name="C_P2_Flex_Supraspinatus_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P2_Flex_Suboccipital_chk" name="C_P2_Flex_Suboccipital_chk" value="checked">
+                <label class="form-check-label" for="C_P2_Flex_Suboccipital_chk">Suboccipital muscle</label>
+            </div>
+            <input type="text" id="C_P2_Flex_Suboccipital_txt" name="C_P2_Flex_Suboccipital_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        
+        <div class="mb-2">
+            <label for="C_P2_Flex_Remark_txt" class="form-label">Remark (Muscle Flexibility):</label>
+            <input type="text" id="C_P2_Flex_Remark_txt" name="C_P2_Flex_Remark_txt" class="form-control form-control-sm" placeholder="Enter remarks...">
+        </div>
+    </fieldset>
+
+    <fieldset class="mt-4">
+        <legend>Clinical Impressions: Mechanical deficits/impairments found on examination</legend>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B29_chk" name="C_P3_B29_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B29_chk">Postural Imbalance</label>
+            </div>
+            <input type="text" id="C_P3_B40_txt" name="C_P3_B40_txt" class="form-control form-control-sm mt-1" placeholder="B40 details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B30_chk" name="C_P3_B30_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B30_chk">Decreased AROM</label>
+            </div>
+            <input type="text" id="C_P3_B41_txt" name="C_P3_B41_txt" class="form-control form-control-sm mt-1" placeholder="B41 details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B31_chk" name="C_P3_B31_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B31_chk">Decreased passive intervertebral motion</label>
+            </div>
+            <input type="text" id="C_P3_B42_txt" name="C_P3_B42_txt" class="form-control form-control-sm mt-1" placeholder="B42 details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B32_chk" name="C_P3_B32_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B32_chk">Hypermobility on passive intervertebral motion</label>
+            </div>
+            <input type="text" id="C_P3_B43_txt" name="C_P3_B43_txt" class="form-control form-control-sm mt-1" placeholder="B43 details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B33_chk" name="C_P3_B33_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B33_chk">Decreased strength of Cervical and UQ muscles</label>
+            </div>
+            <input type="text" id="C_P3_B44_txt" name="C_P3_B44_txt" class="form-control form-control-sm mt-1" placeholder="B44 details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B34_chk" name="C_P3_B34_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B34_chk">Hypertonic upper quarter musculature</label>
+            </div>
+            <input type="text" id="C_P3_B45_txt" name="C_P3_B45_txt" class="form-control form-control-sm mt-1" placeholder="B45 details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B35_chk" name="C_P3_B35_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B35_chk">Adaptive shortening of muscles</label>
+            </div>
+            <input type="text" id="C_P3_B46_txt" name="C_P3_B46_txt" class="form-control form-control-sm mt-1" placeholder="B46 details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B36_chk" name="C_P3_B36_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B36_chk">Adverse neural tension</label>
+            </div>
+            <input type="text" id="C_P3_B47_txt" name="C_P3_B47_txt" class="form-control form-control-sm mt-1" placeholder="B47 details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B37_chk" name="C_P3_B37_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B37_chk">Decreased facet joint mobility</label>
+            </div>
+            <input type="text" id="C_P3_B48_txt" name="C_P3_B48_txt" class="form-control form-control-sm mt-1" placeholder="B48 details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B38_chk" name="C_P3_B38_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B38_chk">Decreased mobility upper thoracic Spine</label>
+            </div>
+            <input type="text" id="C_P3_B49_txt" name="C_P3_B49_txt" class="form-control form-control-sm mt-1" placeholder="B49 details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P3_B39_chk" name="C_P3_B39_chk" value="checked">
+                <label class="form-check-label" for="C_P3_B39_chk">Restricted mobility Suboccipital</label>
+            </div>
+            <input type="text" id="C_P3_B50_txt" name="C_P3_B50_txt" class="form-control form-control-sm mt-1" placeholder="B50 details...">
+        </div>
+        
+        <div class="mb-2">
+            <label for="C_P3_B51_Remark_txt" class="form-label">Remark (Clinical Impressions) (B51):</label>
+            <input type="text" id="C_P3_B51_Remark_txt" name="C_P3_B51_Remark_txt" class="form-control form-control-sm" placeholder="B51 details...">
+        </div>
+    </fieldset>
+
+    <fieldset class="mt-4">
+        <legend>Recommendation: Outlines of initial plan of care</legend>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_Taping_chk" name="C_P4_Rec_Taping_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_Taping_chk">Taping / bracing</label>
+            </div>
+            <input type="text" id="C_P4_Rec_Taping_txt" name="C_P4_Rec_Taping_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_CervStab_chk" name="C_P4_Rec_CervStab_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_CervStab_chk">Cervical stabilization program</label>
+            </div>
+            <input type="text" id="C_P4_Rec_CervStab_txt" name="C_P4_Rec_CervStab_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_CervROM_chk" name="C_P4_Rec_CervROM_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_CervROM_chk">Cervical range of motion</label>
+            </div>
+            <input type="text" id="C_P4_Rec_CervROM_txt" name="C_P4_Rec_CervROM_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_ThorROM_chk" name="C_P4_Rec_ThorROM_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_ThorROM_chk">Thoracic range of motion</label>
+            </div>
+            <input type="text" id="C_P4_Rec_ThorROM_txt" name="C_P4_Rec_ThorROM_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_CervMob_chk" name="C_P4_Rec_CervMob_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_CervMob_chk">Cervical mobilization</label>
+            </div>
+            <input type="text" id="C_P4_Rec_CervMob_txt" name="C_P4_Rec_CervMob_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_ThorMob_chk" name="C_P4_Rec_ThorMob_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_ThorMob_chk">Thoracic mobilization</label>
+            </div>
+            <input type="text" id="C_P4_Rec_ThorMob_txt" name="C_P4_Rec_ThorMob_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_CervTraction_chk" name="C_P4_Rec_CervTraction_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_CervTraction_chk">Cervical traction</label>
+            </div>
+            <input type="text" id="C_P4_Rec_CervTraction_txt" name="C_P4_Rec_CervTraction_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_SoftTissue_chk" name="C_P4_Rec_SoftTissue_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_SoftTissue_chk">Soft tissue mobilization</label>
+            </div>
+            <input type="text" id="C_P4_Rec_SoftTissue_txt" name="C_P4_Rec_SoftTissue_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_NeuralMob_chk" name="C_P4_Rec_NeuralMob_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_NeuralMob_chk">Neural mobilization</label>
+            </div>
+            <input type="text" id="C_P4_Rec_NeuralMob_txt" name="C_P4_Rec_NeuralMob_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_PostureEd_chk" name="C_P4_Rec_PostureEd_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_PostureEd_chk">Posture education & awareness ex</label>
+            </div>
+            <input type="text" id="C_P4_Rec_PostureEd_txt" name="C_P4_Rec_PostureEd_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_BodyMech_chk" name="C_P4_Rec_BodyMech_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_BodyMech_chk">Instruction in body mechanics</label>
+            </div>
+            <input type="text" id="C_P4_Rec_BodyMech_txt" name="C_P4_Rec_BodyMech_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_TriggerPoint_chk" name="C_P4_Rec_TriggerPoint_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_TriggerPoint_chk">Trigger point release</label>
+            </div>
+            <input type="text" id="C_P4_Rec_TriggerPoint_txt" name="C_P4_Rec_TriggerPoint_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_ExStrength_chk" name="C_P4_Rec_ExStrength_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_ExStrength_chk">Exercises to improve strength, [flexibility]</label>
+            </div>
+            <input type="text" id="C_P4_Rec_ExStrength_txt" name="C_P4_Rec_ExStrength_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+        <div class="mb-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="C_P4_Rec_DryNeedling_chk" name="C_P4_Rec_DryNeedling_chk" value="checked">
+                <label class="form-check-label" for="C_P4_Rec_DryNeedling_chk">Dry needling</label>
+            </div>
+            <input type="text" id="C_P4_Rec_DryNeedling_txt" name="C_P4_Rec_DryNeedling_txt" class="form-control form-control-sm mt-1" placeholder="Details...">
+        </div>
+    </fieldset>
+
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-success">Submit Data</button>
+        <button type="reset" class="btn btn-danger">Reset</button>
+    </div>
+
+</form>
+
+<script>
+    // Toggle each fieldset on legend click
+    document.querySelectorAll("fieldset").forEach((fieldset) => {
+        const legend = fieldset.querySelector("legend");
+        if (!legend) return;
+
+        legend.setAttribute("role", "button");
+        legend.setAttribute("tabindex", "0");
+        legend.setAttribute("aria-expanded", fieldset.classList.contains("expanded"));
+
+        legend.addEventListener("click", () => {
+            fieldset.classList.toggle("expanded");
+            const isExpanded = fieldset.classList.contains("expanded");
+            legend.setAttribute("aria-expanded", isExpanded);
+        });
+
+        legend.addEventListener("keydown", (event) => {
+            if (event.target === legend && (event.key === "Enter" || event.key === " ")) {
+                event.preventDefault(); 
+                legend.click(); 
+            }
+        });
+    });
+</script>
+</body>
+</html>

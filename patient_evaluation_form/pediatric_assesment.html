@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pediatric Assessment Form (Collapsible)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Hide all fieldset content except legend when NOT expanded */
+    /* Target direct children that are NOT the legend */
+    fieldset:not(.expanded) > :not(legend) {
+      display: none;
+    }
+
+    /* Explicitly show content when expanded */
+    /* This targets common element types within an expanded fieldset */
+     fieldset.expanded > label,
+     fieldset.expanded > textarea,
+     fieldset.expanded > input:not([type="checkbox"]):not([type="radio"]), /* Target text/other inputs */
+     fieldset.expanded > select,
+     fieldset.expanded > fieldset, /* Ensure nested fieldsets are displayed */
+     fieldset.expanded > div, /* Ensure generic div wrappers are displayed */
+     fieldset.expanded > p.fw-bold { /* Ensure paragraph subheadings are shown */
+         display: block;
+     }
+
+
+    /* Style for legends */
+    legend {
+      cursor: pointer;
+      position: relative;
+      padding-right: 25px; /* Space for the arrow */
+      font-weight: bold;
+      outline: none;
+      border-radius: 0;
+      display: block; 
+      width: 100%; 
+      border-bottom: 1px solid #ddd; 
+      margin-bottom: 0; 
+      padding-bottom: 8px; 
+      padding-top: 8px; 
+      line-height: 1.5; 
+    }
+
+     fieldset + fieldset {
+         margin-top: 1rem;
+     }
+
+    legend::after {
+      content: "\25BC"; 
+      position: absolute;
+      right: 5px; 
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9em;
+      transition: transform 0.3s ease, content 0.3s ease; 
+      display: inline-block; 
+      line-height: 1; 
+    }
+
+    fieldset.expanded legend::after {
+      content: "\25B2"; 
+      transform: translateY(-50%);
+    }
+
+    legend:focus {
+        box-shadow: 0 0 0 .25rem rgba(13,110,253,.25); 
+        z-index: 1; 
+    }
+
+    fieldset.expanded > :not(legend):first-of-type {
+        margin-top: 1rem; 
+    }
+
+    fieldset.expanded > :not(legend) + :not(legend) {
+         margin-top: 0.5rem; 
+    }
+    
+    fieldset.expanded > div + div { /* Space between general div containers */
+        margin-top: 0.75rem;
+    }
+    fieldset.expanded > p.fw-bold + div {
+        margin-top: 0.5rem; /* Space after a sub-heading before the first input div */
+    }
+    fieldset.expanded > div + p.fw-bold {
+        margin-top: 1rem; /* More space before a new sub-heading starts */
+    }
+
+
+     fieldset.expanded > fieldset {
+        margin-top: 1rem; 
+     }
+     fieldset.expanded fieldset > legend::after {
+        content: "\25BC";
+     }
+     fieldset.expanded fieldset.expanded > legend::after {
+        content: "\25B2"; 
+    }
+  </style>
+</head>
+<body class="container py-4">
+
+<form action="#" method="post" id="pediatricAssessmentForm">
+
+    <fieldset class="expanded mt-0"> <!-- First fieldset expanded by default -->
+        <legend>Pediatric Assessment - Patient Information</legend>
+
+        <div class="mb-2">
+            <label for="PA_P1_B1_Name" class="form-label">Name:</label>
+            <input type="text" id="PA_P1_B1_Name" name="PA_P1_B1_Name" class="form-control form-control-sm" placeholder="B1 details...">
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B2_Sex" class="form-label">Sex:</label>
+            <input type="text" id="PA_P1_B2_Sex" name="PA_P1_B2_Sex" class="form-control form-control-sm" placeholder="B2 details...">
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B3_Age" class="form-label">Age:</label>
+            <input type="text" id="PA_P1_B3_Age" name="PA_P1_B3_Age" class="form-control form-control-sm" placeholder="B3 details...">
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B4_MedDiagnosis" class="form-label">Medical Diagnosis:</label>
+            <input type="text" id="PA_P1_B4_MedDiagnosis" name="PA_P1_B4_MedDiagnosis" class="form-control form-control-sm" placeholder="B4 details...">
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B5_TreatingClinician" class="form-label">Treating Clinician:</label>
+            <input type="text" id="PA_P1_B5_TreatingClinician" name="PA_P1_B5_TreatingClinician" class="form-control form-control-sm" placeholder="B5 details...">
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B6_ChiefComplaint" class="form-label">Chief Complaint:</label>
+            <input type="text" id="PA_P1_B6_ChiefComplaint" name="PA_P1_B6_ChiefComplaint" class="form-control form-control-sm" placeholder="B6 details...">
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B7_HPI" class="form-label">HPI:</label>
+            <input type="text" id="PA_P1_B7_HPI" name="PA_P1_B7_HPI" class="form-control form-control-sm" placeholder="B7 details...">
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B8_Allergies" class="form-label">Allergies:</label>
+            <input type="text" id="PA_P1_B8_Allergies" name="PA_P1_B8_Allergies" class="form-control form-control-sm" placeholder="B8 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Vital Sign</p>
+        <div class="mb-2">
+            <label for="PA_P1_B9_Temperature" class="form-label">Temperature (B9):</label>
+            <input type="number" id="PA_P1_B9_Temperature" name="PA_P1_B9_Temperature" class="form-control form-control-sm" step="0.1" placeholder="e.g., 36.5">
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B13_BP_Systolic" class="form-label">BP (S/D) (B13/B14):</label>
+            <div class="row g-2 align-items-center">
+                <div class="col">
+                    <input type="number" id="PA_P1_B13_BP_Systolic" name="PA_P1_B13_BP_Systolic" class="form-control form-control-sm" placeholder="Systolic">
+                </div>
+                <div class="col-auto px-0 text-center" style="width: 1em;">/</div>
+                <div class="col">
+                    <input type="number" id="PA_P1_B14_BP_Diastolic" name="PA_P1_B14_BP_Diastolic" class="form-control form-control-sm" placeholder="Diastolic">
+                </div>
+                <div class="col-auto ps-1">mmHg</div>
+            </div>
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B10_PulseRate" class="form-label">Pulse rate (B10):</label>
+            <input type="number" id="PA_P1_B10_PulseRate" name="PA_P1_B10_PulseRate" class="form-control form-control-sm" placeholder="e.g., 100">
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B15_RespiratoryRate" class="form-label">Respiratory Rate (B15):</label>
+            <div class="input-group input-group-sm">
+                <input type="number" id="PA_P1_B15_RespiratoryRate" name="PA_P1_B15_RespiratoryRate" class="form-control" placeholder="e.g., 20">
+                <span class="input-group-text">breath per minute</span>
+            </div>
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B11_SPO2" class="form-label">SPO2 (B11):</label>
+            <div class="input-group input-group-sm">
+                <input type="number" id="PA_P1_B11_SPO2" name="PA_P1_B11_SPO2" class="form-control" placeholder="e.g., 99">
+                <span class="input-group-text">%</span>
+            </div>
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B16_Height" class="form-label">Height (B16):</label>
+            <div class="input-group input-group-sm">
+                <input type="number" id="PA_P1_B16_Height" name="PA_P1_B16_Height" class="form-control" step="0.1" placeholder="e.g., 100">
+                <span class="input-group-text">cm</span>
+            </div>
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B12_RBS" class="form-label">RBS (B12):</label>
+            <input type="number" id="PA_P1_B12_RBS" name="PA_P1_B12_RBS" class="form-control form-control-sm" placeholder="e.g., 85">
+        </div>
+
+        <div class="mb-2">
+            <label for="PA_P1_B17_Weight" class="form-label">Weight (B17):</label>
+            <div class="input-group input-group-sm">
+                <input type="number" id="PA_P1_B17_Weight" name="PA_P1_B17_Weight" class="form-control" step="0.1" placeholder="e.g., 15.5">
+                <span class="input-group-text">kg</span>
+            </div>
+        </div>
+        
+        <div class="mb-2">
+            <label for="PA_P1_B18_Note" class="form-label">Note (B18):</label>
+            <input type="text" id="PA_P1_B18_Note" name="PA_P1_B18_Note" class="form-control form-control-sm" placeholder="B18 details...">
+        </div>
+    </fieldset>
+
+    <fieldset class="mt-4">
+        <legend>Medical History & Examination</legend>
+
+        <div class="mb-2">
+            <label for="PA_P2_B1_PastMedical" class="form-label">Past medical and Surgical Illness (B1):</label>
+            <input type="text" id="PA_P2_B1_PastMedical" name="PA_P2_B1_PastMedical" class="form-control form-control-sm" placeholder="B1 details...">
+        </div>
+        
+        <p class="fw-bold mb-1">Physical Examination</p>
+        <div class="mb-2">
+            <label for="PA_P2_B2_PhysExamOverall" class="form-label">Overall Physical Examination (B2):</label>
+            <input type="text" id="PA_P2_B2_PhysExamOverall" name="PA_P2_B2_PhysExamOverall" class="form-control form-control-sm" placeholder="B2 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B3_HEENT" class="form-label">HEENT (B3):</label>
+            <input type="text" id="PA_P2_B3_HEENT" name="PA_P2_B3_HEENT" class="form-control form-control-sm" placeholder="B3 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B4_LGS" class="form-label">LGS (B4):</label>
+            <input type="text" id="PA_P2_B4_LGS" name="PA_P2_B4_LGS" class="form-control form-control-sm" placeholder="B4 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B5_Chest" class="form-label">Chest (B5):</label>
+            <input type="text" id="PA_P2_B5_Chest" name="PA_P2_B5_Chest" class="form-control form-control-sm" placeholder="B5 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B6_CVS" class="form-label">CVS (B6):</label>
+            <input type="text" id="PA_P2_B6_CVS" name="PA_P2_B6_CVS" class="form-control form-control-sm" placeholder="B6 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B7_Abdomen" class="form-label">Abdomen (B7):</label>
+            <input type="text" id="PA_P2_B7_Abdomen" name="PA_P2_B7_Abdomen" class="form-control form-control-sm" placeholder="B7 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B8_GUS" class="form-label">GUS (B8):</label>
+            <input type="text" id="PA_P2_B8_GUS" name="PA_P2_B8_GUS" class="form-control form-control-sm" placeholder="B8 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B9_MSS" class="form-label">MSS (B9):</label>
+            <input type="text" id="PA_P2_B9_MSS" name="PA_P2_B9_MSS" class="form-control form-control-sm" placeholder="B9 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B10_Integumentary" class="form-label">Integumentary (B10):</label>
+            <input type="text" id="PA_P2_B10_Integumentary" name="PA_P2_B10_Integumentary" class="form-control form-control-sm" placeholder="B10 details...">
+        </div>
+
+        <p class="fw-bold mb-1">Neurology</p>
+        <div class="mb-2">
+            <label for="PA_P2_B11_Consciousness" class="form-label">Consciousness (B11):</label>
+            <input type="text" id="PA_P2_B11_Consciousness" name="PA_P2_B11_Consciousness" class="form-control form-control-sm" placeholder="B11 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B12_CranialNerves" class="form-label">Cranial nerves (B12):</label>
+            <input type="text" id="PA_P2_B12_CranialNerves" name="PA_P2_B12_CranialNerves" class="form-control form-control-sm" placeholder="B12 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B13_Motor" class="form-label">Motor (B13):</label>
+            <input type="text" id="PA_P2_B13_Motor" name="PA_P2_B13_Motor" class="form-control form-control-sm" placeholder="B13 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B14_Sensory" class="form-label">Sensory (B14):</label>
+            <input type="text" id="PA_P2_B14_Sensory" name="PA_P2_B14_Sensory" class="form-control form-control-sm" placeholder="B14 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B15_Coordination" class="form-label">Coordination (B15):</label>
+            <input type="text" id="PA_P2_B15_Coordination" name="PA_P2_B15_Coordination" class="form-control form-control-sm" placeholder="B15 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B16_Gait" class="form-label">Gait (B16):</label>
+            <input type="text" id="PA_P2_B16_Gait" name="PA_P2_B16_Gait" class="form-control form-control-sm" placeholder="B16 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P2_B17_NeuroOther" class="form-label">Other (B17):</label>
+            <input type="text" id="PA_P2_B17_NeuroOther" name="PA_P2_B17_NeuroOther" class="form-control form-control-sm" placeholder="B17 details...">
+        </div>
+    </fieldset>
+
+    <fieldset class="mt-4">
+        <legend>Assessment, Treatment, and Plan</legend>
+        <div class="mb-2">
+            <label for="PA_P3_B1_Assessment" class="form-label">Assessment (B1):</label>
+            <input type="text" id="PA_P3_B1_Assessment" name="PA_P3_B1_Assessment" class="form-control form-control-sm" placeholder="B1 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P3_B2_Treatment" class="form-label">Treatment (B2):</label>
+            <input type="text" id="PA_P3_B2_Treatment" name="PA_P3_B2_Treatment" class="form-control form-control-sm" placeholder="B2 details...">
+        </div>
+        <div class="mb-2">
+            <label for="PA_P3_B3_Plan" class="form-label">Plan (B3):</label>
+            <input type="text" id="PA_P3_B3_Plan" name="PA_P3_B3_Plan" class="form-control form-control-sm" placeholder="B3 details...">
+        </div>
+    </fieldset>
+
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-success">Submit Data</button>
+        <button type="reset" class="btn btn-danger">Reset</button>
+    </div>
+
+</form>
+
+<script>
+    // Toggle each fieldset on legend click
+    document.querySelectorAll("fieldset").forEach((fieldset) => {
+        const legend = fieldset.querySelector("legend");
+        if (!legend) return;
+
+        legend.setAttribute("role", "button");
+        legend.setAttribute("tabindex", "0");
+        legend.setAttribute("aria-expanded", fieldset.classList.contains("expanded"));
+
+        legend.addEventListener("click", () => {
+            fieldset.classList.toggle("expanded");
+            const isExpanded = fieldset.classList.contains("expanded");
+            legend.setAttribute("aria-expanded", isExpanded);
+        });
+
+        legend.addEventListener("keydown", (event) => {
+            if (event.target === legend && (event.key === "Enter" || event.key === " ")) {
+                event.preventDefault(); 
+                legend.click(); 
+            }
+        });
+    });
+</script>
+</body>
+</html>
