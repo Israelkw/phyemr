@@ -4,9 +4,9 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Check if the user is logged in and is a clinician
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'clinician') {
-    $_SESSION['message'] = "Unauthorized access. Only clinicians can add patients.";
+// Check if the user is logged in and is a clinician, receptionist, or admin
+if (!isset($_SESSION["user_id"]) || !in_array($_SESSION["role"], ['clinician', 'receptionist', 'admin'])) {
+    $_SESSION['message'] = "Unauthorized access. Only clinicians, receptionists, or admins can add patients.";
     header("location: dashboard.php"); 
     exit;
 }
@@ -35,6 +35,14 @@ require_once 'includes/header.php';
             <div>
                 <label for="date_of_birth">Date of Birth:</label>
                 <input type="date" id="date_of_birth" name="date_of_birth" required>
+            </div>
+            <div>
+                <label for="assigned_clinician_id">Assign to Clinician:</label>
+                <select id="assigned_clinician_id" name="assigned_clinician_id" required>
+                    <option value="">-- Select a Clinician --</option>
+                    <option value="2">Clinical Staff</option> 
+                    <option value="5">Medical Expert</option> 
+                </select>
             </div>
             <div>
                 <button type="submit">Add Patient</button>

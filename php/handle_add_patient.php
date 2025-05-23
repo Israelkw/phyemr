@@ -1,23 +1,24 @@
 <?php
 session_start();
 
-// Ensure user is logged in and is a clinician
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'clinician') {
-    $_SESSION['message'] = "Unauthorized access. Only clinicians can perform this action.";
-    header("location: ../login.php"); // Redirect to login if not clinician or session lost
+// Ensure user is logged in and is a clinician, receptionist, or admin
+if (!isset($_SESSION["user_id"]) || !in_array($_SESSION["role"], ['clinician', 'receptionist', 'admin'])) {
+    $_SESSION['message'] = "Unauthorized access. Only clinicians, receptionists, or admins can perform this action.";
+    header("location: ../login.php"); // Redirect to login if not authorized or session lost
     exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve data from form
-    $first_name = trim($_POST['first_name']);
-    $last_name = trim($_POST['last_name']);
-    $date_of_birth = trim($_POST['date_of_birth']);
-    $clinician_id = $_SESSION['user_id']; // ID of the logged-in clinician
+    $first_name = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
+    $last_name = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
+    $date_of_birth = isset($_POST['date_of_birth']) ? trim($_POST['date_of_birth']) : '';
+    $assigned_clinician_id = isset($_POST['assigned_clinician_id']) ? trim($_POST['assigned_clinician_id']) : '';
+    $created_by_user_id = $_SESSION['user_id']; // ID of the logged-in user creating the record
 
-    // Basic validation
-    if (empty($first_name) || empty($last_name) || empty($date_of_birth)) {
-        $_SESSION['message'] = "All patient fields are required.";
+    // Basic validation for all required fields
+    if (empty($first_name) || empty($last_name) || empty($date_of_birth) || empty($assigned_clinician_id)) {
+        $_SESSION['message'] = "All patient details and clinician assignment are required.";
         header("location: ../add_patient.php"); // Redirect back to form
         exit;
     }
@@ -39,8 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'first_name' => $first_name,
         'last_name' => $last_name,
         'date_of_birth' => $date_of_birth,
-        'added_by_clinician_id' => $clinician_id,
-        'clinician_name' => $_SESSION['first_name'] . ' ' . $_SESSION['last_name'] // Store for easy display
+        'assigned_clinician_id' => $assigned_clinician_id,
+        'created_by_user_id' => $created_by_user_id
+        // 'clinician_name' field removed as per instructions
     ];
 
     // Add to our simulated "database" (session array)

@@ -14,12 +14,13 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'clinician') {
 // Fetch all patients from session
 $all_patients = isset($_SESSION['patients']) ? $_SESSION['patients'] : [];
 $my_patients = [];
-$clinician_id = $_SESSION['user_id'];
+$clinician_id = $_SESSION['user_id']; // This is the logged-in clinician's ID
 
-// Filter patients for the current clinician
+// Filter patients for the current clinician based on 'assigned_clinician_id'
 if (!empty($all_patients)) {
     foreach ($all_patients as $patient_id => $patient) {
-        if (isset($patient['added_by_clinician_id']) && $patient['added_by_clinician_id'] == $clinician_id) {
+        // Updated condition to check 'assigned_clinician_id'
+        if (isset($patient['assigned_clinician_id']) && $patient['assigned_clinician_id'] == $clinician_id) {
             $my_patients[$patient_id] = $patient;
         }
     }
@@ -41,8 +42,7 @@ require_once 'includes/header.php';
     <h2>My Patients</h2>
 
     <?php
-    // The specific session message display that was here has been removed.
-    // Global messages are now handled by navigation.php (via header.php).
+    // Global messages are handled by navigation.php (via header.php).
     ?>
 
     <p><a href="add_patient.php">Add New Patient</a> | <a href="dashboard.php">Back to Dashboard</a></p>
@@ -69,7 +69,8 @@ require_once 'includes/header.php';
             </tbody>
         </table>
     <?php else: ?>
-        <p>You have not added any patients yet. <a href="add_patient.php">Add one now</a>.</p>
+        <?php // Updated message for when no patients are assigned to the clinician ?>
+        <p>No patients are currently assigned to you. If you believe this is an error, please contact reception or an administrator.</p>
     <?php endif; ?>
 
 <?php require_once 'includes/footer.php'; ?>
