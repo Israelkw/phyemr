@@ -14,6 +14,11 @@ $base_path = isset($path_to_root) ? $path_to_root : '';
                 <!-- Example: <li><a href="<?php echo $base_path; ?>admin_specific_page.php">Admin Tools</a></li> -->
             <?php endif; ?>
 
+            <?php if ($_SESSION["role"] === 'clinician'): ?>
+                <li><a href="<?php echo $base_path; ?>select_patient_for_form.php">Assign Form to Patient</a></li>
+                <li><a href="<?php echo $base_path; ?>view_patient_history.php">View Patient Form History</a></li>
+            <?php endif; ?>
+
             <li><a href="<?php echo $base_path; ?>logout.php">Logout (<?php echo htmlspecialchars($_SESSION["username"]); ?>)</a></li>
         <?php else: ?>
             <li><a href="<?php echo $base_path; ?>login.php">Login</a></li>
