@@ -1,13 +1,38 @@
-<form action="" method="get" id="general-information">
-    <div class="form-group">
-        <label for="treating clinician">Treating Clinician:</label>
-        <input type="text" id="treating clinician" name="treating clinician" class="form-control" required placeholder="Enter treating clinician's name">
-        <label for="patient evaluation form">Add specific body part Form</label>
-        <select id="patient evaluation form" multiple class="form-control" name="patient evaluation form" required  >  
-        <!-- values will from the formes in ../patient_evaluation_form folder -->
-        <option value="" disabled selected hidden >Select (multiple selaction posible)</option>
-        
-            
-        </select>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Information</title>
+    <!-- You can link a CSS file here if needed -->
+</head>
+<body>
 
+<form method="post" id="general-information" name="general-information-form" novalidate>
+    <div class="form-group">
+        <label for="treating-clinician">Treating Clinician:</label>
+        <input type="text" id="treating-clinician" name="treating_clinician" class="form-control" required placeholder="Enter treating clinician's name">
+        
+        <label for="patient-evaluation-form">Add specific body part Form</label>
+        <select id="patient-evaluation-form" multiple class="form-control" name="patient_evaluation_form" required>
+            <!-- values will from the formes in ../patient_evaluation_form folder -->
+            <option value="" disabled hidden>Select (multiple selection possible)</option>
+            <option value="cervical_form_test">Cervical Form (Test)</option>
+            <option value="lumbar_form_test">Lumbar Form (Test)</option>
+            <option value="shoulder_form_test">Shoulder Form (Test)</option>
+        </select>
+    </div>
+    <button type="submit">Submit</button>
 </form>
+
+<div id="general-info-message" class="message-area"></div>
+
+<script src="../../js/form_handler.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        initFormSubmissionHandler('general-information', 'general-info-message');
+    });
+</script>
+
+</body>
+</html>

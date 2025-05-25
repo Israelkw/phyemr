@@ -68,7 +68,7 @@
 </head>
 <body class="container py-4">
 
-<form action="#" method="post" id="lumbarAssessmentForm">
+<form action="#" method="post" id="lumbarAssessmentForm" novalidate>
 
     <fieldset class="expanded mt-0">
         <legend>Lumbar - Strength</legend>
@@ -724,6 +724,7 @@
         </div>
     </fieldset>
 
+    <div id="lumbarAssessmentForm-message" class="mt-3"></div>
     <div class="form-group mt-3">
         <button type="submit" class="btn btn-success">Submit Data</button>
         <button type="reset" class="btn btn-danger">Reset</button>
@@ -773,7 +774,36 @@
             applyHighlight(); // Apply on initial load
         }
     });
-</script>
 
+    // Script for multi-select highlighting
+    document.addEventListener('DOMContentLoaded', function() {
+        const multiSelectElement = document.getElementById('L_P2_B14_HypermobSeg');
+
+        if (multiSelectElement) {
+            const applyHighlight = () => {
+                for (let i = 0; i < multiSelectElement.options.length; i++) {
+                    if (multiSelectElement.options[i].selected) {
+                        multiSelectElement.options[i].classList.add('custom-selected');
+                    } else {
+                        multiSelectElement.options[i].classList.remove('custom-selected');
+                    }
+                }
+            };
+            multiSelectElement.addEventListener('change', applyHighlight);
+            applyHighlight(); // Apply on initial load
+        }
+    });
+</script>
+<script src="../../js/form_handler.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ensure this is called after other DOM manipulations if any, or just generally on DOM ready
+    if (typeof initFormSubmissionHandler === 'function') {
+      initFormSubmissionHandler('lumbarAssessmentForm', 'lumbarAssessmentForm-message');
+    } else {
+      console.error('Error: initFormSubmissionHandler is not defined. Check if form_handler.js is loaded correctly.');
+    }
+  });
+</script>
 </body>
 </html>
