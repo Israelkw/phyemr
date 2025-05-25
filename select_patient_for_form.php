@@ -22,16 +22,19 @@ include_once 'includes/header.php';
 
     // Filter patients for the current clinician
     if (!empty($all_patients)) {
-        foreach ($all_patients as $patient) {
-            if (isset($patient['added_by_clinician_id']) && $patient['added_by_clinician_id'] == $_SESSION['user_id']) {
-                $clinician_patients[] = $patient;
+        foreach ($all_patients as $patient_id_key => $patient) { // Use key from $_SESSION['patients']
+            if (isset($patient['assigned_clinician_id']) && $patient['assigned_clinician_id'] == $_SESSION['user_id']) {
+                // Ensure the patient_id used for links is the actual patient ID.
+                // If $all_patients is an associative array with patient ID as key, $patient_id_key is it.
+                // If it's numerically indexed, $patient['id'] is it. Assuming $patient['id'] is reliable.
+                $clinician_patients[$patient['id']] = $patient; 
             }
         }
     }
 
     if (!empty($clinician_patients)) :
     ?>
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped styled-table">
             <thead>
                 <tr>
                     <th>Patient ID</th>
@@ -57,7 +60,9 @@ include_once 'includes/header.php';
         </table>
     <?php else : ?>
         <div class="alert alert-info">
-            You have not added any patients yet. Please <a href="add_patient.php">add a patient</a> first.
+            You have no patients assigned to you for whom forms can be filled. 
+            If a patient has been assigned to you, they should appear here. 
+            Contact administration if you believe this is an error.
         </div>
     <?php endif; ?>
 

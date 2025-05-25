@@ -17,40 +17,38 @@ $path_to_root = "";
 require_once 'includes/header.php'; 
 // The header will include navigation.php which displays $_SESSION['message']
 ?>
+<div class="container">
+    <?php
+    $user_role = isset($_SESSION['role']) ? $_SESSION['role'] : 'Guest';
+    $user_first_name = isset($_SESSION['first_name']) ? $_SESSION['first_name'] : '';
+    ?>
+    <h2>Welcome, <?php echo htmlspecialchars(ucfirst($user_role)) . " " . htmlspecialchars($user_first_name); ?>!</h2>
 
-    <h2>Welcome to the Dashboard, <?php echo htmlspecialchars($_SESSION["first_name"]) . " " . htmlspecialchars($_SESSION["last_name"]); ?>!</h2>
-    <p>Your Role: <?php echo htmlspecialchars($_SESSION["role"]); ?></p>
+    <p>This is your dashboard. From here, you can quickly access features relevant to your role.</p>
 
-    <?php if (isset($_SESSION['role'])): ?>
-        <?php if ($_SESSION['role'] === 'admin'): ?>
-            <h3>Admin Section</h3>
-            <ul>
-                <li><a href="add_clinician.php">Add Clinician</a></li>
-                <li><a href="manage_clinicians.php">Manage Clinicians</a></li>
-            </ul>
-        <?php elseif ($_SESSION['role'] === 'clinician'): ?>
-            <h3>Clinician Section</h3>
-            <ul>
-                <li><a href="add_patient.php">Add Patient</a></li>
-                <li><a href="view_my_patients.php">View My Patients</a></li>
-            </ul>
-        <?php elseif ($_SESSION['role'] === 'nurse'): ?>
-            <h3>Nurse Section</h3>
-            <p>Welcome, valued member of our nursing team!</p>
-            <!-- Nurse-specific links can be added here later -->
-        <?php elseif ($_SESSION['role'] === 'receptionist'): ?>
-            <h3>Receptionist Section</h3>
-            <p>Welcome, essential part of our front-desk operations!</p>
-            <!-- Receptionist-specific links can be added here later -->
-        <?php else: ?>
-            <p>Your role (<?php echo htmlspecialchars($_SESSION['role']); ?>) is not currently configured for specific dashboard actions. Please contact an administrator.</p>
-        <?php endif; ?>
-    <?php else: ?>
-        <?php // This case should ideally not be reached due to the check at the top of the script ?>
-        <p>Error: User role not set. Please try logging in again.</p>
-    <?php endif; ?>
-
-    <?php // The main navigation in header.php now includes the Logout link. ?>
-    <?php // So, the <nav> block that was here previously has been removed. ?>
-
+    <div class="quick-links">
+        <h3>Quick Actions:</h3>
+        <ul>
+            <?php if ($user_role === 'receptionist'): ?>
+                <li><a href="add_patient.php" class="btn-dashboard-link">Register & Assign Patient</a></li>
+                <li><p>As a receptionist, your primary role is to register new patients and assign them to available clinicians. You can also manage patient appointments and basic records.</p></li>
+            <?php elseif ($user_role === 'nurse'): ?>
+                <li><a href="nurse_select_patient.php" class="btn-dashboard-link">Select Patient for Vitals/Info</a></li>
+                <li><p>As a nurse, you are responsible for taking patient vitals, recording general patient overview information, and assisting clinicians. Use the link above to select a patient and enter their data.</p></li>
+            <?php elseif ($user_role === 'clinician'): ?>
+                <li><a href="add_patient.php" class="btn-dashboard-link">Add Patient</a></li>
+                <li><a href="view_my_patients.php" class="btn-dashboard-link">My Assigned Patients</a></li>
+                <li><a href="select_patient_for_form.php" class="btn-dashboard-link">Select Patient for Clinical Form</a></li>
+                <li><a href="view_patient_history.php" class="btn-dashboard-link">View Patient History</a></li>
+                <li><p>As a clinician, you can manage your assigned patients, add new patients (assigning them to yourself), fill out clinical evaluation forms, and view comprehensive patient history.</p></li>
+            <?php elseif ($user_role === 'admin'): ?>
+                <li><a href="manage_clinicians.php" class="btn-dashboard-link">Manage Clinicians</a></li>
+                <?php // Add other admin links here if they exist ?>
+                <li><p>As an administrator, you have oversight of the system, including managing user accounts (like clinicians) and ensuring the smooth operation of the application.</p></li>
+            <?php else: ?>
+                <li><p>Your role is not currently configured for specific quick actions. Please contact an administrator if you believe this is an error.</p></li>
+            <?php endif; ?>
+        </ul>
+    </div>
+</div>
 <?php require_once 'includes/footer.php'; ?>

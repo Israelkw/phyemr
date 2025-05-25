@@ -19,13 +19,14 @@ $clinician_id = $_SESSION['user_id'];
 // Filter patients for the current clinician
 if (!empty($all_patients)) {
     foreach ($all_patients as $patient_id => $patient) {
-        if (isset($patient['added_by_clinician_id']) && $patient['added_by_clinician_id'] == $clinician_id) {
-            $my_patients[$patient_id] = $patient;
+        // Ensure patient_id is used as key for $my_patients for consistency, though not strictly necessary here if just iterating later
+        if (isset($patient['assigned_clinician_id']) && $patient['assigned_clinician_id'] == $clinician_id) {
+            $my_patients[$patient['id']] = $patient; // Use actual patient ID as key
         }
     }
 }
 
-$page_title = "My Patients";
+$page_title = "My Assigned Patients";
 $path_to_root = ""; 
 require_once 'includes/header.php'; 
 // header.php includes navigation.php, which handles displaying $_SESSION['message']
@@ -55,6 +56,7 @@ require_once 'includes/header.php';
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Date of Birth</th>
+                    <th>View History</th>
                 </tr>
             </thead>
             <tbody>
@@ -64,12 +66,14 @@ require_once 'includes/header.php';
                         <td><?php echo htmlspecialchars($patient['first_name']); ?></td>
                         <td><?php echo htmlspecialchars($patient['last_name']); ?></td>
                         <td><?php echo htmlspecialchars($patient['date_of_birth']); ?></td>
+                        <td><a href="view_patient_history.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>" class="btn-action">View History</a></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     <?php else: ?>
-        <p>You have not added any patients yet. <a href="add_patient.php">Add one now</a>.</p>
+        <p>You have no patients assigned to you yet. If you believe this is an error, please contact administration.</p>
+        <p>Receptionists can assign patients to you during the <a href="add_patient.php">patient registration process</a>.</p>
     <?php endif; ?>
 
 <?php require_once 'includes/footer.php'; ?>

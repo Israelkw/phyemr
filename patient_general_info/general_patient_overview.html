@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>General Patient Overview</title>
+    <link rel="stylesheet" href="../css/style.css"> <!-- Adjust path if necessary -->
+</head>
+<body>
+    <form> <!-- Action and method will be added by fill_patient_form.php -->
+        <h3>General Patient Overview</h3>
+        <div>
+            <label for="presenting_complaint">Presenting Complaint:</label>
+            <textarea id="presenting_complaint" name="presenting_complaint" rows="3"></textarea>
+        </div>
+        <div>
+            <label for="history_of_presenting_complaint">History of Presenting Complaint:</label>
+            <textarea id="history_of_presenting_complaint" name="history_of_presenting_complaint" rows="5"></textarea>
+        </div>
+        <div>
+            <label for="allergies">Known Allergies:</label>
+            <input type="text" id="allergies" name="allergies">
+        </div>
+        <div>
+            <label for="current_medications">Current Medications:</label>
+            <textarea id="current_medications" name="current_medications" rows="3"></textarea>
+        </div>
+        <div>
+            <label for="general_notes">General Notes by Nurse:</label>
+            <textarea id="general_notes" name="general_notes" rows="4"></textarea>
+        </div>
+        <button type="submit">Save General Overview</button>
+    </form>
+</body>
+</html>
