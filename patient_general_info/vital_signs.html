@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vital Signs</title>
+    <link rel="stylesheet" href="../css/style.css"> <!-- Adjust path if necessary -->
+</head>
+<body>
+    <form> <!-- Action and method will be added by fill_patient_form.php -->
+        <h3>Vital Signs</h3>
+        <div>
+            <label for="temperature">Temperature (°C):</label>
+            <input type="number" step="0.1" id="temperature" name="temperature">
+        </div>
+        <div>
+            <label for="heart_rate">Heart Rate (bpm):</label>
+            <input type="number" id="heart_rate" name="heart_rate">
+        </div>
+        <div>
+            <label for="blood_pressure_systolic">Blood Pressure (Systolic mmHg):</label>
+            <input type="number" id="blood_pressure_systolic" name="blood_pressure_systolic">
+        </div>
+        <div>
+            <label for="blood_pressure_diastolic">Blood Pressure (Diastolic mmHg):</label>
+            <input type="number" id="blood_pressure_diastolic" name="blood_pressure_diastolic">
+        </div>
+        <div>
+            <label for="respiratory_rate">Respiratory Rate (breaths/min):</label>
+            <input type="number" id="respiratory_rate" name="respiratory_rate">
+        </div>
+        <div>
+            <label for="oxygen_saturation">Oxygen Saturation (%):</label>
+            <input type="number" step="0.1" id="oxygen_saturation" name="oxygen_saturation">
+        </div>
+        <div>
+            <label for="notes">Notes:</label>
+            <textarea id="notes" name="notes" rows="3"></textarea>
+        </div>
+        <button type="submit">Save Vital Signs</button>
+    </form>
+</body>
+</html>

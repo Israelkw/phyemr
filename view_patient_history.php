@@ -42,17 +42,16 @@ include_once 'includes/header.php';
         $current_clinician_id = $_SESSION['user_id'];
 
         if (!empty($all_patients)) {
-            foreach ($all_patients as $patient) {
-                // Assuming 'added_by_clinician_id' links patient to clinician
-                if (isset($patient['added_by_clinician_id']) && $patient['added_by_clinician_id'] == $current_clinician_id) {
-                    $clinician_patients[] = $patient;
+            foreach ($all_patients as $patient_key => $patient) { // Use key if $_SESSION['patients'] is associative by actual ID
+                if (isset($patient['assigned_clinician_id']) && $patient['assigned_clinician_id'] == $current_clinician_id) {
+                    $clinician_patients[$patient['id']] = $patient; // Use actual patient ID as key
                 }
             }
         }
 
         if (!empty($clinician_patients)) :
         ?>
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped styled-table">
                 <thead>
                     <tr>
                         <th>Patient ID</th>
@@ -77,46 +76,107 @@ include_once 'includes/header.php';
                 </tbody>
             </table>
         <?php else : ?>
-            <div class="alert alert-info">You have not added any patients yet, or no patients are assigned to you. <a href="add_patient.php">Add a patient</a>.</div>
+            <div class="alert alert-info">You have no patients assigned to you. If you believe this is an error, please contact administration.</div>
         <?php endif; ?>
 
     <?php else : // 6.2. If patient_id IS provided in the URL
         $patient_id_from_url = trim($_GET['patient_id']);
-        $patient_index = findPatientIndexById($patient_id_from_url, isset($_SESSION['patients']) ? $_SESSION['patients'] : []);
+        // Assuming $_SESSION['patients'] is an associative array where keys are patient IDs.
+        // If findPatientIndexById returns an index for a numerically indexed array, 
+        // you might need to adjust how $selected_patient is fetched or use a different lookup.
+        // For this change, let's assume $_SESSION['patients'] is keyed by patient ID for direct access.
+        // If not, findPatientIndexById and subsequent access $_SESSION['patients'][$patient_index] is fine.
         
-        // Validate patient_id and ensure patient belongs to the clinician
-        if ($patient_index === -1 || 
-            !isset($_SESSION['patients'][$patient_index]['added_by_clinician_id']) ||
-            $_SESSION['patients'][$patient_index]['added_by_clinician_id'] != $_SESSION['user_id']) {
-            
+        $selected_patient = null;
+        if (isset($_SESSION['patients'][$patient_id_from_url])) {
+            $temp_patient = $_SESSION['patients'][$patient_id_from_url];
+            // Crucial validation: check if this patient is assigned to the logged-in clinician
+            if (isset($temp_patient['assigned_clinician_id']) && $temp_patient['assigned_clinician_id'] == $_SESSION['user_id']) {
+                $selected_patient = $temp_patient;
+            }
+        }
+        
+        $all_users_map = isset($_SESSION['all_users_map']) ? $_SESSION['all_users_map'] : [];
+
+        if (!$selected_patient) {
             $_SESSION['message'] = "Invalid patient selection or patient not assigned to you.";
-            // Redirect back to the selection list to avoid showing an empty/error page for wrong ID
-            // header("Location: view_patient_history.php"); 
-            // Or show message directly:
-            echo "<div class='alert alert-danger'>Invalid patient selection or patient not assigned to you. Please <a href='view_patient_history.php'>select a patient from the list</a>.</div>";
-            // exit(); // If redirecting
+            echo "<div class='alert alert-danger'>" . $_SESSION['message'] . " Please <a href='view_patient_history.php'>select a patient from the list</a>.</div>";
+            unset($_SESSION['message']); // Clear message after displaying
         } else {
-            $selected_patient = $_SESSION['patients'][$patient_index];
             $patient_name = htmlspecialchars($selected_patient['first_name'] . " " . $selected_patient['last_name']);
     ?>
-        <h3>History for <?php echo $patient_name; ?></h3>
+        <h3>Form Submission History for <?php echo $patient_name; ?> (ID: <?php echo htmlspecialchars($selected_patient['id']); ?>)</h3>
         <?php
             $submitted_forms = isset($selected_patient['submitted_forms']) && is_array($selected_patient['submitted_forms']) ? $selected_patient['submitted_forms'] : [];
+            // Sort forms by submission timestamp, most recent first
+            if (!empty($submitted_forms)) {
+                usort($submitted_forms, function($a, $b) {
+                    return (isset($b['submission_timestamp']) ? $b['submission_timestamp'] : 0) <=> (isset($a['submission_timestamp']) ? $a['submission_timestamp'] : 0);
+                });
+            }
 
             if (!empty($submitted_forms)) :
         ?>
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped styled-table">
                 <thead>
                     <tr>
                         <th>Form Name</th>
+                        <th>Category</th>
+                        <th>Submitted By</th>
                         <th>Submission Date</th>
                         <th>View/Download JSON</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($submitted_forms as $form_submission) : ?>
+                        <?php
+                            // Descriptive Form Name
+                            $descriptive_form_name = "Unknown Form";
+                            if (isset($form_submission['form_name'])) {
+                                $base_name = pathinfo($form_submission['form_name'], PATHINFO_FILENAME);
+                                $descriptive_form_name = ucwords(str_replace(['_', '-'], [' ', ' '], $base_name));
+                            }
+
+                            // Category
+                            $category = "N/A";
+                            if (isset($form_submission['form_directory'])) {
+                                if ($form_submission['form_directory'] === 'patient_general_info') {
+                                    if (strpos($form_submission['form_name'], 'vital_signs') !== false) {
+                                        $category = "Vitals";
+                                        $descriptive_form_name = "Vital Signs Record"; // More specific
+                                    } elseif (strpos($form_submission['form_name'], 'general_patient_overview') !== false) {
+                                        $category = "General Info";
+                                        $descriptive_form_name = "General Patient Overview"; // More specific
+                                    } else {
+                                        $category = "General Info"; // Default for this directory
+                                    }
+                                } elseif ($form_submission['form_directory'] === 'patient_evaluation_form') {
+                                    $category = "Clinical Evaluation";
+                                    // Example for specific assessment names if needed
+                                    // if (strpos($form_submission['form_name'], 'cervical') !== false) $descriptive_form_name = "Cervical Assessment";
+                                } else {
+                                    $category = ucfirst(str_replace(['_', '-'], [' ', ' '], $form_submission['form_directory']));
+                                }
+                            }
+
+                            // Submitter Details
+                            $submitter_details = "N/A";
+                            if (isset($form_submission['submitted_by_user_id']) && isset($all_users_map[$form_submission['submitted_by_user_id']])) {
+                                $submitter = $all_users_map[$form_submission['submitted_by_user_id']];
+                                $submitter_name = htmlspecialchars($submitter['first_name'] . " " . $submitter['last_name']);
+                                $submitter_role = htmlspecialchars(ucfirst($submitter['role']));
+                                $submitter_details = $submitter_role . " " . $submitter_name;
+                            } elseif (isset($form_submission['submitted_by_user_role'])) {
+                                // Fallback if user not in map but role is known
+                                $submitter_details = htmlspecialchars(ucfirst($form_submission['submitted_by_user_role'])) . " (ID: " . htmlspecialchars(isset($form_submission['submitted_by_user_id']) ? $form_submission['submitted_by_user_id'] : 'Unknown') . ")";
+                            } elseif (isset($form_submission['submitted_by_user_id'])) {
+                                $submitter_details = "User ID: " . htmlspecialchars($form_submission['submitted_by_user_id']);
+                            }
+                        ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($form_submission['form_name']); // e.g., "cervical.html" ?></td>
+                            <td><?php echo htmlspecialchars($descriptive_form_name); ?></td>
+                            <td><?php echo htmlspecialchars($category); ?></td>
+                            <td><?php echo $submitter_details; // Already escaped ?></td>
                             <td>
                                 <?php 
                                 if (isset($form_submission['submission_timestamp'])) {
@@ -128,9 +188,6 @@ include_once 'includes/header.php';
                             </td>
                             <td>
                                 <?php 
-                                // The path stored is 'submitted_forms/[patient_id]/[json_filename]'
-                                // which is relative to the project root.
-                                // view_patient_history.php is at the root, so no ../ needed.
                                 $file_link = htmlspecialchars($form_submission['file_path']); 
                                 ?>
                                 <a href="<?php echo $file_link; ?>" target="_blank" class="btn btn-info btn-sm">View JSON</a>
@@ -142,7 +199,7 @@ include_once 'includes/header.php';
         <?php else : ?>
             <div class="alert alert-info">No forms have been submitted yet for <?php echo $patient_name; ?>.</div>
         <?php endif; ?>
-        <p><a href="view_patient_history.php" class="btn btn-secondary">Select Another Patient</a></p>
+        <p><a href="view_patient_history.php" class="btn btn-secondary">Back to Patient Selection for History</a></p>
     <?php 
         } // End of valid patient_id processing
     endif; // End of patient_id check 
@@ -150,7 +207,7 @@ include_once 'includes/header.php';
 
     <!-- 7. Common Navigation -->
     <div class="mt-3">
-        <a href="dashboard.php" class="btn btn-success">Back to Dashboard</a>
+        <a href="dashboard.php" class="btn btn-info">Back to Dashboard</a>
     </div>
 </div>
 

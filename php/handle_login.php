@@ -30,6 +30,25 @@ foreach ($users as $user) {
         $_SESSION['first_name'] = $user['first_name'];
         $_SESSION['last_name'] = $user['last_name'];
         
+        // Store clinician list, nurse list, and all_users_map in session
+        $clinician_list = [];
+        $nurse_list = [];
+        $all_users_map = [];
+
+        foreach ($users as $u) {
+            $user_details = ['id' => $u['id'], 'first_name' => $u['first_name'], 'last_name' => $u['last_name'], 'role' => $u['role']];
+            $all_users_map[$u['id']] = $user_details;
+
+            if ($u['role'] === 'clinician') {
+                $clinician_list[] = $user_details;
+            } elseif ($u['role'] === 'nurse') {
+                $nurse_list[] = $user_details;
+            }
+        }
+        $_SESSION['clinician_list'] = $clinician_list;
+        $_SESSION['nurse_list'] = $nurse_list;
+        $_SESSION['all_users_map'] = $all_users_map;
+
         $authenticated = true;
         header('Location: ../dashboard.php');
         exit;
