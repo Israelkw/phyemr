@@ -57,8 +57,13 @@ if (isset($_SESSION['user_id'])) {
         </div>
     <?php endif; ?>
 
-    <?php if (empty($db_error_message) && !empty($clinician_patients)) : ?>
-        <table class="table table-striped table-hover table-bordered"> <!-- Ensured consistency and added table-hover -->
+    <?php if (!empty($db_error_message)): ?>
+        <?php // The main database error is already displayed further up. ?>
+        <?php // This block can be used if there's specific content to show when the patient list can't be displayed due to the error. ?>
+        <?php // For now, we can omit an additional message here if the main error message is sufficient, or add a simple one. ?>
+        <div class="alert alert-warning mt-3">Could not display the patient list due to an issue (see message above if applicable).</div>
+    <?php elseif (!empty($clinician_patients)) : ?>
+        <table class="table table-striped table-hover table-bordered">
             <thead>
                 <tr>
                     <th>Patient ID</th>
@@ -82,15 +87,9 @@ if (isset($_SESSION['user_id'])) {
                 <?php endforeach; ?>
             </tbody>
         </table>
-    <?php else : ?>
+    <?php else : // This case means $db_error_message is empty AND $clinician_patients is empty ?>
         <div class="alert alert-info">
-            You have no patients assigned to you for whom forms can be filled.
-            If a patient has been recently assigned, they should appear here.
-            Contact administration if you believe this is an error or if issues persist.
-        </div>
-    <?php elseif (empty($db_error_message) && empty($clinician_patients)) : ?>
-        <div class="alert alert-info">
-            No patients are currently assigned to you.
+            No patients are currently assigned to you. If a patient has been recently assigned, they should appear here. You can also add new patients via your dashboard.
         </div>
     <?php endif; ?>
 

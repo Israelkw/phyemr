@@ -12,7 +12,9 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'clinician') {
     exit;
 }
 
-require_once $path_to_root . 'includes/db_connect.php'; // $mysqli connection object
+// $path_to_root = "../"; // This is still needed for header.php to build its internal paths for CSS, JS, and navigation.
+// The require_once paths below will use __DIR__ for robustness of file inclusion itself.
+require_once __DIR__ . '/../includes/db_connect.php'; // $mysqli connection object
 
 $my_patients = [];
 $db_error_message = '';
@@ -40,7 +42,8 @@ if ($stmt === false) {
 // $mysqli->close(); // Connection usually closed at end of script by PHP or db_connect.php
 
 $page_title = "My Assigned Patients";
-require_once $path_to_root . 'includes/header.php'; 
+// $path_to_root must be defined before including header.php for its internal use.
+require_once __DIR__ . '/../includes/header.php'; 
 // header.php includes navigation.php, which handles displaying $_SESSION['message'] (global messages)
 ?>
     <?php // The main content div class="container" is provided by header.php for the <main> element ?>
@@ -88,4 +91,4 @@ require_once $path_to_root . 'includes/header.php';
         </div>
     <?php endif; ?>
 
-<?php require_once $path_to_root . 'includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>
