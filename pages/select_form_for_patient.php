@@ -89,7 +89,7 @@ include_once $path_to_root . 'includes/header.php';
                 $form_display_name = str_replace(['_', '-'], ' ', pathinfo($form_file, PATHINFO_FILENAME));
                 $form_display_name = ucwords($form_display_name) . " Assessment Form";
             ?>
-                <a href="fill_patient_form.php?form_name=<?php echo htmlspecialchars($form_file); ?>" class="list-group-item list-group-item-action">
+                <a href="fill_patient_form.php?form_name=<?php echo htmlspecialchars($form_file); ?>&form_directory=patient_evaluation_form" class="list-group-item list-group-item-action">
                     <?php echo htmlspecialchars($form_display_name); ?>
                 </a>
             <?php endforeach; ?>
