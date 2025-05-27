@@ -15,8 +15,8 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'admin') {
 $clinicians = isset($_SESSION['clinicians']) ? $_SESSION['clinicians'] : [];
 
 $page_title = "Manage Clinicians";
-$path_to_root = ""; 
-require_once 'includes/header.php'; 
+$path_to_root = "../"; // Define $path_to_root for includes
+require_once $path_to_root . 'includes/header.php'; 
 // header.php includes navigation.php, which handles displaying $_SESSION['message']
 ?>
     <style>
@@ -34,7 +34,7 @@ require_once 'includes/header.php';
     // Global messages are now handled by navigation.php (via header.php).
     ?>
 
-    <p><a href="add_clinician.php">Add New Clinician</a> | <a href="dashboard.php">Back to Dashboard</a></p>
+    <p><a href="add_clinician.php">Add New Clinician</a> | <a href="dashboard.php">Back to Dashboard</a></p> <!-- Links are to sibling pages -->
 
     <?php if (!empty($clinicians)): ?>
         <table>
@@ -64,7 +64,7 @@ require_once 'includes/header.php';
             </tbody>
         </table>
     <?php else: ?>
-        <p>No clinicians found. <a href="add_clinician.php">Add one now</a>.</p>
+        <p>No clinicians found. <a href="add_clinician.php">Add one now</a>.</p> <!-- Link is to a sibling page -->
     <?php endif; ?>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once $path_to_root . 'includes/footer.php'; ?>

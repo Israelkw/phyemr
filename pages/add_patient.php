@@ -17,11 +17,11 @@ if ($_SESSION['role'] === 'receptionist' && !isset($_SESSION['clinician_list']))
     // This might happen if the session was started before the clinician_list was added
     // Or if the logged-in user is a receptionist but the list wasn't populated for some reason.
     $_SESSION['message'] = "Clinician list not available. Please log out and log back in.";
-    header("location: dashboard.php");
+    header("location: dashboard.php"); // Stays as is, relative to current dir (pages/)
     exit;
 }
-$path_to_root = ""; 
-require_once 'includes/header.php'; 
+$path_to_root = "../"; // Define $path_to_root for includes
+require_once $path_to_root . 'includes/header.php'; 
 // header.php includes navigation.php, which handles displaying $_SESSION['message']
 ?>
 
@@ -31,7 +31,7 @@ require_once 'includes/header.php';
         // The specific session message display that was here has been removed.
         // Global messages are now handled by navigation.php (via header.php).
         ?>
-        <form action="php/handle_add_patient.php" method="POST">
+        <form action="../php/handle_add_patient.php" method="POST">
             <div>
                 <label for="first_name">First Name:</label>
                 <input type="text" id="first_name" name="first_name" required>
@@ -61,7 +61,7 @@ require_once 'includes/header.php';
                 <button type="submit">Add Patient</button>
             </div>
         </form>
-        <p><a href="dashboard.php">Back to Dashboard</a></p>
+        <p><a href="dashboard.php">Back to Dashboard</a></p> <!-- Stays as is, relative to current dir (pages/) -->
     </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once $path_to_root . 'includes/footer.php'; ?>

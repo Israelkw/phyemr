@@ -15,20 +15,20 @@ function findPatientIndexById($patient_id, $patients_array) {
 // 2. Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $_SESSION['message'] = "Invalid request method.";
-    header("Location: ../dashboard.php");
+    header("Location: ../pages/dashboard.php");
     exit();
 }
 
 // 3. Check if a user is logged in and if their role is 'clinician' or 'nurse'
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || !in_array($_SESSION['role'], ['clinician', 'nurse'])) {
     $_SESSION['message'] = "Unauthorized action. Please login as a clinician or nurse.";
-    header("Location: ../login.php"); // Redirect to login page if not authorized
+    header("Location: ../pages/login.php"); // Redirect to login page if not authorized
     exit();
 }
 
 // Determine appropriate redirect paths based on role for error cases
-$select_patient_page = ($_SESSION['role'] === 'nurse') ? '../nurse_select_patient.php' : '../select_patient_for_form.php';
-// $select_form_page = ($_SESSION['role'] === 'nurse') ? '../nurse_select_form.php' : '../select_form_for_patient.php'; // Not directly used here but good for context
+$select_patient_page = ($_SESSION['role'] === 'nurse') ? '../pages/nurse_select_patient.php' : '../pages/select_patient_for_form.php';
+// $select_form_page = ($_SESSION['role'] === 'nurse') ? '../pages/nurse_select_form.php' : '../pages/select_form_for_patient.php'; // Not directly used here but good for context
 
 // 4. Retrieve patient_id, form_name, and form_directory from the $_POST data
 if (!isset($_POST['patient_id']) || empty(trim($_POST['patient_id'])) || 
@@ -38,10 +38,10 @@ if (!isset($_POST['patient_id']) || empty(trim($_POST['patient_id'])) ||
     // Intelligent redirect: if patient_id is known, go to form selection for that patient, else general patient selection
     if(isset($_POST['patient_id']) && !empty(trim($_POST['patient_id']))) {
         $redirect_patient_id = trim($_POST['patient_id']);
-        $form_selection_page = ($_SESSION['role'] === 'nurse') ? '../nurse_select_form.php' : '../select_form_for_patient.php';
+        $form_selection_page = ($_SESSION['role'] === 'nurse') ? '../pages/nurse_select_form.php' : '../pages/select_form_for_patient.php';
         header("Location: " . $form_selection_page . "?patient_id=" . urlencode($redirect_patient_id));
     } else {
-        header("Location: " . $select_patient_page);
+        header("Location: " . $select_patient_page); // Already correctly points to pages/ via variable
     }
     exit();
 }
@@ -64,7 +64,7 @@ if (!$patient_data) {
 $allowed_directories = ['patient_evaluation_form', 'patient_general_info'];
 if (!in_array($form_directory, $allowed_directories)) {
     $_SESSION['message'] = "Invalid Form Directory: " . htmlspecialchars($form_directory);
-    $form_selection_page = ($_SESSION['role'] === 'nurse') ? '../nurse_select_form.php' : '../select_form_for_patient.php';
+    $form_selection_page = ($_SESSION['role'] === 'nurse') ? '../pages/nurse_select_form.php' : '../pages/select_form_for_patient.php';
     header("Location: " . $form_selection_page . "?patient_id=" . urlencode($patient_id));
     exit();
 }
@@ -74,15 +74,15 @@ $form_basename = basename($original_form_name);
 if ($form_basename !== $original_form_name || pathinfo($form_basename, PATHINFO_EXTENSION) !== 'html') {
     $_SESSION['message'] = "Invalid Form Name: " . htmlspecialchars($original_form_name);
     // Redirect to the page where the form was filled
-    header("Location: ../fill_patient_form.php?form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory));
+    header("Location: ../pages/fill_patient_form.php?form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory));
     exit();
 }
 
 // Further validation: check if the form file actually exists in the specified directory
-$form_template_path = '../' . rtrim($form_directory, '/') . '/' . $form_basename;
+$form_template_path = '../' . rtrim($form_directory, '/') . '/' . $form_basename; // This path is relative to php/ so ../ goes to root
 if (!file_exists($form_template_path)) {
     $_SESSION['message'] = "Form template '" . htmlspecialchars($form_basename) . "' not found in directory '" . htmlspecialchars($form_directory) . "'.";
-    $form_selection_page = ($_SESSION['role'] === 'nurse') ? '../nurse_select_form.php' : '../select_form_for_patient.php';
+    $form_selection_page = ($_SESSION['role'] === 'nurse') ? '../pages/nurse_select_form.php' : '../pages/select_form_for_patient.php';
     header("Location: " . $form_selection_page . "?patient_id=" . urlencode($patient_id));
     exit();
 }
@@ -99,7 +99,7 @@ if (!is_dir($patient_specific_dir)) {
     if (!mkdir($patient_specific_dir, 0755, true)) {
         $_SESSION['message'] = "Error: Could not create directory for submitted forms at " . htmlspecialchars($patient_specific_dir);
         // Redirect to a page that makes sense, perhaps the form filling page or dashboard
-        header("Location: ../fill_patient_form.php?form_name=" . urlencode($original_form_name)); 
+        header("Location: ../pages/fill_patient_form.php?form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory)); 
         exit();
     }
 }
@@ -117,7 +117,7 @@ $json_data = json_encode($submitted_data, JSON_PRETTY_PRINT);
 
 if ($json_data === false) {
     $_SESSION['message'] = "Error: Could not encode form data to JSON. Error: " . json_last_error_msg();
-    header("Location: ../fill_patient_form.php?form_name=" . urlencode($original_form_name));
+    header("Location: ../pages/fill_patient_form.php?form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory));
     exit();
 }
 
@@ -147,14 +147,14 @@ if (file_put_contents($file_path_to_save, $json_data)) {
     $_SESSION['message'] = "Form '" . htmlspecialchars($form_name_without_ext) . "' (from " . htmlspecialchars($form_directory) . ") submitted successfully for patient " . $patient_display_name . " and saved as " . htmlspecialchars($json_filename) . ".";
     
     // 14. Redirect the user
-    header("Location: ../dashboard.php");
+    header("Location: ../pages/dashboard.php");
     exit();
 
 } else {
     // 15. Handle potential errors during file saving
     $_SESSION['message'] = "Error: Could not save the submitted form data to " . htmlspecialchars($file_path_to_save) . ". Please check server permissions.";
     // Redirect back to the form they were filling
-    header("Location: ../fill_patient_form.php?form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory));
+    header("Location: ../pages/fill_patient_form.php?form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory));
     exit();
 }
 ?>

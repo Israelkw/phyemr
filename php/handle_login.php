@@ -3,7 +3,7 @@ session_start();
 
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../login.php');
+    header('Location: ../pages/login.php');
     exit;
 }
 
@@ -50,7 +50,7 @@ foreach ($users as $user) {
         $_SESSION['all_users_map'] = $all_users_map;
 
         $authenticated = true;
-        header('Location: ../dashboard.php');
+        header('Location: ../pages/dashboard.php');
         exit;
     }
 }
@@ -58,7 +58,7 @@ foreach ($users as $user) {
 // If authentication failed after checking all users
 if (!$authenticated) {
     $_SESSION['login_error'] = 'Invalid username or password.';
-    header('Location: ../login.php');
+    header('Location: ../pages/login.php');
     exit;
 }
 ?>
