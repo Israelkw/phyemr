@@ -109,7 +109,7 @@ include_once $path_to_root . 'includes/header.php';
 // 8. Display heading
 ?>
 <div class="container mt-4"> <!-- Added mt-4 for spacing -->
-    <h2>
+    <h2 class="mb-4">
         <?php echo htmlspecialchars($form_display_name); ?>
         <small class="text-muted">for <?php echo $patient_full_name; ?></small>
     </h2>

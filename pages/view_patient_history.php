@@ -78,7 +78,7 @@ include_once $path_to_root . 'includes/header.php';
 ?>
 
 <div class="container mt-4">
-    <h2>Patient Form Submission History</h2>
+    <h2 class="mb-4">Patient Form Submission History</h2>
 
     <?php if (!empty($error_message)): ?>
         <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
@@ -88,16 +88,16 @@ include_once $path_to_root . 'includes/header.php';
     <?php endif; ?>
 
     <?php if ($patient_details && empty($error_message) && empty($db_error_message)): ?>
-        <h4>Patient Details</h4>
+        <h4 class="mb-3">Patient Details</h4>
         <p>
             <strong>Name:</strong> <?php echo htmlspecialchars($patient_details['first_name'] . ' ' . $patient_details['last_name']); ?><br>
             <strong>Date of Birth:</strong> <?php echo htmlspecialchars($patient_details['date_of_birth']); ?><br>
             <strong>Patient ID:</strong> <?php echo htmlspecialchars($patient_details['id']); ?>
         </p>
 
-        <h4 class="mt-4">Submissions</h4>
+        <h4 class="mt-4 mb-3">Submissions</h4>
         <?php if (!empty($submissions)): ?>
-            <table class="table table-bordered table-striped">
+            <table class="table table-striped table-hover table-bordered"> <!-- Ensured consistency and added table-hover -->
                 <thead>
                     <tr>
                         <th>Submission ID</th>

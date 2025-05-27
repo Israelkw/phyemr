@@ -65,7 +65,7 @@ include_once $path_to_root . 'includes/header.php';
 
 <div class="container">
     <!-- 7. Display heading -->
-    <h2>Select Evaluation Form for <?php echo $patient_name; ?></h2>
+    <h2 class="mb-4">Select Evaluation Form for <?php echo $patient_name; ?></h2>
 
     <?php
     // 8. Scan the patient_evaluation_form/ directory

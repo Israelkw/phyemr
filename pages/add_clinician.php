@@ -21,7 +21,7 @@ require_once $path_to_root . 'includes/header.php';
 ?>
 
 <div class="container mt-5">
-    <h2>Add New User</h2>
+    <h2 class="mb-4">Add New User</h2>
 
     <?php if (isset($_SESSION['message'])): ?>
         <div class="alert <?php echo strpos(strtolower($_SESSION['message']), 'successfully') !== false ? 'alert-success' : 'alert-danger'; ?>">
