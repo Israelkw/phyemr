@@ -42,7 +42,7 @@ if ($stmt === false) {
 ?>
 
 <div class="container mt-4"> <!-- Added mt-4 for spacing -->
-    <h2>Select a Patient</h2>
+    <h2 class="mb-3">Select a Patient</h2>
     
     <?php if (isset($_SESSION['message'])): ?>
         <div class="alert alert-info"> <!-- Or appropriate class based on message type -->
@@ -57,7 +57,7 @@ if ($stmt === false) {
     <?php endif; ?>
 
     <?php if (empty($db_error_message) && !empty($patients)): ?>
-        <table class="table table-bordered table-striped"> <!-- Removed styled-table, use Bootstrap classes -->
+        <table class="table table-striped table-hover table-bordered"> <!-- Ensured consistency and added table-hover -->
             <thead>
                 <tr>
                     <th>ID</th>

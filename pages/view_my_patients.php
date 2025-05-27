@@ -44,7 +44,7 @@ require_once $path_to_root . 'includes/header.php';
 // header.php includes navigation.php, which handles displaying $_SESSION['message'] (global messages)
 ?>
     <?php // The main content div class="container" is provided by header.php for the <main> element ?>
-    <h2 class="mt-4">My Patients</h2>
+    <h2 class="mt-4 mb-3">My Patients</h2>
 
     <?php if (!empty($db_error_message)): ?>
         <div class="alert alert-danger">
@@ -55,7 +55,7 @@ require_once $path_to_root . 'includes/header.php';
     <p><a href="add_patient.php" class="btn btn-success mb-3">Add New Patient</a> <a href="dashboard.php" class="btn btn-secondary mb-3">Back to Dashboard</a></p> <!-- Sibling pages -->
 
     <?php if (empty($db_error_message) && !empty($my_patients)): ?>
-        <table class="table table-bordered table-striped"> <!-- Using Bootstrap classes -->
+        <table class="table table-striped table-hover table-bordered"> <!-- Ensured consistency and added table-hover -->
             <thead>
                 <tr>
                     <th>Patient ID</th>

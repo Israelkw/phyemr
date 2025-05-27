@@ -3,10 +3,9 @@ $page_title = "Welcome";
 $path_to_root = ""; // Root directory
 // No session needed for index.php logic itself before header, header will start it.
 require_once 'includes/header.php';
+// The <main class="main-content container"> is already provided by header.php
 ?>
-
-<div class="container">
-    <h1>Welcome to the Patient Management System</h1>
+    <h1 class="mb-4">Welcome to the Patient Management System</h1>
     <p>This system allows authorized personnel to manage patient and clinician data.</p>
     
     <?php if (isset($_SESSION["user_id"])): ?>
@@ -31,6 +30,5 @@ require_once 'includes/header.php';
         <li><a href="patient_general_info/basic_info.html">Basic Information Form</a></li>
         <li><a href="patient_general_info/demo.html">Demographics Form</a></li>
     </ul>
-</div>
 
 <?php require_once 'includes/footer.php'; ?>

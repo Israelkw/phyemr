@@ -49,7 +49,7 @@ if (isset($_SESSION['user_id'])) {
 ?>
 
 <div class="container mt-4"> <!-- Added mt-4 for spacing -->
-    <h2>Select Patient to Assign Form</h2>
+    <h2 class="mb-3">Select Patient to Assign Form</h2>
 
     <?php if (!empty($db_error_message)): ?>
         <div class="alert alert-danger">
@@ -58,7 +58,7 @@ if (isset($_SESSION['user_id'])) {
     <?php endif; ?>
 
     <?php if (empty($db_error_message) && !empty($clinician_patients)) : ?>
-        <table class="table table-bordered table-striped"> <!-- Removed styled-table, assuming Bootstrap handles styling -->
+        <table class="table table-striped table-hover table-bordered"> <!-- Ensured consistency and added table-hover -->
             <thead>
                 <tr>
                     <th>Patient ID</th>

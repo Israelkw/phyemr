@@ -77,7 +77,7 @@ if (is_dir($forms_directory)) {
 ?>
 
 <div class="container">
-    <h2>Select Form for Patient: <?php echo $patient_name; ?> (ID: <?php echo htmlspecialchars($patient_id); ?>)</h2>
+    <h2 class="mb-4">Select Form for Patient: <?php echo $patient_name; ?> (ID: <?php echo htmlspecialchars($patient_id); ?>)</h2>
     
     <?php
     // Message display is handled by header.php

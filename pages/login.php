@@ -7,7 +7,7 @@ require_once $path_to_root . 'includes/header.php';
 ?>
 
     <form action="../php/handle_login.php" method="POST" class="form-container">
-        <h2>User Login</h2>
+        <h2 class="mb-4">User Login</h2>
         <?php
         // The global message display in navigation.php (included by header.php)
         // will handle displaying $_SESSION['message'].
@@ -15,17 +15,15 @@ require_once $path_to_root . 'includes/header.php';
         // it will be shown by the header's navigation include.
         // For now, specific error display here is removed.
         ?>
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+        <div class="mb-3">
+            <label for="username" class="form-label">Username:</label>
+            <input type="text" id="username" name="username" class="form-control" required>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" id="password" name="password" class="form-control" required>
         </div>
-        <div>
-            <button type="submit">Login</button>
-        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
     </form>
 
 <?php require_once $path_to_root . 'includes/footer.php'; ?>
