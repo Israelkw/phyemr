@@ -37,9 +37,6 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                             <a class="nav-link<?php if ($current_page == 'view_my_patients.php') echo ' active'; ?>" href="<?php echo $base_path; ?>pages/view_my_patients.php">My Assigned Patients</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link<?php if ($current_page == 'select_patient_for_form.php') echo ' active'; ?>" href="<?php echo $base_path; ?>pages/select_patient_for_form.php">Select Patient for Form</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link<?php if ($current_page == 'view_patient_history.php') echo ' active'; ?>" href="<?php echo $base_path; ?>pages/view_patient_history.php">View Patient History</a>
                         </li>
                     <?php elseif ($_SESSION["role"] === 'admin'): ?>
