@@ -35,7 +35,29 @@ function initFormSubmissionHandler(formId, messageElementId) {
             }
         }
 
-        formData.form_name = form.name || formId;
+        // Retrieve patient_id and clinician_id from global window variables
+        // These should have been set by fill_patient_form.php
+        if (typeof window.currentPatientId === 'undefined' || typeof window.currentClinicianId === 'undefined') {
+            console.error('Patient ID or Clinician ID is not defined. Ensure they are set in fill_patient_form.php.');
+            messageElement.textContent = 'Error: Critical patient or clinician information is missing. Cannot submit form.';
+            messageElement.className = 'error-message';
+            return; // Prevent submission
+        }
+
+        formData.patient_id = window.currentPatientId;
+        formData.clinician_id = window.currentClinicianId;
+        
+        // form_name might also come from window.currentFormName if needed, 
+        // but existing logic takes it from form.name or formId.
+        // If window.currentFormName is more reliable, could use:
+        // formData.form_name = window.currentFormName || form.name || formId;
+        // For now, stick to existing form_name logic unless specified otherwise.
+        if (!formData.form_name && window.currentFormName) {
+             formData.form_name = window.currentFormName;
+        } else if (!formData.form_name) {
+            formData.form_name = form.name || formId; // Fallback if window.currentFormName also not set
+        }
+
 
         fetch('../php/save_submission.php', {
             method: 'POST',

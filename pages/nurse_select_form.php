@@ -1,4 +1,5 @@
 <?php
+$path_to_root = "../"; // Define $path_to_root for includes
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -6,35 +7,61 @@ if (session_status() == PHP_SESSION_NONE) {
 // Authorization: Check if user is logged in and is a nurse
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'nurse') {
     $_SESSION['message'] = "Unauthorized access. Only nurses can select forms.";
-    header("location: dashboard.php");
+    header("location: dashboard.php"); // Sibling page
     exit;
 }
 
 // Get and validate patient_id
 if (!isset($_GET['patient_id']) || empty($_GET['patient_id'])) {
     $_SESSION['message'] = "Patient ID is missing.";
-    header("location: nurse_select_patient.php");
+    header("location: nurse_select_patient.php"); // Sibling page
     exit;
 }
 $patient_id = $_GET['patient_id'];
 
-// Ensure patient exists (basic check using $_SESSION['patients'])
-if (!isset($_SESSION['patients'][$patient_id])) {
-    $_SESSION['message'] = "Invalid Patient ID selected.";
+// DB connection
+require_once $path_to_root . 'includes/db_connect.php'; // $mysqli connection object
+
+// Fetch patient details from database
+$patient_name = "Selected Patient"; // Default name
+
+$stmt = $mysqli->prepare("SELECT first_name, last_name FROM patients WHERE id = ?");
+if ($stmt === false) {
+    error_log("Error preparing statement to fetch patient name (nurse_select_form): " . $mysqli->error);
+    $_SESSION['message'] = "An error occurred while fetching patient details.";
     header("location: nurse_select_patient.php");
-    exit;
+    exit();
 }
 
-// Store patient_id in session for the form filling process
-$_SESSION['selected_patient_id_for_form'] = $patient_id;
-$patient = $_SESSION['patients'][$patient_id];
-$patient_name = htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']);
+$stmt->bind_param("i", $patient_id); // Assuming patient_id is an integer
+
+if ($stmt->execute()) {
+    $result = $stmt->get_result();
+    if ($patient_db = $result->fetch_assoc()) {
+        $patient_name = htmlspecialchars($patient_db['first_name'] . " " . $patient_db['last_name']);
+        // Store patient_id in session for the form filling process ONLY if patient is found
+        $_SESSION['selected_patient_id_for_form'] = $patient_id;
+    } else {
+        // Patient not found in database
+        $_SESSION['message'] = "Selected patient not found in the database (ID: " . htmlspecialchars($patient_id) . ").";
+        $stmt->close();
+        header("location: nurse_select_patient.php");
+        exit();
+    }
+    $stmt->close();
+} else {
+    error_log("Error executing statement to fetch patient name (nurse_select_form): " . $stmt->error);
+    $_SESSION['message'] = "An error occurred while retrieving patient information.";
+    $stmt->close();
+    header("location: nurse_select_patient.php");
+    exit();
+}
+// $mysqli->close(); // Connection closed at end of script
 
 $page_title = "Select Form for " . $patient_name;
-$path_to_root = "";
-require_once 'includes/header.php';
+require_once $path_to_root . 'includes/header.php';
 
-$forms_directory = 'patient_general_info/';
+$forms_directory = $path_to_root . 'patient_general_info/'; // Adjusted path
 $available_forms = [];
 if (is_dir($forms_directory)) {
     if ($handle = opendir($forms_directory)) {
@@ -75,8 +102,8 @@ if (is_dir($forms_directory)) {
         <p>Please ensure forms like 'vital_signs.html' or 'general_patient_overview.html' are present.</p>
     <?php endif; ?>
 
-    <p><a href="nurse_select_patient.php">Back to Patient Selection</a></p>
-    <p><a href="dashboard.php">Back to Dashboard</a></p>
+    <p><a href="nurse_select_patient.php">Back to Patient Selection</a></p> <!-- Sibling page -->
+    <p><a href="dashboard.php">Back to Dashboard</a></p> <!-- Sibling page -->
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once $path_to_root . 'includes/footer.php'; ?>

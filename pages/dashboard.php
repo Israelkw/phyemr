@@ -13,8 +13,8 @@ if (!isset($_SESSION["user_id"]) || !isset($_SESSION["role"])) {
 }
 
 $page_title = "Dashboard";
-$path_to_root = ""; 
-require_once 'includes/header.php'; 
+$path_to_root = "../"; // Define $path_to_root for includes
+require_once $path_to_root . 'includes/header.php'; 
 // The header will include navigation.php which displays $_SESSION['message']
 ?>
 <div class="container">
@@ -30,19 +30,19 @@ require_once 'includes/header.php';
         <h3>Quick Actions:</h3>
         <ul>
             <?php if ($user_role === 'receptionist'): ?>
-                <li><a href="add_patient.php" class="btn-dashboard-link">Register & Assign Patient</a></li>
+                <li><a href="add_patient.php" class="btn-dashboard-link">Register & Assign Patient</a></li> <!-- Stays as is, relative to current dir (pages/) -->
                 <li><p>As a receptionist, your primary role is to register new patients and assign them to available clinicians. You can also manage patient appointments and basic records.</p></li>
             <?php elseif ($user_role === 'nurse'): ?>
-                <li><a href="nurse_select_patient.php" class="btn-dashboard-link">Select Patient for Vitals/Info</a></li>
+                <li><a href="nurse_select_patient.php" class="btn-dashboard-link">Select Patient for Vitals/Info</a></li> <!-- Stays as is -->
                 <li><p>As a nurse, you are responsible for taking patient vitals, recording general patient overview information, and assisting clinicians. Use the link above to select a patient and enter their data.</p></li>
             <?php elseif ($user_role === 'clinician'): ?>
-                <li><a href="add_patient.php" class="btn-dashboard-link">Add Patient</a></li>
-                <li><a href="view_my_patients.php" class="btn-dashboard-link">My Assigned Patients</a></li>
-                <li><a href="select_patient_for_form.php" class="btn-dashboard-link">Select Patient for Clinical Form</a></li>
-                <li><a href="view_patient_history.php" class="btn-dashboard-link">View Patient History</a></li>
+                <li><a href="add_patient.php" class="btn-dashboard-link">Add Patient</a></li> <!-- Stays as is -->
+                <li><a href="view_my_patients.php" class="btn-dashboard-link">My Assigned Patients</a></li> <!-- Stays as is -->
+                <li><a href="select_patient_for_form.php" class="btn-dashboard-link">Select Patient for Clinical Form</a></li> <!-- Stays as is -->
+                <li><a href="view_patient_history.php" class="btn-dashboard-link">View Patient History</a></li> <!-- Stays as is -->
                 <li><p>As a clinician, you can manage your assigned patients, add new patients (assigning them to yourself), fill out clinical evaluation forms, and view comprehensive patient history.</p></li>
             <?php elseif ($user_role === 'admin'): ?>
-                <li><a href="manage_clinicians.php" class="btn-dashboard-link">Manage Clinicians</a></li>
+                <li><a href="manage_clinicians.php" class="btn-dashboard-link">Manage Clinicians</a></li> <!-- Stays as is -->
                 <?php // Add other admin links here if they exist ?>
                 <li><p>As an administrator, you have oversight of the system, including managing user accounts (like clinicians) and ensuring the smooth operation of the application.</p></li>
             <?php else: ?>
@@ -51,4 +51,4 @@ require_once 'includes/header.php';
         </ul>
     </div>
 </div>
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once $path_to_root . 'includes/footer.php'; ?>

@@ -4,7 +4,7 @@ session_start();
 // Ensure user is logged in and is a clinician or receptionist
 if (!isset($_SESSION["user_id"]) || !in_array($_SESSION["role"], ['clinician', 'receptionist'])) {
     $_SESSION['message'] = "Unauthorized access. Only clinicians or receptionists can perform this action.";
-    header("location: ../login.php"); // Redirect to login if not authorized or session lost
+    header("location: ../pages/login.php"); // Redirect to login if not authorized or session lost
     exit;
 }
 
@@ -19,14 +19,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Basic validation for common fields
     if (empty($first_name) || empty($last_name) || empty($date_of_birth)) {
         $_SESSION['message'] = "Patient's first name, last name, and date of birth are required.";
-        header("location: ../add_patient.php"); // Redirect back to form
+        header("location: ../pages/add_patient.php"); // Redirect back to form
         exit;
     }
 
     if ($_SESSION['role'] === 'receptionist') {
         if (!isset($_POST['assigned_clinician_id']) || empty($_POST['assigned_clinician_id'])) {
             $_SESSION['message'] = "An assigned clinician is required when a receptionist adds a patient.";
-            header("location: ../add_patient.php");
+            header("location: ../pages/add_patient.php");
             exit;
         }
         $assigned_clinician_id = $_POST['assigned_clinician_id'];
@@ -57,13 +57,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['patients'][$new_patient_id] = $new_patient;
 
     $_SESSION['message'] = "Patient '".htmlspecialchars($first_name)." ".htmlspecialchars($last_name)."' added successfully!";
-    header("location: ../dashboard.php");
+    header("location: ../pages/dashboard.php");
     exit;
 
 } else {
     // Not a POST request
     $_SESSION['message'] = "Invalid request method.";
-    header("location: ../dashboard.php");
+    header("location: ../pages/dashboard.php");
     exit;
 }
 ?>

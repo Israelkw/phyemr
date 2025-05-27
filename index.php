@@ -11,9 +11,9 @@ require_once 'includes/header.php';
     
     <?php if (isset($_SESSION["user_id"])): ?>
         <p>You are logged in as <?php echo htmlspecialchars($_SESSION["first_name"]) . " " . htmlspecialchars($_SESSION["last_name"]); ?> (<?php echo htmlspecialchars($_SESSION["role"]); ?>).</p>
-        <p><a href="dashboard.php">Go to your Dashboard</a> or use the navigation menu.</p>
+        <p><a href="pages/dashboard.php">Go to your Dashboard</a> or use the navigation menu.</p>
     <?php else: ?>
-        <p>Please <a href="login.php">login</a> to access the system features.</p>
+        <p>Please <a href="pages/login.php">login</a> to access the system features.</p>
     <?php endif; ?>
     
     <p>If you are looking for specific patient evaluation forms, they can be found under these (currently static) links:</p>
