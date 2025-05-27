@@ -52,7 +52,22 @@ if ($stmt_patient === false) {
 
 // 3. Fetch Form Submissions if patient details were found
 if ($patient_details && empty($db_error_message)) {
-    $stmt_submissions = $mysqli->prepare("SELECT id, form_name, file_path, submitted_at FROM form_submissions WHERE patient_id = ? ORDER BY submitted_at DESC");
+    $sql_submissions = "
+        SELECT 
+            pfs.id, 
+            pfs.form_name, 
+            pfs.form_directory, 
+            pfs.submission_timestamp, 
+            pfs.submitted_by_user_id,
+            u.first_name AS submitter_first_name,
+            u.last_name AS submitter_last_name
+        FROM patient_form_submissions pfs
+        LEFT JOIN users u ON pfs.submitted_by_user_id = u.id
+        WHERE pfs.patient_id = ? 
+        ORDER BY pfs.submission_timestamp DESC";
+    
+    $stmt_submissions = $mysqli->prepare($sql_submissions);
+
     if ($stmt_submissions === false) {
         error_log("Error preparing statement to fetch form submissions: " . $mysqli->error);
         $db_error_message = "An error occurred while preparing to fetch submission history.";
@@ -97,32 +112,42 @@ include_once $path_to_root . 'includes/header.php';
 
         <h4 class="mt-4 mb-3">Submissions</h4>
         <?php if (!empty($submissions)): ?>
-            <table class="table table-striped table-hover table-bordered"> <!-- Ensured consistency and added table-hover -->
+            <table class="table table-striped table-hover table-bordered">
                 <thead>
                     <tr>
                         <th>Submission ID</th>
                         <th>Form Name</th>
                         <th>Date Submitted</th>
+                        <th>Submitted By</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($submissions as $submission): ?>
                         <?php
-                            // Sanitize form_name for display
-                            $display_form_name = ucwords(str_replace(['_', '-'], ' ', pathinfo($submission['form_name'], PATHINFO_FILENAME)));
-                            // Ensure file_path is relative to the web root if it's stored that way, or construct a safe link.
-                            // Assuming file_path is stored like 'submissions/submission_id.json'
-                            // And the submissions directory is at the root of the web directory.
-                            // $file_link = '../' . ltrim($submission['file_path'], '/'); // Original logic
-                            $file_link = $path_to_root . ltrim($submission['file_path'], '/'); // Using $path_to_root for consistency
+                            // Format form_name and form_directory for display
+                            $form_file_name = pathinfo($submission['form_name'], PATHINFO_FILENAME); // e.g., "cervical"
+                            $formatted_form_name = ucwords(str_replace(['_', '-'], ' ', $form_file_name));
+                            $formatted_directory_name = ucwords(str_replace(['_', '-'], ' ', $submission['form_directory']));
+                            $display_form_name = $formatted_form_name . " (" . $formatted_directory_name . ")";
+
+                            // Prepare submitter display name
+                            $submitter_name = "N/A"; // Default if user not found or name is empty
+                            if (!empty($submission['submitter_first_name']) || !empty($submission['submitter_last_name'])) {
+                                $submitter_name = htmlspecialchars(trim($submission['submitter_first_name'] . ' ' . $submission['submitter_last_name']));
+                            } elseif (isset($submission['submitted_by_user_id'])) {
+                                $submitter_name = "User ID: " . htmlspecialchars($submission['submitted_by_user_id']);
+                            }
+                            
+                            $view_data_link = "view_submission_detail.php?submission_id=" . htmlspecialchars($submission['id']);
                         ?>
                         <tr>
                             <td><?php echo htmlspecialchars($submission['id']); ?></td>
                             <td><?php echo htmlspecialchars($display_form_name); ?></td>
-                            <td><?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($submission['submitted_at']))); ?></td>
+                            <td><?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($submission['submission_timestamp']))); ?></td>
+                            <td><?php echo $submitter_name; // Already escaped if names exist, or displays ID safely ?></td>
                             <td>
-                                <a href="<?php echo htmlspecialchars($file_link); ?>" target="_blank" class="btn btn-info btn-sm">View Data</a>
+                                <a href="<?php echo $view_data_link; ?>" class="btn btn-info btn-sm">View Data</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

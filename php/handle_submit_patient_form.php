@@ -1,25 +1,17 @@
 <?php
 session_start();
 
-// 1. Helper function to find patient index (as patient_id might not be a direct key if numeric array)
-function findPatientIndexById($patient_id, $patients_array) {
-    if (!is_array($patients_array)) return -1;
-    foreach ($patients_array as $index => $patient) {
-        if (isset($patient['id']) && $patient['id'] == $patient_id) {
-            return $index;
-        }
-    }
-    return -1;
-}
+// Include the database connection file
+require_once '../includes/db_connect.php';
 
-// 2. Check if the request method is POST
+// 1. Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $_SESSION['message'] = "Invalid request method.";
     header("Location: ../pages/dashboard.php");
     exit();
 }
 
-// 3. Check if a user is logged in and if their role is 'clinician' or 'nurse'
+// 2. Check if a user is logged in and if their role is 'clinician' or 'nurse'
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || !in_array($_SESSION['role'], ['clinician', 'nurse'])) {
     $_SESSION['message'] = "Unauthorized action. Please login as a clinician or nurse.";
     header("Location: ../pages/login.php"); // Redirect to login page if not authorized
@@ -28,133 +20,120 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || !in_array($_SES
 
 // Determine appropriate redirect paths based on role for error cases
 $select_patient_page = ($_SESSION['role'] === 'nurse') ? '../pages/nurse_select_patient.php' : '../pages/select_patient_for_form.php';
-// $select_form_page = ($_SESSION['role'] === 'nurse') ? '../pages/nurse_select_form.php' : '../pages/select_form_for_patient.php'; // Not directly used here but good for context
+$fill_form_page_base = "../pages/fill_patient_form.php"; // Base for redirecting back to form on error
 
-// 4. Retrieve patient_id, form_name, and form_directory from the $_POST data
+// 3. Retrieve patient_id, form_name, and form_directory from the $_POST data
 if (!isset($_POST['patient_id']) || empty(trim($_POST['patient_id'])) || 
     !isset($_POST['form_name']) || empty(trim($_POST['form_name'])) ||
     !isset($_POST['form_directory']) || empty(trim($_POST['form_directory']))) {
     $_SESSION['message'] = "Patient ID, Form Name, or Form Directory missing in submission.";
-    // Intelligent redirect: if patient_id is known, go to form selection for that patient, else general patient selection
     if(isset($_POST['patient_id']) && !empty(trim($_POST['patient_id']))) {
         $redirect_patient_id = trim($_POST['patient_id']);
         $form_selection_page = ($_SESSION['role'] === 'nurse') ? '../pages/nurse_select_form.php' : '../pages/select_form_for_patient.php';
         header("Location: " . $form_selection_page . "?patient_id=" . urlencode($redirect_patient_id));
     } else {
-        header("Location: " . $select_patient_page); // Already correctly points to pages/ via variable
+        header("Location: " . $select_patient_page);
     }
     exit();
 }
 
-$patient_id = trim($_POST['patient_id']);
+$patient_id_post = trim($_POST['patient_id']);
 $original_form_name = trim($_POST['form_name']); // e.g., "cervical.html"
 $form_directory = trim($_POST['form_directory']); // e.g., "patient_evaluation_form"
+$submitted_by_user_id = $_SESSION['user_id'];
 
-// 5. Validate patient_id, form_directory and form_name
-$patient_index = findPatientIndexById($patient_id, isset($_SESSION['patients']) ? $_SESSION['patients'] : []);
-$patient_data = ($patient_index !== -1) ? $_SESSION['patients'][$patient_index] : null;
+// Construct redirect URL for form filling page in case of errors related to this specific form
+$redirect_to_fill_form = $fill_form_page_base . "?patient_id=" . urlencode($patient_id_post) . "&form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory);
 
-if (!$patient_data) {
-    $_SESSION['message'] = "Invalid Patient ID: " . htmlspecialchars($patient_id);
+// 4. Validate patient_id by checking against the database
+$stmt_check_patient = $mysqli->prepare("SELECT id, first_name, last_name FROM patients WHERE id = ?");
+if (!$stmt_check_patient) {
+    error_log("MySQLi prepare error (check patient): " . $mysqli->error);
+    $_SESSION['message'] = "Error validating patient. Please try again.";
     header("Location: " . $select_patient_page);
     exit();
 }
+$stmt_check_patient->bind_param("i", $patient_id_post);
+$stmt_check_patient->execute();
+$result_patient = $stmt_check_patient->get_result();
+if ($result_patient->num_rows === 1) {
+    $patient_db_data = $result_patient->fetch_assoc();
+} else {
+    $_SESSION['message'] = "Invalid Patient ID: " . htmlspecialchars($patient_id_post);
+    header("Location: " . $select_patient_page);
+    exit();
+}
+$stmt_check_patient->close();
 
-// Validate form_directory
+
+// 5. Validate form_directory and form_name (existing logic)
 $allowed_directories = ['patient_evaluation_form', 'patient_general_info'];
 if (!in_array($form_directory, $allowed_directories)) {
     $_SESSION['message'] = "Invalid Form Directory: " . htmlspecialchars($form_directory);
     $form_selection_page = ($_SESSION['role'] === 'nurse') ? '../pages/nurse_select_form.php' : '../pages/select_form_for_patient.php';
-    header("Location: " . $form_selection_page . "?patient_id=" . urlencode($patient_id));
+    header("Location: " . $form_selection_page . "?patient_id=" . urlencode($patient_id_post));
     exit();
 }
 
-// Validate form_name (basename to prevent path traversal, check extension)
 $form_basename = basename($original_form_name);
 if ($form_basename !== $original_form_name || pathinfo($form_basename, PATHINFO_EXTENSION) !== 'html') {
-    $_SESSION['message'] = "Invalid Form Name: " . htmlspecialchars($original_form_name);
-    // Redirect to the page where the form was filled
-    header("Location: ../pages/fill_patient_form.php?form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory));
+    $_SESSION['message'] = "Invalid Form Name structure: " . htmlspecialchars($original_form_name);
+    header("Location: " . $redirect_to_fill_form);
     exit();
 }
 
 // Further validation: check if the form file actually exists in the specified directory
-$form_template_path = '../' . rtrim($form_directory, '/') . '/' . $form_basename; // This path is relative to php/ so ../ goes to root
+$form_template_path = '../' . rtrim($form_directory, '/') . '/' . $form_basename;
 if (!file_exists($form_template_path)) {
     $_SESSION['message'] = "Form template '" . htmlspecialchars($form_basename) . "' not found in directory '" . htmlspecialchars($form_directory) . "'.";
     $form_selection_page = ($_SESSION['role'] === 'nurse') ? '../pages/nurse_select_form.php' : '../pages/select_form_for_patient.php';
-    header("Location: " . $form_selection_page . "?patient_id=" . urlencode($patient_id));
+    header("Location: " . $form_selection_page . "?patient_id=" . urlencode($patient_id_post));
     exit();
 }
 
-// 6. Create a unique filename for the JSON file
-$timestamp = time();
-$form_name_without_ext = pathinfo($form_basename, PATHINFO_FILENAME); // "cervical"
-$json_filename = $form_name_without_ext . '_' . $timestamp . '.json'; // "cervical_1678886400.json"
+// 6. Prepare form data for JSON storage
+// Exclude specific control fields from being part of the main JSON data if they have their own columns
+$form_data_payload = $_POST;
+// Optionally remove fields that are already stored in dedicated columns to avoid redundancy in JSON
+// unset($form_data_payload['patient_id']); // Already stored in its own column
+// unset($form_data_payload['form_name']); // Already stored
+// unset($form_data_payload['form_directory']); // Already stored
+// However, keeping them can be useful for a complete snapshot of what was posted. For this task, we keep all of $_POST.
 
-// 7. Define the directory path for saving forms
-$patient_specific_dir = '../submitted_forms/' . $patient_id . '/';
+$json_form_data = json_encode($form_data_payload, JSON_PRETTY_PRINT);
 
-if (!is_dir($patient_specific_dir)) {
-    if (!mkdir($patient_specific_dir, 0755, true)) {
-        $_SESSION['message'] = "Error: Could not create directory for submitted forms at " . htmlspecialchars($patient_specific_dir);
-        // Redirect to a page that makes sense, perhaps the form filling page or dashboard
-        header("Location: ../pages/fill_patient_form.php?form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory)); 
-        exit();
-    }
-}
-
-// 8. Collect all submitted data from $_POST.
-$submitted_data = $_POST;
-// Add server-side timestamp, user ID, and role
-$submitted_data['submission_timestamp'] = $timestamp; 
-$submitted_data['submitted_by_user_id'] = $_SESSION['user_id'];
-$submitted_data['submitted_by_user_role'] = $_SESSION['role'];
-// patient_id, form_name, and form_directory are already in $_POST, so they will be included.
-
-// 9. Convert the collected data array to a JSON string
-$json_data = json_encode($submitted_data, JSON_PRETTY_PRINT);
-
-if ($json_data === false) {
+if ($json_form_data === false) {
     $_SESSION['message'] = "Error: Could not encode form data to JSON. Error: " . json_last_error_msg();
-    header("Location: ../pages/fill_patient_form.php?form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory));
+    header("Location: " . $redirect_to_fill_form);
     exit();
 }
 
-// 10. Save the JSON string to the file
-$file_path_to_save = $patient_specific_dir . $json_filename;
+// 7. Insert into patient_form_submissions table
+$sql_insert_submission = "INSERT INTO patient_form_submissions (patient_id, form_name, form_directory, submitted_by_user_id, form_data) VALUES (?, ?, ?, ?, ?)";
+$stmt_insert_submission = $mysqli->prepare($sql_insert_submission);
 
-if (file_put_contents($file_path_to_save, $json_data)) {
-    // 11. File saved successfully.
+if (!$stmt_insert_submission) {
+    error_log("MySQLi prepare error (insert submission): " . $mysqli->error);
+    $_SESSION['message'] = "Error preparing to save form submission. Please try again.";
+    header("Location: " . $redirect_to_fill_form);
+    exit();
+}
 
-    // 12. Update $_SESSION to record the submission
-    if (!isset($_SESSION['patients'][$patient_index]['submitted_forms']) || !is_array($_SESSION['patients'][$patient_index]['submitted_forms'])) {
-        $_SESSION['patients'][$patient_index]['submitted_forms'] = [];
-    }
+$stmt_insert_submission->bind_param("issis", $patient_db_data['id'], $original_form_name, $form_directory, $submitted_by_user_id, $json_form_data);
 
-    $_SESSION['patients'][$patient_index]['submitted_forms'][] = [
-        'form_name' => $original_form_name, // e.g., "cervical.html"
-        'json_filename' => $json_filename,   // e.g., "cervical_1678886400.json"
-        'submission_timestamp' => $timestamp,
-        'file_path' => 'submitted_forms/' . $patient_id . '/' . $json_filename, // Relative to project root
-        'submitted_by_user_id' => $_SESSION['user_id'],
-        'submitted_by_user_role' => $_SESSION['role'],
-        'form_directory' => $form_directory // Store this for easier access later if needed
-    ];
-
-    // 13. Set a success message
-    $patient_display_name = htmlspecialchars($patient_data['first_name'] . ' ' . $patient_data['last_name']);
-    $_SESSION['message'] = "Form '" . htmlspecialchars($form_name_without_ext) . "' (from " . htmlspecialchars($form_directory) . ") submitted successfully for patient " . $patient_display_name . " and saved as " . htmlspecialchars($json_filename) . ".";
-    
-    // 14. Redirect the user
+if ($stmt_insert_submission->execute()) {
+    $form_name_without_ext = pathinfo($form_basename, PATHINFO_FILENAME);
+    $patient_display_name = htmlspecialchars($patient_db_data['first_name'] . ' ' . $patient_db_data['last_name']);
+    $_SESSION['message'] = "Form '" . htmlspecialchars($form_name_without_ext) . "' (from " . htmlspecialchars($form_directory) . ") submitted successfully for patient " . $patient_display_name . " and saved to the database.";
     header("Location: ../pages/dashboard.php");
-    exit();
-
 } else {
-    // 15. Handle potential errors during file saving
-    $_SESSION['message'] = "Error: Could not save the submitted form data to " . htmlspecialchars($file_path_to_save) . ". Please check server permissions.";
-    // Redirect back to the form they were filling
-    header("Location: ../pages/fill_patient_form.php?form_name=" . urlencode($original_form_name) . "&form_directory=" . urlencode($form_directory));
-    exit();
+    error_log("MySQLi execute error (insert submission): " . $stmt_insert_submission->error);
+    $_SESSION['message'] = "Error saving form submission to the database: " . htmlspecialchars($stmt_insert_submission->error);
+    header("Location: " . $redirect_to_fill_form);
 }
+
+$stmt_insert_submission->close();
+$mysqli->close();
+exit();
+
 ?>

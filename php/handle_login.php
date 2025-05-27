@@ -7,22 +7,50 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Include the database connection file
+require_once '../includes/db_connect.php';
+
 // Retrieve username and password from the $_POST array
 $username = isset($_POST['username']) ? trim($_POST['username']) : '';
 $password = isset($_POST['password']) ? $_POST['password'] : '';
 
-// Sample users array
-$users = [
-    ['id' => '1', 'username' => 'admin', 'password' => 'adminpass', 'role' => 'admin', 'first_name' => 'Admin', 'last_name' => 'User'],
-    ['id' => '2', 'username' => 'clinician1', 'password' => 'clinicpass', 'role' => 'clinician', 'first_name' => 'Clinical', 'last_name' => 'Staff'],
-    ['id' => '3', 'username' => 'nurse1', 'password' => 'nursepass', 'role' => 'nurse', 'first_name' => 'Nurse', 'last_name' => 'Joy'],
-    ['id' => '4', 'username' => 'reception1', 'password' => 'receptpass', 'role' => 'receptionist', 'first_name' => 'Reception', 'last_name' => 'Desk']
-];
+// Clear any previous login errors
+unset($_SESSION['login_error']);
 
-// Authentication Logic
-$authenticated = false;
-foreach ($users as $user) {
-    if ($username === $user['username'] && $password === $user['password']) {
+if (empty($username) || empty($password)) {
+    $_SESSION['login_error'] = 'Username and password are required.';
+    header('Location: ../pages/login.php');
+    exit;
+}
+
+// Prepare SQL to fetch user from the database
+$sql = "SELECT id, username, password_hash, role, first_name, last_name, is_active FROM users WHERE username = ?";
+$stmt = $mysqli->prepare($sql);
+
+if (!$stmt) {
+    // Handle error, perhaps log it and show a generic error message
+    error_log("MySQLi prepare error: " . $mysqli->error);
+    $_SESSION['login_error'] = 'An internal server error occurred. Please try again later.';
+    header('Location: ../pages/login.php');
+    exit;
+}
+
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 1) {
+    $user = $result->fetch_assoc();
+
+    // Verify password
+    if (password_verify($password, $user['password_hash'])) {
+        // Check if the user is active
+        if ($user['is_active'] != 1) {
+            $_SESSION['login_error'] = 'Your account is inactive. Please contact an administrator.';
+            header('Location: ../pages/login.php');
+            exit;
+        }
+
         // Authentication successful
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
@@ -30,35 +58,24 @@ foreach ($users as $user) {
         $_SESSION['first_name'] = $user['first_name'];
         $_SESSION['last_name'] = $user['last_name'];
         
-        // Store clinician list, nurse list, and all_users_map in session
-        $clinician_list = [];
-        $nurse_list = [];
-        $all_users_map = [];
+        // Regenerate session ID to prevent session fixation
+        session_regenerate_id(true);
 
-        foreach ($users as $u) {
-            $user_details = ['id' => $u['id'], 'first_name' => $u['first_name'], 'last_name' => $u['last_name'], 'role' => $u['role']];
-            $all_users_map[$u['id']] = $user_details;
-
-            if ($u['role'] === 'clinician') {
-                $clinician_list[] = $user_details;
-            } elseif ($u['role'] === 'nurse') {
-                $nurse_list[] = $user_details;
-            }
-        }
-        $_SESSION['clinician_list'] = $clinician_list;
-        $_SESSION['nurse_list'] = $nurse_list;
-        $_SESSION['all_users_map'] = $all_users_map;
-
-        $authenticated = true;
         header('Location: ../pages/dashboard.php');
         exit;
+    } else {
+        // Password does not match
+        $_SESSION['login_error'] = 'Invalid username or password.';
+        header('Location: ../pages/login.php');
+        exit;
     }
-}
-
-// If authentication failed after checking all users
-if (!$authenticated) {
+} else {
+    // User not found
     $_SESSION['login_error'] = 'Invalid username or password.';
     header('Location: ../pages/login.php');
     exit;
 }
+
+$stmt->close();
+$mysqli->close();
 ?>
