@@ -162,12 +162,18 @@
     </fieldset>
 
     <div class="mt-3"> <!-- Removed form-group class, Bootstrap handles spacing via mt-3 -->
-        <button type="button" class="btn btn-success" onclick="submitForm()">Submit</button>
-        <button type="button" class="btn btn-danger" onclick="resetForm()">Reset</button>
+        <button type="submit" class="btn btn-success">Submit</button>
+        <button type="reset" class="btn btn-danger">Reset</button>
     </div>
+    <div id="general-information-message" class="mt-3"></div>
 </form>
 
+<script src="../../js/form_handler.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      initFormSubmissionHandler('general-information', 'general-information-message');
+    });
+
     // Collapsible fieldset script
     document.querySelectorAll("fieldset").forEach((fieldset) => {
         const legend = fieldset.querySelector("legend");
@@ -200,6 +206,8 @@
         }
     };
 
+    // Removed validateForm(), submitForm(), and resetForm() as they will be handled by form_handler.js or standard form behavior.
+
     function calculateBMI() {
         var heightInput = document.getElementById("height");
         var weightInput = document.getElementById("weight");
@@ -216,53 +224,6 @@
             checkVitals(); // Call checkVitals after BMI is calculated
         } else {
             bmiInput.value = "";
-        }
-    }
-
-    function resetForm() {
-        var form = document.getElementById("general-information");
-        if (form) {
-            form.reset();
-        }
-        var painScaleValue = document.getElementById("painScaleValue");
-        if (painScaleValue) {
-            painScaleValue.innerText = "0/10";
-        }
-        
-        let fields = ["temp", "pulse", "systolic-blood-pressure", "diastolic-blood-pressure", "respiratory-rate", "oxygen-saturation", "blood-glucose", "bmi"];
-        fields.forEach(id => {
-            let field = document.getElementById(id);
-            if (field) {
-                field.style.color = "black"; // reset color
-            }
-        });
-    }
-
-    function validateForm() {
-        var form = document.getElementById("general-information");
-        if (!form) return false;
-        if (!form.checkValidity()) {
-            // Find the first invalid field and focus it for better UX
-            let firstInvalidField = form.querySelector(':invalid');
-            if (firstInvalidField) {
-                firstInvalidField.focus();
-            }
-            alert("Please fill out all required fields.");
-            return false;
-        }
-        return true;
-    }
-
-    function submitForm() {
-        if (validateForm()) {
-            alert("Form submitted successfully!");
-            // Actual form submission logic (e.g., AJAX) would go here.
-            // Example:
-            // const formData = new FormData(document.getElementById("general-information"));
-            // fetch('/your-submit-url', { method: 'POST', body: formData })
-            //   .then(response => response.json())
-            //   .then(data => console.log(data))
-            //   .catch(error => console.error('Error:', error));
         }
     }
 
