@@ -87,8 +87,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Execute the statement
     if ($stmt->execute()) {
-        $_SESSION['message'] = "Patient '" . htmlspecialchars($first_name) . " " . htmlspecialchars($last_name) . "' added successfully and saved to the database.";
-        header("Location: ../pages/dashboard.php");
+        $_SESSION['selected_patient_id_for_form'] = $stmt->insert_id; // Store new patient ID
+        $_SESSION['message'] = "Patient '" . htmlspecialchars($first_name) . " " . htmlspecialchars($last_name) . "' added successfully. Please fill out the demography form.";
+        header("Location: ../pages/fill_patient_form.php?form_name=demo.html&form_directory=patient_general_info"); // Redirect to demo form
     } else {
         error_log("MySQLi execute error (insert patient): " . $stmt->error);
         $_SESSION['message'] = "Error saving patient data: " . htmlspecialchars($stmt->error);
