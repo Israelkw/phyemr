@@ -88,11 +88,13 @@
     </fieldset>
 
     <div class="mt-3">
-        <button type="button" class="btn btn-success" onclick="submitDemographicsForm()">Submit</button>
-        <button type="button" class="btn btn-danger" onclick="resetDemographicsForm()">Reset</button>
+        <button type="submit" class="btn btn-success">Submit</button>
+        <button type="reset" class="btn btn-danger">Reset</button>
     </div>
+    <div id="form-messages" class="mt-3"></div>
 </form>
 
+<script src="../../js/form_handler.js"></script>
 <script>
     // Collapsible fieldset script
     document.querySelectorAll("fieldset").forEach((fieldset) => {
@@ -117,41 +119,17 @@
         });
     });
 
-    // Placeholder form handling functions
-    function validateDemographicsForm() {
-        var form = document.getElementById("demographyForm");
-        if (!form) return false;
-        if (!form.checkValidity()) {
-            // Find the first invalid field and focus it for better UX
-            let firstInvalidField = form.querySelector(':invalid');
-            if (firstInvalidField) {
-                firstInvalidField.focus();
-            }
-            alert("Please fill out all required fields.");
-            return false;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ensure form_handler.js is loaded and initFormSubmissionHandler is available
+        if (typeof initFormSubmissionHandler === 'function') {
+            initFormSubmissionHandler('demographyForm', 'form-messages');
+        } else {
+            console.error('form_handler.js not loaded or initFormSubmissionHandler not defined.');
+            // Optionally display an error message in the form-messages div
+            var msgDiv = document.getElementById('form-messages');
+            if(msgDiv) msgDiv.innerHTML = '<div class="alert alert-danger">Error initializing form. Please contact support.</div>';
         }
-        return true;
-    }
-
-    function submitDemographicsForm() {
-        if (validateDemographicsForm()) {
-            alert("Demographics form submitted successfully!");
-            // Actual form submission logic (e.g., AJAX) would go here.
-            // const formData = new FormData(document.getElementById("demographyForm"));
-            // fetch('/your-submit-url', { method: 'POST', body: formData })
-            //   .then(response => response.json())
-            //   .then(data => console.log(data))
-            //   .catch(error => console.error('Error:', error));
-        }
-    }
-
-    function resetDemographicsForm() {
-        var form = document.getElementById("demographyForm");
-        if (form) {
-            form.reset();
-        }
-        // If there were any custom display elements to reset (like pain scale), do it here.
-    }
+    });
 </script>
 
 </body>

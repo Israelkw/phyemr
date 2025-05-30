@@ -88,6 +88,28 @@ if ($stmt_patient_name) {
     exit();
 }
 
+// Check if the requested form is a clinical evaluation form and if general info is filled
+if ($form_directory_from_url === 'patient_evaluation_form') {
+    $check_stmt = $mysqli->prepare("SELECT COUNT(*) as count FROM patient_form_submissions WHERE patient_id = ? AND form_name = 'general-information.html' AND form_directory = 'patient_general_info'");
+    if (!$check_stmt) {
+        error_log("MySQLi prepare error (check general info form): " . $mysqli->error);
+        $_SESSION['message'] = "Error checking for general information form. Please try again.";
+        header("Location: dashboard.php"); // Or $select_patient_page
+        exit();
+    }
+    $check_stmt->bind_param("i", $selected_patient_id);
+    $check_stmt->execute();
+    $result = $check_stmt->get_result();
+    $row = $result->fetch_assoc();
+    $check_stmt->close();
+
+    if ($row['count'] == 0) {
+        $_SESSION['message'] = "Please fill out the General Information form for this patient before accessing clinical evaluations.";
+        // Redirect to the general-information.html form
+        header("Location: fill_patient_form.php?form_name=general-information.html&form_directory=patient_general_info&patient_id=" . urlencode($selected_patient_id));
+        exit();
+    }
+}
 
 // 6. Set page title
 $form_display_name = ucwords(str_replace(['_', '-'], ' ', pathinfo($form_file_basename, PATHINFO_FILENAME)));

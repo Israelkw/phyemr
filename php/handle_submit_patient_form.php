@@ -124,8 +124,22 @@ $stmt_insert_submission->bind_param("issis", $patient_db_data['id'], $original_f
 if ($stmt_insert_submission->execute()) {
     $form_name_without_ext = pathinfo($form_basename, PATHINFO_FILENAME);
     $patient_display_name = htmlspecialchars($patient_db_data['first_name'] . ' ' . $patient_db_data['last_name']);
-    $_SESSION['message'] = "Form '" . htmlspecialchars($form_name_without_ext) . "' (from " . htmlspecialchars($form_directory) . ") submitted successfully for patient " . $patient_display_name . " and saved to the database.";
-    header("Location: ../pages/dashboard.php");
+
+    // Conditional redirect based on the form submitted
+    if ($original_form_name === 'demo.html' && $form_directory === 'patient_general_info') {
+        // $patient_id_post is available and validated
+        $_SESSION['message'] = "Demographics form submitted successfully. Please complete the general information form.";
+        // Assuming fill_patient_form.php uses patient_id from the session if not in GET,
+        // or that selected_patient_id_for_form is still set correctly.
+        // To be safe, let's ensure patient_id is passed if needed by fill_patient_form.php for the next form.
+        // The current selected_patient_id_for_form is the one we want.
+        header("Location: ../pages/fill_patient_form.php?form_name=general-information.html&form_directory=patient_general_info&patient_id=" . urlencode($patient_id_post));
+    } else {
+        // Existing redirect for other forms
+        $_SESSION['message'] = "Form '" . htmlspecialchars($form_name_without_ext) . "' submitted successfully for patient " . $patient_display_name . ".";
+        header("Location: ../pages/dashboard.php");
+    }
+    // exit; is called after this block, so it's fine.
 } else {
     error_log("MySQLi execute error (insert submission): " . $stmt_insert_submission->error);
     $_SESSION['message'] = "Error saving form submission to the database: " . htmlspecialchars($stmt_insert_submission->error);
