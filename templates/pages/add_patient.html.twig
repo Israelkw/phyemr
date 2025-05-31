@@ -1,0 +1,72 @@
+{% extends "layout/base.html.twig" %}
+
+{% block title %}{{ page_title | default("Add New Patient") }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h2 class="text-center">Add New Patient</h2>
+                </div>
+                <div class="card-body">
+                    {% if clinician_load_error %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ clinician_load_error }}
+                        </div>
+                    {% endif %}
+
+                    <form action="{{ form_action_path }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                        <div class="mb-3">
+                            <label for="first_name" class="form-label">First Name:</label>
+                            <input type="text" id="first_name" name="first_name" class="form-control" required value="{{ old_input.first_name | default('') }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="last_name" class="form-label">Last Name:</label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" required value="{{ old_input.last_name | default('') }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="date_of_birth" class="form-label">Date of Birth:</label>
+                            <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" required value="{{ old_input.date_of_birth | default('') }}">
+                        </div>
+
+                        {% if show_clinician_dropdown %}
+                        <div class="mb-3">
+                            <label for="assigned_clinician_id" class="form-label">Assign to Clinician:</label>
+                            <select id="assigned_clinician_id" name="assigned_clinician_id" class="form-select" required {% if clinician_load_error %}disabled{% endif %}>
+                                <option value="">Select a Clinician</option>
+                                {% for clinician in clinicians %}
+                                    <option value="{{ clinician.id }}" {{ old_input.assigned_clinician_id == clinician.id ? 'selected' : '' }}>
+                                        {{ clinician.first_name }} {{ clinician.last_name }} ({{ clinician.username }})
+                                    </option>
+                                {% endfor %}
+                                {% if not clinicians and not clinician_load_error %}
+                                     <option value="" disabled>No clinicians available</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" {% if clinician_load_error and show_clinician_dropdown %}disabled{% endif %}>Add Patient</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                     <a href="{{ dashboard_path | default('dashboard.php') }}" class="btn btn-secondary btn-sm">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {# Add any page-specific scripts here if needed #}
+    {# For example, script to re-populate form fields on error if not using server-side pre-filling always #}
+{% endblock %}
