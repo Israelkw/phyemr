@@ -7,13 +7,22 @@
 // though for includes/db_config.php it's a sibling.
 require_once __DIR__ . '/db_config.php';
 
-// Attempt to connect to MySQL database
-$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+// DSN (Data Source Name) for PDO connection
+$dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
 
-// Check connection
-if ($mysqli->connect_error) {
+// Options for PDO connection
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // Enable exceptions for errors
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       // Set default fetch mode to associative array
+    PDO::ATTR_EMULATE_PREPARES   => false,                  // Disable emulation of prepared statements
+];
+
+try {
+    // Attempt to connect to MySQL database using PDO
+    $pdo = new PDO($dsn, DB_USER, DB_PASSWORD, $options);
+} catch (PDOException $e) {
     // Log the detailed error to the server's error log
-    error_log("Database Connection Failed: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
+    error_log("Database Connection Failed: " . $e->getMessage());
     
     // For AJAX requests or APIs, it's often better to output a JSON error.
     // For general pages, a user-friendly HTML message might be better,
@@ -23,14 +32,11 @@ if ($mysqli->connect_error) {
     header('Content-Type: application/json'); // Ensure header is set for JSON output
     die(json_encode([
         'status' => 'error',
-        'message' => 'Database connection error. Please check server logs or contact administrator.'
+        'message' => 'Database connection error. Please check server logs or contact administrator. Details: ' . $e->getMessage()
     ]));
 }
 
-// Set charset to utf8mb4 for broader character support (optional but recommended)
-if (!$mysqli->set_charset("utf8mb4")) {
-    error_log("Error loading character set utf8mb4: " . $mysqli->error);
-    // Continue execution even if charset setting fails, but log it.
-}
+// The $pdo variable now holds the PDO connection object.
+// No need to set charset separately as it's part of the DSN.
 
 ?>

@@ -1,110 +1,105 @@
 <?php
-session_start();
+// Start session management first
+require_once '../includes/SessionManager.php';
+SessionManager::startSession();
 
-// Include the database connection file
-require_once '../includes/db_connect.php';
+// Include necessary files
+require_once '../includes/db_connect.php'; // Provides $pdo
+require_once '../includes/Database.php';    // Provides Database class
+require_once '../includes/Validator.php';   // Provides Validator class
+require_once '../includes/ErrorHandler.php'; // Provides ErrorHandler class
 
-// Ensure user is logged in and is a clinician or receptionist
-if (!isset($_SESSION["user_id"]) || !in_array($_SESSION["role"], ['clinician', 'receptionist'])) {
-    $_SESSION['message'] = "Unauthorized access. Only clinicians or receptionists can perform this action.";
-    header("Location: ../pages/login.php"); // Redirect to login if not authorized or session lost
-    exit;
-}
+// Register the error handler (ErrorHandler also calls session_start if not already called, SessionManager handles it better)
+ErrorHandler::register();
+
+// Instantiate the Database class
+$db = new Database($pdo);
+
+// Authentication and Authorization
+SessionManager::ensureUserIsLoggedIn('../pages/login.php');
+SessionManager::hasRole(['clinician', 'receptionist'], '../pages/dashboard.php', "Unauthorized access. Only clinicians or receptionists can perform this action.");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve data from form
-    $first_name = trim($_POST['first_name']);
-    $last_name = trim($_POST['last_name']);
-    $date_of_birth = trim($_POST['date_of_birth']); // Expects YYYY-MM-DD format
-    $registered_by_user_id = $_SESSION['user_id'];
-    $assigned_clinician_id = null;
-
-    // Basic validation for common fields
-    if (empty($first_name) || empty($last_name) || empty($date_of_birth)) {
-        $_SESSION['message'] = "Patient's first name, last name, and date of birth are required.";
-        header("Location: ../pages/add_patient.php"); // Redirect back to form
-        exit;
-    }
-
-    // Validate date_of_birth format (basic check, more robust validation can be added)
-    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date_of_birth)) {
-        $_SESSION['message'] = "Invalid date of birth format. Please use YYYY-MM-DD.";
+    // CSRF Token Validation
+    $submittedToken = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+    if (!SessionManager::validateCsrfToken($submittedToken)) {
+        SessionManager::set('message', 'Invalid or missing CSRF token. Please try again.');
         header("Location: ../pages/add_patient.php");
         exit;
     }
 
-    if ($_SESSION['role'] === 'receptionist') {
-        if (!isset($_POST['assigned_clinician_id']) || empty($_POST['assigned_clinician_id'])) {
-            $_SESSION['message'] = "An assigned clinician is required when a receptionist adds a patient.";
-            header("Location: ../pages/add_patient.php");
-            exit;
-        }
-        $assigned_clinician_id_post = $_POST['assigned_clinician_id'];
+    $validator = new Validator($_POST);
 
-        // Validate assigned_clinician_id
-        $stmt_check_clinician = $mysqli->prepare("SELECT id FROM users WHERE id = ? AND role = 'clinician' AND is_active = 1");
-        if (!$stmt_check_clinician) {
-            error_log("MySQLi prepare error (check clinician): " . $mysqli->error);
-            $_SESSION['message'] = "Error validating clinician. Please try again.";
-            header("Location: ../pages/add_patient.php");
-            exit;
-        }
-        $stmt_check_clinician->bind_param("i", $assigned_clinician_id_post);
-        $stmt_check_clinician->execute();
-        $stmt_check_clinician->store_result();
-        
-        if ($stmt_check_clinician->num_rows == 1) {
+    $validator->addField('first_name', 'required|minLength:2|maxLength:50');
+    $validator->addField('last_name', 'required|minLength:2|maxLength:50');
+    $validator->addField('date_of_birth', 'required|date:Y-m-d');
+
+    $registered_by_user_id = SessionManager::get('user_id');
+    $assigned_clinician_id = null; // Initialize
+    $current_user_role = SessionManager::get('role');
+
+    if ($current_user_role === 'receptionist') {
+        $validator->addField('assigned_clinician_id', 'required|numeric');
+    }
+
+    if (!$validator->validate()) {
+        SessionManager::set('message', $validator->getFirstError()); // Get the first validation error
+        header("Location: ../pages/add_patient.php");
+        exit;
+    }
+
+    // Retrieve validated data
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $date_of_birth = $_POST['date_of_birth'];
+
+    // Handle assigned_clinician_id based on role after basic validation
+    if ($current_user_role === 'receptionist') {
+        $assigned_clinician_id_post = $_POST['assigned_clinician_id'];
+        // Validate assigned_clinician_id exists and is active (Database check)
+        $stmt_check_clinician = $db->prepare("SELECT id FROM users WHERE id = :id AND role = 'clinician' AND is_active = 1");
+        $db->execute($stmt_check_clinician, ['id' => $assigned_clinician_id_post]);
+        $clinician = $db->fetch($stmt_check_clinician);
+
+        if ($clinician) {
             $assigned_clinician_id = $assigned_clinician_id_post;
         } else {
-            $_SESSION['message'] = "Invalid or inactive clinician selected.";
+            SessionManager::set('message', "Invalid or inactive clinician selected.");
             header("Location: ../pages/add_patient.php");
             exit;
         }
-        $stmt_check_clinician->close();
-
-    } elseif ($_SESSION['role'] === 'clinician') {
-        // If a clinician is adding a patient, they are assigned to themselves
-        $assigned_clinician_id = $_SESSION['user_id'];
+    } elseif ($current_user_role === 'clinician') {
+        $assigned_clinician_id = $registered_by_user_id; // Clinician assigns to themselves
     }
 
     // Prepare SQL for inserting patient data
-    $sql = "INSERT INTO patients (first_name, last_name, date_of_birth, assigned_clinician_id, registered_by_user_id) VALUES (?, ?, ?, ?, ?)";
-    $stmt = $mysqli->prepare($sql);
+    $sql = "INSERT INTO patients (first_name, last_name, date_of_birth, assigned_clinician_id, registered_by_user_id)
+            VALUES (:first_name, :last_name, :date_of_birth, :assigned_clinician_id, :registered_by_user_id)";
 
-    if (!$stmt) {
-        error_log("MySQLi prepare error (insert patient): " . $mysqli->error);
-        $_SESSION['message'] = "Error preparing to save patient data. Please try again.";
-        header("Location: ../pages/add_patient.php");
-        exit;
+    $params = [
+        'first_name' => $first_name,
+        'last_name' => $last_name,
+        'date_of_birth' => $date_of_birth,
+        'assigned_clinician_id' => $assigned_clinician_id,
+        'registered_by_user_id' => $registered_by_user_id
+    ];
+
+    try {
+        $stmt = $db->prepare($sql);
+        $db->execute($stmt, $params);
+        SessionManager::set('selected_patient_id_for_form', $db->getLastInsertId());
+        SessionManager::set('message', "Patient '" . htmlspecialchars($first_name) . " " . htmlspecialchars($last_name) . "' added successfully. Please fill out the demography form.");
+        header("Location: ../pages/fill_patient_form.php?form_name=demo.html&form_directory=patient_general_info");
+    } catch (PDOException $e) {
+        // Use ErrorHandler for database exceptions
+        ErrorHandler::handleException($e); // This will redirect to error.php
     }
-
-    // Bind parameters
-    // assigned_clinician_id can be null if a clinician from a different system (not a user) is assigned,
-    // but current logic assigns a user ID or null if no selection / error.
-    // For this implementation, it's INT NULL, so null is acceptable if logic allows.
-    // Here, it's either a valid clinician ID or the current clinician's ID.
-    $stmt->bind_param("sssis", $first_name, $last_name, $date_of_birth, $assigned_clinician_id, $registered_by_user_id);
-
-    // Execute the statement
-    if ($stmt->execute()) {
-        $_SESSION['selected_patient_id_for_form'] = $stmt->insert_id; // Store new patient ID
-        $_SESSION['message'] = "Patient '" . htmlspecialchars($first_name) . " " . htmlspecialchars($last_name) . "' added successfully. Please fill out the demography form.";
-        header("Location: ../pages/fill_patient_form.php?form_name=demo.html&form_directory=patient_general_info"); // Redirect to demo form
-    } else {
-        error_log("MySQLi execute error (insert patient): " . $stmt->error);
-        $_SESSION['message'] = "Error saving patient data: " . htmlspecialchars($stmt->error);
-        // Check for specific errors, e.g., duplicate entry if there's a unique constraint violated
-        // For now, a generic error related to DB operation.
-        header("Location: ../pages/add_patient.php");
-    }
-    $stmt->close();
-    $mysqli->close();
     exit;
 
 } else {
     // Not a POST request
-    $_SESSION['message'] = "Invalid request method.";
-    header("Location: ../pages/dashboard.php"); // Or login page, or add_patient form
+    SessionManager::set('message', "Invalid request method.");
+    header("Location: ../pages/dashboard.php");
     exit;
 }
 ?>
