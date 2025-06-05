@@ -1,4 +1,17 @@
 <?php
+// DEBUGGING CODE BY JULES - START
+$templatePath = __DIR__ . '/../templates/layout/base.html.twig';
+if (file_exists($templatePath)) {
+    $templateContent = file_get_contents($templatePath);
+    echo "<pre>\nDEBUGGING base.html.twig (first 300 chars):\n";
+    echo htmlspecialchars(substr($templateContent, 0, 300));
+    echo "\n</pre>\n<hr>\n";
+} else {
+    echo "<pre>\nDEBUGGING: base.html.twig NOT FOUND at: " . htmlspecialchars($templatePath) . "</pre>\n<hr>\n";
+}
+die("Stopped by Jules' debug output.");
+// DEBUGGING CODE BY JULES - END
+
 // Define path to root for includes, assuming this file is in pages/
 $path_to_root = "../";
 
