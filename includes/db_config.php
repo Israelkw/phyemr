@@ -27,15 +27,15 @@
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
 
 // Database Username
-// Attempts to get DB_USER from environment variables, otherwise falls back to 'your_db_user'.
-define('DB_USER', getenv('DB_USER') ?: 'your_db_user');
+// Attempts to get DB_USER from environment variables, otherwise falls back to 'root'.
+define('DB_USER', getenv('DB_USER') ?: 'root');
 
 // Database Password
-// Attempts to get DB_PASSWORD from environment variables, otherwise falls back to 'your_db_password'.
-define('DB_PASSWORD', getenv('DB_PASSWORD') ?: 'your_db_password');
+// Attempts to get DB_PASSWORD from environment variables, otherwise falls back to ''.
+define('DB_PASSWORD', getenv('DB_PASSWORD') ?: '');
 
 // Database Name
-// Attempts to get DB_NAME from environment variables, otherwise falls back to 'your_db_name'.
-define('DB_NAME', getenv('DB_NAME') ?: 'your_db_name');
+// Attempts to get DB_NAME from environment variables, otherwise falls back to 'physio_db'.
+define('DB_NAME', getenv('DB_NAME') ?: 'physio_db');
 
 ?>

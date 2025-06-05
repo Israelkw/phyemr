@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS users (
     INDEX idx_role (role)
 )";
 
-if ($mysqli->query($sqlCreateTable)) {
+try {
+    $pdo->exec($sqlCreateTable);
     echo "<p>Users table created successfully or already exists.</p>";
 
     // Array of default users
@@ -30,48 +31,41 @@ if ($mysqli->query($sqlCreateTable)) {
 
     // Prepare statement for inserting users
     $sqlInsertUser = "INSERT INTO users (username, password_hash, role, first_name, last_name) VALUES (?, ?, ?, ?, ?)";
-    $stmtInsert = $mysqli->prepare($sqlInsertUser);
+    $stmtInsert = $pdo->prepare($sqlInsertUser); // Changed to $pdo
 
-    if (!$stmtInsert) {
-        echo "<p>Error preparing insert statement: " . htmlspecialchars($mysqli->error) . "</p>";
-    } else {
-        // Prepare statement for checking if user exists
-        $sqlCheckUser = "SELECT id FROM users WHERE username = ?";
-        $stmtCheck = $mysqli->prepare($sqlCheckUser);
+    // Prepare statement for checking if user exists
+    $sqlCheckUser = "SELECT id FROM users WHERE username = ?"; // Using ? for positional placeholder
+    $stmtCheck = $pdo->prepare($sqlCheckUser); // Changed to $pdo
 
-        if (!$stmtCheck) {
-            echo "<p>Error preparing select statement: " . htmlspecialchars($mysqli->error) . "</p>";
+    foreach ($defaultUsers as $user) {
+        // Check if user already exists
+        $stmtCheck->execute([$user['username']]); // Pass username as array for execution
+
+        if ($stmtCheck->fetchColumn() > 0) { // Check if any row was returned (user exists)
+            echo "<p>User '" . htmlspecialchars($user['username']) . "' already exists.</p>";
         } else {
-            foreach ($defaultUsers as $user) {
-                // Check if user already exists
-                $stmtCheck->bind_param("s", $user['username']);
-                $stmtCheck->execute();
-                $stmtCheck->store_result();
+            // Hash the password
+            $passwordHash = password_hash($user['password'], PASSWORD_DEFAULT);
 
-                if ($stmtCheck->num_rows > 0) {
-                    echo "<p>User '" . htmlspecialchars($user['username']) . "' already exists.</p>";
-                } else {
-                    // Hash the password
-                    $passwordHash = password_hash($user['password'], PASSWORD_DEFAULT);
-
-                    // Bind parameters and execute insert statement
-                    $stmtInsert->bind_param("sssss", $user['username'], $passwordHash, $user['role'], $user['first_name'], $user['last_name']);
-                    if ($stmtInsert->execute()) {
-                        echo "<p>User '" . htmlspecialchars($user['username']) . "' inserted successfully.</p>";
-                    } else {
-                        echo "<p>Error inserting user '" . htmlspecialchars($user['username']) . "': " . htmlspecialchars($stmtInsert->error) . "</p>";
-                    }
-                }
-            }
-            $stmtCheck->close();
+            // Execute insert statement with an array of values
+            $stmtInsert->execute([
+                $user['username'],
+                $passwordHash,
+                $user['role'],
+                $user['first_name'],
+                $user['last_name']
+            ]);
+            echo "<p>User '" . htmlspecialchars($user['username']) . "' inserted successfully.</p>";
         }
-        $stmtInsert->close();
     }
-} else {
-    echo "<p>Error creating users table: " . htmlspecialchars($mysqli->error) . "</p>";
+    // No need to explicitly close $stmtCheck and $stmtInsert with PDO in this script structure,
+    // they will be closed when the script ends or if the variables are reassigned.
+
+} catch (PDOException $e) {
+    echo "<p>Database error: " . htmlspecialchars($e->getMessage()) . "</p>";
 }
 
-// Close the database connection
-$mysqli->close();
+// Close the database connection (optional with PDO, but good practice)
+$pdo = null;
 echo "<p>Setup script finished.</p>";
 ?>

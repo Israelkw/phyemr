@@ -20,58 +20,38 @@ CREATE TABLE IF NOT EXISTS patients (
     INDEX idx_lastname_firstname (last_name, first_name)
 )";
 
-if ($mysqli->query($sqlCreateTable)) {
-    echo "<p>Patients table created successfully or already exists.</p>";
-
-    // Helper function to check if a column exists
-    function columnExists($mysqli, $tableName, $columnName) {
+try {
+    // Helper function to check if a column exists (PDO version)
+    function columnExists($pdo, $tableName, $columnName) {
         $sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
                 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?";
-        $stmt = $mysqli->prepare($sql);
-        if (!$stmt) {
-            echo "<p>Error preparing column check statement: " . htmlspecialchars($mysqli->error) . "</p>";
-            return false; // Consider true to prevent alter attempts on error
-        }
-        $stmt->bind_param("ss", $tableName, $columnName);
-        $stmt->execute();
-        $stmt->bind_result($count);
-        $stmt->fetch();
-        $stmt->close();
-        return $count > 0;
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$tableName, $columnName]);
+        return $stmt->fetchColumn() > 0;
     }
 
-    // Helper function to check if an index exists
-    function indexExists($mysqli, $tableName, $indexName) {
-        $sql = "SHOW INDEX FROM " . $mysqli->real_escape_string($tableName) . " WHERE Key_name = ?";
-        $stmt = $mysqli->prepare($sql);
-        if (!$stmt) {
-            echo "<p>Error preparing index check statement: " . htmlspecialchars($mysqli->error) . "</p>";
-            return false; // Consider true to prevent alter attempts on error
-        }
-        $stmt->bind_param("s", $indexName);
-        $stmt->execute();
-        $stmt->store_result();
-        $count = $stmt->num_rows;
-        $stmt->close();
-        return $count > 0;
+    // Helper function to check if an index exists (PDO version)
+    function indexExists($pdo, $tableName, $indexName) {
+        // Note: $tableName is used directly in the SQL string.
+        // In this script, $tableName is always 'patients', so it's safe.
+        // For dynamic table names, consider whitelisting or quoting.
+        $sql = "SHOW INDEX FROM `$tableName` WHERE Key_name = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$indexName]);
+        return $stmt->fetch() !== false; // If fetch() returns a row, the index exists
     }
 
-    // Helper function to check if a foreign key constraint exists
-    function constraintExists($mysqli, $tableName, $constraintName) {
+    // Helper function to check if a foreign key constraint exists (PDO version)
+    function constraintExists($pdo, $tableName, $constraintName) {
         $sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
                 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = ? AND CONSTRAINT_TYPE = 'FOREIGN KEY'";
-        $stmt = $mysqli->prepare($sql);
-        if (!$stmt) {
-            echo "<p>Error preparing constraint check statement: " . htmlspecialchars($mysqli->error) . "</p>";
-            return false; // Consider true to prevent alter attempts on error
-        }
-        $stmt->bind_param("ss", $tableName, $constraintName);
-        $stmt->execute();
-        $stmt->bind_result($count);
-        $stmt->fetch();
-        $stmt->close();
-        return $count > 0;
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$tableName, $constraintName]);
+        return $stmt->fetchColumn() > 0;
     }
+
+    $pdo->exec($sqlCreateTable);
+    echo "<p>Patients table created successfully or already exists.</p>";
 
     // Columns, FKs, and Indexes to check/add
     $columnsAndConstraints = [
@@ -98,64 +78,53 @@ if ($mysqli->query($sqlCreateTable)) {
 
     foreach ($columnsAndConstraints as $item) {
         // Check and add column
-        if (isset($item['column']) && !columnExists($mysqli, 'patients', $item['column'])) {
-            $sqlAlter = "ALTER TABLE patients ADD COLUMN " . $item['column'] . " " . $item['definition'];
-            if ($mysqli->query($sqlAlter)) {
-                echo "<p>Column " . htmlspecialchars($item['column']) . " added successfully.</p>";
-            } else {
-                echo "<p>Error adding column " . htmlspecialchars($item['column']) . ": " . htmlspecialchars($mysqli->error) . "</p>";
-            }
+        if (isset($item['column']) && !columnExists($pdo, 'patients', $item['column'])) {
+            $sqlAlter = "ALTER TABLE patients ADD COLUMN `" . $item['column'] . "` " . $item['definition'];
+            $pdo->exec($sqlAlter);
+            echo "<p>Column " . htmlspecialchars($item['column']) . " added successfully.</p>";
         }
 
         // Check and add Foreign Key
-        if (isset($item['fk']) && !constraintExists($mysqli, 'patients', $item['fk']['name'])) {
-            // Ensure the column exists before adding FK, especially if column add failed
-            if (isset($item['column']) && columnExists($mysqli, 'patients', $item['column'])) {
-                 $sqlAlterFK = "ALTER TABLE patients ADD CONSTRAINT " . $item['fk']['name'] . " " . $item['fk']['definition'];
-                if ($mysqli->query($sqlAlterFK)) {
-                    echo "<p>Foreign Key " . htmlspecialchars($item['fk']['name']) . " added successfully.</p>";
-                } else {
-                    echo "<p>Error adding Foreign Key " . htmlspecialchars($item['fk']['name']) . ": " . htmlspecialchars($mysqli->error) . "</p>";
-                }
+        if (isset($item['fk']) && !constraintExists($pdo, 'patients', $item['fk']['name'])) {
+            if (isset($item['column']) && columnExists($pdo, 'patients', $item['column'])) {
+                 $sqlAlterFK = "ALTER TABLE patients ADD CONSTRAINT `" . $item['fk']['name'] . "` " . $item['fk']['definition'];
+                $pdo->exec($sqlAlterFK);
+                echo "<p>Foreign Key " . htmlspecialchars($item['fk']['name']) . " added successfully.</p>";
             } else if (isset($item['column'])) {
-                 echo "<p>Skipping FK " . htmlspecialchars($item['fk']['name']) . " because column " . htmlspecialchars($item['column']) . " might be missing.</p>";
+                 echo "<p>Skipping FK " . htmlspecialchars($item['fk']['name']) . " because column " . htmlspecialchars($item['column']) . " might be missing or its check failed.</p>";
             }
         }
         
         // Check and add Index
-        if (isset($item['index']) && !indexExists($mysqli, 'patients', $item['index']['name'])) {
-            // Ensure column(s) exist before adding index
+        if (isset($item['index']) && !indexExists($pdo, 'patients', $item['index']['name'])) {
             $canAddIndex = true;
-            if (isset($item['column'])) { // Simple check for single column index
-                if(!columnExists($mysqli, 'patients', $item['column'])) {
+            if (isset($item['column'])) {
+                if(!columnExists($pdo, 'patients', $item['column'])) {
                     $canAddIndex = false;
-                    echo "<p>Skipping Index " . htmlspecialchars($item['index']['name']) . " because column " . htmlspecialchars($item['column']) . " might be missing.</p>";
+                    echo "<p>Skipping Index " . htmlspecialchars($item['index']['name']) . " because column " . htmlspecialchars($item['column']) . " might be missing or its check failed.</p>";
                 }
-            } else { // For multi-column indexes like idx_lastname_firstname, assume columns from CREATE TABLE exist
+            } else {
                  if ($item['index']['name'] === 'idx_lastname_firstname') {
-                    if (!columnExists($mysqli, 'patients', 'last_name') || !columnExists($mysqli, 'patients', 'first_name')) {
+                    if (!columnExists($pdo, 'patients', 'last_name') || !columnExists($pdo, 'patients', 'first_name')) {
                         $canAddIndex = false;
-                        echo "<p>Skipping Index " . htmlspecialchars($item['index']['name']) . " because one or more key columns might be missing.</p>";
+                        echo "<p>Skipping Index " . htmlspecialchars($item['index']['name']) . " because one or more key columns might be missing or their checks failed.</p>";
                     }
                  }
             }
 
             if ($canAddIndex) {
-                $sqlAlterIndex = "ALTER TABLE patients ADD INDEX " . $item['index']['name'] . " " . $item['index']['columns'];
-                if ($mysqli->query($sqlAlterIndex)) {
-                    echo "<p>Index " . htmlspecialchars($item['index']['name']) . " added successfully.</p>";
-                } else {
-                    echo "<p>Error adding Index " . htmlspecialchars($item['index']['name']) . ": " . htmlspecialchars($mysqli->error) . "</p>";
-                }
+                $sqlAlterIndex = "ALTER TABLE patients ADD INDEX `" . $item['index']['name'] . "` " . $item['index']['columns'];
+                $pdo->exec($sqlAlterIndex);
+                echo "<p>Index " . htmlspecialchars($item['index']['name']) . " added successfully.</p>";
             }
         }
     }
 
-} else {
-    echo "<p>Error creating patients table: " . htmlspecialchars($mysqli->error) . "</p>";
+} catch (PDOException $e) {
+    echo "<p>Database error: " . htmlspecialchars($e->getMessage()) . "</p>";
 }
 
 // Close the database connection
-$mysqli->close();
+$pdo = null;
 echo "<p>Patients table setup script finished.</p>";
 ?>
