@@ -72,6 +72,7 @@ try {
     SessionManager::set('login_error', 'Invalid username or password.'); // Specific login feedback
     header('Location: ../pages/login.php');
     exit;
+}
 } catch (PDOException $e) {
     // Use ErrorHandler to handle the exception
     // The ErrorHandler will log the error, set a generic session message, and redirect to error.php
