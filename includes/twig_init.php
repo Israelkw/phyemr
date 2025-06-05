@@ -3,57 +3,39 @@
 // from your project's root vendor directory.
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Initialize Twig environment
+// Initialize Twig environment - MINIMAL TEST
 try {
-    // The path to the templates directory, relative to this file's parent directory (includes/)
-    // So, if twig_init.php is in 'includes/', and templates are in 'templates/',
-    // this path should resolve correctly.
+    error_log("JULES DEBUG: About to attempt new Twig\Environment(null, ['cache' => false]);");
+    $twig = new \Twig\Environment(null, ['cache' => false, 'autoescape' => false]); // No loader, no cache for this basic test
+    error_log("JULES DEBUG: Successfully instantiated Twig\Environment.");
+    // The rest of the original Twig setup (FilesystemLoader, options, globals) can remain commented out or removed for this test.
+    // For now, let's just see if the Environment class itself can be new'd up.
+    // The original code for loader, options, globals, etc. will be put back later.
 
-// -- START JULES DIAGNOSTIC INCLUDE --
-$filesystemLoaderPath = __DIR__ . '/../vendor/twig/twig/src/Loader/FilesystemLoader.php';
-if (is_readable($filesystemLoaderPath)) {
-    require_once $filesystemLoaderPath;
-    error_log("JULES DIAGNOSTIC: Manually included FilesystemLoader.php. Path: " . realpath($filesystemLoaderPath));
-} else {
-    error_log("JULES DIAGNOSTIC: FilesystemLoader.php NOT readable or found at: " . realpath($filesystemLoaderPath));
-}
-// -- END JULES DIAGNOSTIC INCLUDE --
-    $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../templates');
+    // For this minimal test, we won't use $loader or $twig_options from before.
+    // We'll just see if the class can be found.
+    // $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../templates');
+    // $twig_options = [
+    //     'cache' => __DIR__ . '/../cache_new',
+    //     'debug' => true,
+    //     'auto_reload' => true,
+    // ];
+    // $twig = new \Twig\Environment($loader, $twig_options); // Original instantiation
 
-    // The path to the cache directory, relative to this file's parent directory (includes/)
-    // Ensure the 'cache' directory exists and is writable by the web server.
-    // For development, you can disable caching or set auto_reload to true.
-    $twig_options = [
-        'cache' => __DIR__ . '/../cache_new', // Set to false to disable caching for development
-        'debug' => true,                 // Enable debug mode (useful for development)
-        'auto_reload' => true,           // Automatically recompile templates if source changes (good for dev)
-    ];
+    // if (session_status() == PHP_SESSION_NONE) {
+    //     session_start();
+    // }
+    // $twig->addGlobal('session', isset($_SESSION) ? $_SESSION : []);
+    // if ($twig_options['debug']) { // This would cause error if $twig_options not defined
+    //     $twig->addExtension(new \Twig\Extension\DebugExtension());
+    // }
 
-    $twig = new \Twig\Environment($loader, $twig_options);
-
-    // Add $_SESSION as a global variable to Twig.
-    // It's generally better to handle session access more explicitly in your controllers
-    // or services and pass only necessary data to templates, but for now, this maintains
-    // the previous behavior of making the whole session available.
-    if (session_status() == PHP_SESSION_NONE) {
-        // This check is important. If SessionManager is used, it might have already started it.
-        // If not, start it here to make $_SESSION available.
-        // Consider using your SessionManager::startSession() if it's the standard way.
-        session_start();
-    }
-    $twig->addGlobal('session', isset($_SESSION) ? $_SESSION : []);
-
-    // If you use Twig's debug extension, you can add it here:
-    if ($twig_options['debug']) {
-        $twig->addExtension(new \Twig\Extension\DebugExtension());
-    }
-
-} catch (Exception $e) {
-    // Handle any exceptions during Twig initialization
-    error_log("Twig Initialization Error: " . $e->getMessage());
-    // Consider a more user-friendly error page or message in production
-    die("An error occurred during template system initialization. Please check server logs. Details: " . $e->getMessage());
+} catch (Throwable $e) { // Catch Throwable for broader error catching, including Error
+    error_log("JULES DEBUG: Twig Initialization Error (Minimal Test): " . $e->getMessage() . " on line " . $e->getLine() . " in " . $e->getFile());
+    error_log("JULES DEBUG: Stack Trace: " . $e->getTraceAsString());
+    die("An error occurred during minimal Twig Environment test. Please check server logs. Details: " . $e->getMessage());
 }
 
 // The $twig variable is now available for use in PHP scripts that include this file.
+// However, for this minimal test, it's only useful if the Environment class was found.
 ?>
