@@ -8,6 +8,16 @@ try {
     // The path to the templates directory, relative to this file's parent directory (includes/)
     // So, if twig_init.php is in 'includes/', and templates are in 'templates/',
     // this path should resolve correctly.
+
+// -- START JULES DIAGNOSTIC INCLUDE --
+$filesystemLoaderPath = __DIR__ . '/../vendor/twig/twig/src/Loader/FilesystemLoader.php';
+if (is_readable($filesystemLoaderPath)) {
+    require_once $filesystemLoaderPath;
+    error_log("JULES DIAGNOSTIC: Manually included FilesystemLoader.php. Path: " . realpath($filesystemLoaderPath));
+} else {
+    error_log("JULES DIAGNOSTIC: FilesystemLoader.php NOT readable or found at: " . realpath($filesystemLoaderPath));
+}
+// -- END JULES DIAGNOSTIC INCLUDE --
     $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../templates');
 
     // The path to the cache directory, relative to this file's parent directory (includes/)
