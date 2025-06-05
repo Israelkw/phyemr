@@ -3,6 +3,28 @@
 // from your project's root vendor directory.
 require_once __DIR__ . '/../vendor/autoload.php';
 
+// -- START JULES DEBUG --
+if (class_exists('Twig\Environment')) {
+    error_log("JULES DEBUG: Twig\Environment class IS found after autoload.");
+} else {
+    error_log("JULES DEBUG: Twig\Environment class IS NOT found after autoload. Autoloader path: " . realpath(__DIR__ . '/../vendor/autoload.php'));
+    // Check if the autoloader file itself is readable
+    if (!is_readable(__DIR__ . '/../vendor/autoload.php')) {
+        error_log("JULES DEBUG: vendor/autoload.php is NOT readable.");
+    }
+    // Check if the specific Twig class file is present
+    $twigClassPath = __DIR__ . '/../vendor/twig/twig/src/Environment.php';
+    if (file_exists($twigClassPath)) {
+        error_log("JULES DEBUG: Twig Environment.php file IS present at: " . realpath($twigClassPath));
+         if (!is_readable($twigClassPath)) {
+            error_log("JULES DEBUG: Twig Environment.php IS NOT readable.");
+         }
+    } else {
+        error_log("JULES DEBUG: Twig Environment.php file IS NOT present at expected path: " . realpath($twigClassPath));
+    }
+}
+// -- END JULES DEBUG --
+
 // Initialize Twig environment
 try {
     // The path to the templates directory, relative to this file's parent directory (includes/)
