@@ -1,5 +1,10 @@
 <?php
-session_start();
+// Assuming SessionManager.php is in 'includes' directory relative to the root
+// and this error page is in 'pages' directory, so path_to_root is '../'
+// If this page can be accessed from different directory levels, a more robust path calculation might be needed.
+// For now, assuming it's always in 'pages/'.
+require_once __DIR__ . '/../includes/SessionManager.php';
+SessionManager::startSession();
 
 $errorMessage = isset($_SESSION['error_message']) ? $_SESSION['error_message'] : 'An unspecified error occurred.';
 // Clear the error message after displaying it to prevent it from showing again on subsequent visits

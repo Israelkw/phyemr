@@ -58,6 +58,16 @@ function initFormSubmissionHandler(formId, messageElementId) {
             formData.form_name = form.name || formId; // Fallback if window.currentFormName also not set
         }
 
+        // Add CSRF token to payload if available
+        if (window.csrfToken) {
+            formData.csrf_token = window.csrfToken;
+        } else {
+            console.warn('CSRF token not found on window object. Submission might fail server-side validation.');
+            // Optionally, prevent submission:
+            // messageElement.textContent = 'Error: CSRF token missing. Cannot submit form.';
+            // messageElement.className = 'error-message';
+            // return;
+        }
 
         fetch('../php/save_submission.php', {
             method: 'POST',
@@ -70,9 +80,21 @@ function initFormSubmissionHandler(formId, messageElementId) {
             if (response.ok) {
                 return response.json().then(data => {
                     if (data.success) {
-                        messageElement.textContent = `Submission successful! ID: ${data.submission_id}`;
-                        messageElement.className = 'success-message'; // Optional: for styling
-                        form.reset(); // Optionally reset the form on success
+                        if (data.next_form_url) {
+                            if (messageElement) { // Optionally show message briefly before redirect
+                                messageElement.className = 'alert alert-success'; // Use Bootstrap class
+                                messageElement.textContent = data.message || 'Redirecting to the next form...';
+                            }
+                            // The URL from the server is "fill_patient_form.php?..."
+                            // This will correctly navigate as the current page is also in the 'pages' directory.
+                            window.location.href = data.next_form_url;
+                        } else {
+                            if (messageElement) {
+                                messageElement.className = 'alert alert-success'; // Use Bootstrap class
+                                messageElement.textContent = data.message || 'Form submitted successfully!';
+                            }
+                            if (form) form.reset(); // Reset form on general success
+                        }
                     } else {
                         // Handle server-side errors reported in a JSON response
                         messageElement.textContent = `Error: ${data.error || 'Unknown server error.'}`;

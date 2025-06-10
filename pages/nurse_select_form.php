@@ -1,8 +1,7 @@
 <?php
 $path_to_root = "../"; // Define $path_to_root for includes
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+require_once $path_to_root . 'includes/SessionManager.php';
+SessionManager::startSession();
 
 // Authorization: Check if user is logged in and is a nurse
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'nurse') {
