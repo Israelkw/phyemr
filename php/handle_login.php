@@ -7,6 +7,14 @@ SessionManager::startSession();
 require_once '../includes/ErrorHandler.php';
 ErrorHandler::register(); // ErrorHandler also starts session if not started, ensure SessionManager is first for consistent settings
 
+// CSRF Token Validation
+$submittedToken = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+if (!SessionManager::validateCsrfToken($submittedToken)) {
+    SessionManager::set('login_error', 'Invalid or missing CSRF token. Please try logging in again.');
+    header('Location: ../pages/login.php');
+    exit;
+}
+
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../pages/login.php');

@@ -1,8 +1,7 @@
 <?php
-// Session check must come before any HTML output.
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+$path_to_root = "../"; // Define $path_to_root for includes, ensure it's at the top
+require_once $path_to_root . 'includes/SessionManager.php';
+SessionManager::startSession();
 
 // Check if the user is logged in and is an admin
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'admin') {
@@ -11,7 +10,7 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'admin') {
     exit;
 }
 
-$path_to_root = "../"; // Define $path_to_root for includes
+// $path_to_root is already defined above
 require_once $path_to_root . 'includes/db_connect.php'; // Database connection
 
 $users_from_db = [];

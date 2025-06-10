@@ -4,24 +4,37 @@ require_once 'db_connect.php';
 
 echo "<h1>Patient Form Submissions Table Setup Script</h1>";
 
-// SQL to create patient_form_submissions table
+// SQL to create patient_form_submissions table - Aligned with physio_db_schema.sql and instructions
 $sqlCreateTable = "
 CREATE TABLE IF NOT EXISTS patient_form_submissions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     patient_id INT NOT NULL,
-    form_name VARCHAR(255) NOT NULL COMMENT 'e.g., cervical.html, basic_info.html',
-    form_directory VARCHAR(255) NOT NULL COMMENT 'e.g., patient_evaluation_form, patient_general_info',
-    submission_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     submitted_by_user_id INT NOT NULL,
-    form_data JSON NOT NULL COMMENT 'To store all submitted form fields',
-    FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
-    FOREIGN KEY (submitted_by_user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_patient_form_timestamp (patient_id, submission_timestamp DESC),
-    INDEX idx_form_name_directory (form_name, form_directory)
+    form_name VARCHAR(255) NOT NULL,
+    form_directory VARCHAR(255) NOT NULL,
+    submission_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    treating_clinician VARCHAR(255) NULL,
+    chief_complaint TEXT NULL,
+    evaluation_summary_diagnosis TEXT NULL,
+    submission_notes TEXT NULL,
+    form_data JSON NOT NULL,
+
+    CONSTRAINT fk_submission_patient FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
+    CONSTRAINT fk_submission_user FOREIGN KEY (submitted_by_user_id) REFERENCES users(id) ON DELETE RESTRICT,
+
+    INDEX idx_submission_patient_id (patient_id),
+    INDEX idx_submission_user_id (submitted_by_user_id),
+    INDEX idx_submission_form_name (form_name),
+    INDEX idx_submission_timestamp (submission_timestamp)
 )";
+// Comments from original PHP for form_name, form_directory, form_data are omitted for brevity but can be kept.
+// fk_submission_user changed to ON DELETE RESTRICT
 
 try {
-    // Helper function to check if a column exists (PDO version)
+    $pdo->exec($sqlCreateTable);
+    echo "<p>Patient Form Submissions table created successfully or already exists using base schema.</p>";
+
+    // Helper functions
     function columnExists($pdo, $tableName, $columnName) {
         $sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
                 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?";
@@ -30,16 +43,13 @@ try {
         return $stmt->fetchColumn() > 0;
     }
 
-    // Helper function to check if an index exists (PDO version)
     function indexExists($pdo, $tableName, $indexName) {
-        // $tableName is used directly in SQL, ensure it's safe (here it's hardcoded)
         $sql = "SHOW INDEX FROM `$tableName` WHERE Key_name = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$indexName]);
-        return $stmt->fetch() !== false; // If fetch() returns a row, index exists
+        return $stmt->fetch() !== false;
     }
 
-    // Helper function to check if a foreign key constraint exists (PDO version)
     function constraintExists($pdo, $tableName, $constraintName) {
         $sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
                 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = ? AND CONSTRAINT_TYPE = 'FOREIGN KEY'";
@@ -48,77 +58,130 @@ try {
         return $stmt->fetchColumn() > 0;
     }
 
-    $pdo->exec($sqlCreateTable);
-    echo "<p>Patient Form Submissions table created successfully or already exists.</p>";
+    function getForeignKeyDefinition($pdo, $tableName, $constraintName) {
+        $sql = "SELECT REFERENTIAL_INTEGRITY_RULE FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS
+                WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = ? AND CONSTRAINT_TYPE = 'FOREIGN KEY'";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$tableName, $constraintName]);
+        return $stmt->fetchColumn();
+    }
 
-    // Define table name
     $tableName = 'patient_form_submissions';
 
-    // Columns, FKs, and Indexes to check/add
-    $schemaItems = [
-        // Columns
-        ['type' => 'column', 'name' => 'patient_id', 'definition' => 'INT NOT NULL'],
-        ['type' => 'column', 'name' => 'form_name', 'definition' => "VARCHAR(255) NOT NULL COMMENT 'e.g., cervical.html, basic_info.html'"],
-        ['type' => 'column', 'name' => 'form_directory', 'definition' => "VARCHAR(255) NOT NULL COMMENT 'e.g., patient_evaluation_form, patient_general_info'"],
-        ['type' => 'column', 'name' => 'submission_timestamp', 'definition' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP'],
-        ['type' => 'column', 'name' => 'submitted_by_user_id', 'definition' => 'INT NOT NULL'],
-        ['type' => 'column', 'name' => 'form_data', 'definition' => "JSON NOT NULL COMMENT 'To store all submitted form fields'"],
-        
-        // Foreign Keys
-        ['type' => 'fk', 'name' => 'fk_submission_patient', 'column' => 'patient_id', 'definition' => "ADD CONSTRAINT fk_submission_patient FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE"],
-        ['type' => 'fk', 'name' => 'fk_submission_user', 'column' => 'submitted_by_user_id', 'definition' => "ADD CONSTRAINT fk_submission_user FOREIGN KEY (submitted_by_user_id) REFERENCES users(id) ON DELETE CASCADE"],
-        
-        // Indexes
-        ['type' => 'index', 'name' => 'idx_patient_form_timestamp', 'columns' => '(patient_id, submission_timestamp DESC)'],
-        ['type' => 'index', 'name' => 'idx_form_name_directory', 'columns' => '(form_name, form_directory)'],
+    // Columns to add
+    $columnsToAdd = [
+        ['name' => 'treating_clinician', 'definition' => 'VARCHAR(255) NULL'],
+        ['name' => 'chief_complaint', 'definition' => 'TEXT NULL'],
+        ['name' => 'evaluation_summary_diagnosis', 'definition' => 'TEXT NULL'],
+        ['name' => 'submission_notes', 'definition' => 'TEXT NULL'],
     ];
 
-    foreach ($schemaItems as $item) {
-        switch ($item['type']) {
-            case 'column':
-                if (!columnExists($pdo, $tableName, $item['name'])) {
-                    $sqlAlter = "ALTER TABLE `$tableName` ADD COLUMN `" . $item['name'] . "` " . $item['definition'];
-                    $pdo->exec($sqlAlter);
-                    echo "<p>Column `" . htmlspecialchars($item['name']) . "` added successfully.</p>";
-                } else {
-                    echo "<p>Column `" . htmlspecialchars($item['name']) . "` already exists.</p>";
-                }
-                break;
-            
-            case 'fk':
-                if (!constraintExists($pdo, $tableName, $item['name'])) {
-                    if (columnExists($pdo, $tableName, $item['column'])) {
-                        $sqlAlterFK = "ALTER TABLE `$tableName` " . $item['definition'];
-                        $pdo->exec($sqlAlterFK);
-                        echo "<p>Foreign Key `" . htmlspecialchars($item['name']) . "` added successfully.</p>";
-                    } else {
-                        echo "<p>Skipping FK `" . htmlspecialchars($item['name']) . "` because column `" . htmlspecialchars($item['column']) . "` is missing or its check failed.</p>";
-                    }
-                } else {
-                    echo "<p>Foreign Key `" . htmlspecialchars($item['name']) . "` already exists.</p>";
-                }
-                break;
+    foreach ($columnsToAdd as $column) {
+        if (!columnExists($pdo, $tableName, $column['name'])) {
+            $sqlAlter = "ALTER TABLE `$tableName` ADD COLUMN `" . $column['name'] . "` " . $column['definition'];
+            $pdo->exec($sqlAlter);
+            echo "<p>Column `" . htmlspecialchars($column['name']) . "` added to $tableName table.</p>";
+        } else {
+            echo "<p>Column `" . htmlspecialchars($column['name']) . "` already exists in $tableName table.</p>";
+        }
+    }
 
-            case 'index':
-                if (!indexExists($pdo, $tableName, $item['name'])) {
-                    $firstColumnInIndex = explode(',', str_replace(['(', ')', ' DESC', ' ASC'], '', $item['columns']))[0];
-                    if (columnExists($pdo, $tableName, trim($firstColumnInIndex))) {
-                        $sqlAlterIndex = "ALTER TABLE `$tableName` ADD INDEX `" . $item['name'] . "` " . $item['columns'];
-                        $pdo->exec($sqlAlterIndex);
-                        echo "<p>Index `" . htmlspecialchars($item['name']) . "` added successfully.</p>";
-                    } else {
-                         echo "<p>Skipping Index `" . htmlspecialchars($item['name']) . "` because primary column `" . htmlspecialchars(trim($firstColumnInIndex)) ."` might be missing or its check failed.</p>";
-                    }
-                } else {
-                    echo "<p>Index `" . htmlspecialchars($item['name']) . "` already exists.</p>";
+    // Foreign Keys - Check and update ON DELETE rule for fk_submission_user
+    $fkUserConstraintName = 'fk_submission_user';
+    if (constraintExists($pdo, $tableName, $fkUserConstraintName)) {
+        // This is a simplified check. Information schema query is needed to get current ON DELETE rule.
+        // For robust solution, parse SHOW CREATE TABLE or query INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS
+        // We will attempt to drop and re-add with RESTRICT if it exists.
+        // Note: This requires `submitted_by_user_id` column to exist.
+        $currentDeleteRule = getForeignKeyDefinition($pdo, $tableName, $fkUserConstraintName);
+        if ($currentDeleteRule && strtoupper($currentDeleteRule) !== 'RESTRICT') {
+            try {
+                $pdo->exec("ALTER TABLE `$tableName` DROP FOREIGN KEY `$fkUserConstraintName`");
+                $pdo->exec("ALTER TABLE `$tableName` ADD CONSTRAINT `$fkUserConstraintName` FOREIGN KEY (submitted_by_user_id) REFERENCES users(id) ON DELETE RESTRICT");
+                echo "<p>Foreign Key `$fkUserConstraintName` updated to ON DELETE RESTRICT.</p>";
+            } catch (PDOException $e) {
+                echo "<p>Error updating Foreign Key `$fkUserConstraintName`: " . htmlspecialchars($e->getMessage()) . ". Manual check may be required.</p>";
+            }
+        } elseif (!$currentDeleteRule && columnExists($pdo, $tableName, 'submitted_by_user_id')) {
+             // FK existed by name but couldn't get rule, or it was somehow dropped by name but column exists. Try to add.
+            try {
+                $pdo->exec("ALTER TABLE `$tableName` ADD CONSTRAINT `$fkUserConstraintName` FOREIGN KEY (submitted_by_user_id) REFERENCES users(id) ON DELETE RESTRICT");
+                echo "<p>Foreign Key `$fkUserConstraintName` (re-)added with ON DELETE RESTRICT.</p>";
+            } catch (PDOException $e) {
+                echo "<p>Error (re-)adding Foreign Key `$fkUserConstraintName`: " . htmlspecialchars($e->getMessage()) . ".</p>";
+            }
+        } else {
+             echo "<p>Foreign Key `$fkUserConstraintName` already exists with correct ON DELETE rule or column missing.</p>";
+        }
+    } elseif (columnExists($pdo, $tableName, 'submitted_by_user_id')) { // If constraint doesn't exist by name, add it
+        $pdo->exec("ALTER TABLE `$tableName` ADD CONSTRAINT `$fkUserConstraintName` FOREIGN KEY (submitted_by_user_id) REFERENCES users(id) ON DELETE RESTRICT");
+        echo "<p>Foreign Key `$fkUserConstraintName` added with ON DELETE RESTRICT.</p>";
+    }
+
+
+    $fkPatientConstraintName = 'fk_submission_patient';
+    if (!constraintExists($pdo, $tableName, $fkPatientConstraintName) && columnExists($pdo, $tableName, 'patient_id')) {
+        $pdo->exec("ALTER TABLE `$tableName` ADD CONSTRAINT `$fkPatientConstraintName` FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE");
+        echo "<p>Foreign Key `$fkPatientConstraintName` added.</p>";
+    } else {
+        echo "<p>Foreign Key `$fkPatientConstraintName` already exists or patient_id column missing.</p>";
+    }
+
+    // Indexes to add/rename
+    // Drop old indexes if they exist and new ones are preferred
+    if (indexExists($pdo, $tableName, 'idx_patient_form_timestamp') && !indexExists($pdo, $tableName, 'idx_submission_patient_id')) {
+        // This specific rename isn't ideal as idx_submission_patient_id is simpler.
+        // The SQL schema has idx_submission_patient_id (patient_id) and idx_submission_timestamp (submission_timestamp)
+        // The old PHP had idx_patient_form_timestamp (patient_id, submission_timestamp DESC)
+        // We will add the SQL schema's preferred simple indexes.
+        // And remove the old composite one if it exists.
+        try {
+            $pdo->exec("ALTER TABLE `$tableName` DROP INDEX `idx_patient_form_timestamp`");
+            echo "<p>Index `idx_patient_form_timestamp` dropped in $tableName table.</p>";
+        } catch (PDOException $e) {
+            echo "<p>Notice: Could not drop index `idx_patient_form_timestamp`. It might not exist or is needed by a FK (unlikely for non-primary key indexes): ".htmlspecialchars($e->getMessage())."</p>";
+        }
+    }
+    if (indexExists($pdo, $tableName, 'idx_form_name_directory') && !indexExists($pdo, $tableName, 'idx_submission_form_name')) {
+         try {
+            $pdo->exec("ALTER TABLE `$tableName` DROP INDEX `idx_form_name_directory`");
+            echo "<p>Index `idx_form_name_directory` dropped from $tableName table.</p>";
+        } catch (PDOException $e) {
+            echo "<p>Notice: Could not drop index `idx_form_name_directory`: ".htmlspecialchars($e->getMessage())."</p>";
+        }
+    }
+
+    $indexesToAdd = [
+        ['name' => 'idx_submission_patient_id', 'columns' => '(patient_id)'],
+        ['name' => 'idx_submission_user_id', 'columns' => '(submitted_by_user_id)'],
+        ['name' => 'idx_submission_form_name', 'columns' => '(form_name)'], // SQL schema has this
+        ['name' => 'idx_submission_timestamp', 'columns' => '(submission_timestamp)'], // SQL schema has this
+    ];
+
+    foreach ($indexesToAdd as $index) {
+        if (!indexExists($pdo, $tableName, $index['name'])) {
+            $canCreateIndex = true;
+            $cols = explode(',', str_replace(['(', ')', ' DESC', ' ASC', ' '], '', $index['columns']));
+            foreach ($cols as $col) {
+                if (!columnExists($pdo, $tableName, trim($col))) {
+                    $canCreateIndex = false;
+                    echo "<p>Skipping Index `" . htmlspecialchars($index['name']) . "` for $tableName table because column `".trim($col)."` is missing.</p>";
+                    break;
                 }
-                break;
+            }
+            if ($canCreateIndex) {
+                $sqlAlterIndex = "ALTER TABLE `$tableName` ADD INDEX `" . $index['name'] . "` " . $index['columns'];
+                $pdo->exec($sqlAlterIndex);
+                echo "<p>Index `" . htmlspecialchars($index['name']) . "` added to $tableName table.</p>";
+            }
+        } else {
+            echo "<p>Index `" . htmlspecialchars($index['name']) . "` already exists in $tableName table.</p>";
         }
     }
     echo "<p>Patient Form Submissions table schema check completed.</p>";
 
 } catch (PDOException $e) {
-    echo "<p>Database error: " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p>Database error during Patient Form Submissions table setup: " . htmlspecialchars($e->getMessage()) . "</p>";
 }
 
 // Close the database connection

@@ -1,5 +1,5 @@
 <?php
-session_start(); // Ensure session is started to use $_SESSION variables
+require_once __DIR__ . '/SessionManager.php'; // Added SessionManager
 
 class ErrorHandler {
 
@@ -14,6 +14,9 @@ class ErrorHandler {
         $errorMessage = "[" . date("Y-m-d H:i:s") . "] Exception: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine() . PHP_EOL;
         error_log($errorMessage, 3, $logFilePath);
 
+        // Start session before using $_SESSION
+        SessionManager::startSession();
+
         // Set user-friendly error message
         $_SESSION['error_message'] = 'An unexpected error occurred. Please try again later or contact support.';
 
@@ -21,7 +24,8 @@ class ErrorHandler {
         // For this subtask, we will redirect to a generic error page.
         // A more sophisticated approach might check the context (e.g., current page or type of exception)
         // For now, all exceptions handled by this will go to pages/error.php
-        header('Location: ../pages/error.php');
+        // Using a root-relative path assuming 'pages' is directly under the web root.
+        header('Location: /pages/error.php');
         exit;
     }
 

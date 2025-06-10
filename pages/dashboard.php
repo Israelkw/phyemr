@@ -1,8 +1,7 @@
 <?php
-// This session check MUST come before any HTML output, including the header.
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+$path_to_root = "../"; // Define $path_to_root for includes, moved up for SessionManager
+require_once $path_to_root . 'includes/SessionManager.php';
+SessionManager::startSession();
 
 // Check if the user is logged in, if not then redirect to login page
 if (!isset($_SESSION["user_id"]) || !isset($_SESSION["role"])) {
@@ -13,7 +12,7 @@ if (!isset($_SESSION["user_id"]) || !isset($_SESSION["role"])) {
 }
 
 $page_title = "Dashboard";
-$path_to_root = "../"; // Define $path_to_root for includes
+// $path_to_root is already defined above
 require_once $path_to_root . 'includes/header.php'; 
 // The header will include navigation.php which displays $_SESSION['message']
 // The <main class="main-content container"> is already provided by header.php

@@ -1,7 +1,6 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start(); // Start session if not already started
-}
+require_once __DIR__ . '/SessionManager.php'; // Ensure SessionManager is available
+SessionManager::startSession(); // Centralized session start
 ?>
 <!DOCTYPE html>
 <html lang="en">

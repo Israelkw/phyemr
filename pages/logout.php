@@ -14,8 +14,8 @@ SessionManager::destroySession();
 // To set a message for the login page after session destruction,
 // we need to start a new, minimal session or pass it via query parameter.
 // Starting a new session is cleaner if the login page is set up to display it.
-session_start(); // This starts a new, fresh session
-SessionManager::set('logout_message', 'You have been successfully logged out.'); // Uses the new session
+// SessionManager::set will automatically start a new session if needed after destruction.
+SessionManager::set('logout_message', 'You have been successfully logged out.');
 
 header("Location: login.php");
 exit;

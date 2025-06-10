@@ -1,6 +1,7 @@
 <?php
 $path_to_root = "../"; // Define $path_to_root for includes
-session_start();
+require_once $path_to_root . 'includes/SessionManager.php';
+SessionManager::startSession();
 require_once $path_to_root . 'includes/db_connect.php'; // Added for database connection
 
 // 1. Check if user is logged in and is a clinician

@@ -1,6 +1,7 @@
 <?php
 $path_to_root = "../"; // Define $path_to_root for includes
-session_start();
+require_once $path_to_root . 'includes/SessionManager.php';
+SessionManager::startSession();
 
 // Check if user is logged in and is a clinician
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'clinician') {

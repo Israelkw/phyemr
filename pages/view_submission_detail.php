@@ -1,8 +1,7 @@
 <?php
 $path_to_root = "../";
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+require_once $path_to_root . 'includes/SessionManager.php';
+SessionManager::startSession();
 
 require_once $path_to_root . 'includes/db_connect.php'; // $mysqli connection
 

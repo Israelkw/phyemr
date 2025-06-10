@@ -15,6 +15,7 @@ require_once 'includes/header.php';
         <p>Please <a href="pages/login.php">login</a> to access the system features.</p>
     <?php endif; ?>
     
+    <!--
     <p>If you are looking for specific patient evaluation forms, they can be found under these (currently static) links:</p>
     <ul>
         <li><a href="patient_evaluation_form/cervical.html">Cervical Evaluation Form</a></li>
@@ -30,5 +31,7 @@ require_once 'includes/header.php';
         <li><a href="patient_general_info/basic_info.html">Basic Information Form</a></li>
         <li><a href="patient_general_info/demo.html">Demographics Form</a></li>
     </ul>
+    -->
+    <p>Patient-specific forms should be accessed through the patient selection and dashboard functionalities after logging in. Direct linking to forms from this page is not supported as they require patient context.</p>
 
 <?php require_once 'includes/footer.php'; ?>

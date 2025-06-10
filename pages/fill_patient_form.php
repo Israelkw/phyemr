@@ -1,6 +1,8 @@
 <?php
 $path_to_root = "../"; // Define $path_to_root for includes
-session_start();
+require_once $path_to_root . 'includes/SessionManager.php';
+SessionManager::startSession();
+$csrf_token = SessionManager::generateCsrfToken(); // Generate CSRF token
 
 // 1. Check if user is logged in and is a clinician or nurse
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['clinician', 'nurse'])) {
@@ -125,6 +127,7 @@ include_once $path_to_root . 'includes/header.php';
     window.currentClinicianId = <?php echo json_encode($current_user_id); ?>;
     // Also make form_name available if js/form_handler.js needs it directly, though it's also in hidden field
     window.currentFormName = <?php echo json_encode($form_file_basename); ?>; 
+    window.csrfToken = <?php echo json_encode($csrf_token); ?>; // Inject CSRF token
 </script>
 
 <?php

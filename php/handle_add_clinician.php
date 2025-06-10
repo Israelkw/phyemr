@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/SessionManager.php';
+SessionManager::startSession();
 require_once __DIR__ . '/../includes/db_connect.php'; // $mysqli connection object
 
 // Check if user is logged in
