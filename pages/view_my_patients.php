@@ -11,34 +11,26 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'clinician') {
     exit;
 }
 
-// $path_to_root = "../"; // This is still needed for header.php to build its internal paths for CSS, JS, and navigation.
 // The require_once paths below will use __DIR__ for robustness of file inclusion itself.
-require_once __DIR__ . '/../includes/db_connect.php'; // $mysqli connection object
+require_once __DIR__ . '/../includes/db_connect.php'; // Provides $pdo
+require_once __DIR__ . '/../includes/Database.php';    // Provides Database class
+
+$db = new Database($pdo); // Instantiate Database class
 
 $my_patients = [];
 $db_error_message = '';
 $clinician_id = $_SESSION['user_id'];
 
-$sql = "SELECT id, first_name, last_name, date_of_birth FROM patients WHERE assigned_clinician_id = ? ORDER BY last_name, first_name";
-$stmt = $mysqli->prepare($sql);
-
-if ($stmt === false) {
-    error_log("Error preparing statement to fetch clinician's patients: " . $mysqli->error);
-    $db_error_message = "An error occurred while preparing to fetch your patient data. Please try again later.";
-} else {
-    $stmt->bind_param("i", $clinician_id);
-    if ($stmt->execute()) {
-        $result = $stmt->get_result();
-        while ($row = $result->fetch_assoc()) {
-            $my_patients[] = $row;
-        }
-    } else {
-        error_log("Error executing statement to fetch clinician's patients: " . $stmt->error);
-        $db_error_message = "An error occurred while fetching your patient data. Please try again later.";
-    }
-    $stmt->close();
+try {
+    $sql = "SELECT id, first_name, last_name, date_of_birth FROM patients WHERE assigned_clinician_id = :clinician_id ORDER BY last_name, first_name";
+    $stmt = $db->prepare($sql);
+    $db->execute($stmt, [':clinician_id' => $clinician_id]);
+    $my_patients = $db->fetchAll($stmt);
+} catch (PDOException $e) {
+    error_log("Error fetching clinician's patients: " . $e->getMessage());
+    $db_error_message = "An error occurred while fetching your patient data. Please try again later.";
+    // Optional: ErrorHandler::handleException($e);
 }
-// $mysqli->close(); // Connection usually closed at end of script by PHP or db_connect.php
 
 $page_title = "My Assigned Patients";
 // $path_to_root must be defined before including header.php for its internal use.

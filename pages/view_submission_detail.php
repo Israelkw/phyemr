@@ -3,7 +3,10 @@ $path_to_root = "../";
 require_once $path_to_root . 'includes/SessionManager.php';
 SessionManager::startSession();
 
-require_once $path_to_root . 'includes/db_connect.php'; // $mysqli connection
+require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
+require_once $path_to_root . 'includes/Database.php';    // Provides Database class
+
+$db = new Database($pdo); // Instantiate Database class
 
 // Initialize variables
 $submission_id = null;
@@ -28,65 +31,51 @@ if (!isset($_GET['submission_id']) || empty($_GET['submission_id']) || !is_numer
 } else {
     $submission_id = (int)$_GET['submission_id'];
 
-    // 3. Fetch Submission Details from patient_form_submissions
-    $stmt_submission = $mysqli->prepare("SELECT patient_id, form_name, form_directory, submission_timestamp, form_data FROM patient_form_submissions WHERE id = ?");
-    if (!$stmt_submission) {
-        error_log("Error preparing statement to fetch submission: " . $mysqli->error);
-        $db_error_message = "An error occurred while preparing to fetch submission data.";
-    } else {
-        $stmt_submission->bind_param("i", $submission_id);
-        if ($stmt_submission->execute()) {
-            $result_submission = $stmt_submission->get_result();
-            if ($result_submission->num_rows > 0) {
-                $submission_details = $result_submission->fetch_assoc();
-                $patient_id_from_submission = $submission_details['patient_id'];
+    try {
+        // 3. Fetch Submission Details from patient_form_submissions
+        $sql_submission = "SELECT patient_id, form_name, form_directory, submission_timestamp, form_data FROM patient_form_submissions WHERE id = :submission_id";
+        $stmt_submission = $db->prepare($sql_submission);
+        $db->execute($stmt_submission, [':submission_id' => $submission_id]);
+        $submission_details = $db->fetch($stmt_submission);
 
-                // 4. Fetch Patient Details for Authorization
-                $stmt_patient = $mysqli->prepare("SELECT id, first_name, last_name, date_of_birth, assigned_clinician_id FROM patients WHERE id = ?");
-                if (!$stmt_patient) {
-                    error_log("Error preparing statement for patient authorization: " . $mysqli->error);
-                    $db_error_message = "An error occurred while preparing patient data for authorization.";
+        if ($submission_details) {
+            $patient_id_from_submission = $submission_details['patient_id'];
+
+            // 4. Fetch Patient Details for Authorization
+            $sql_patient = "SELECT id, first_name, last_name, date_of_birth, assigned_clinician_id FROM patients WHERE id = :patient_id";
+            $stmt_patient = $db->prepare($sql_patient);
+            $db->execute($stmt_patient, [':patient_id' => $patient_id_from_submission]);
+            $patient_details = $db->fetch($stmt_patient);
+
+            if ($patient_details) {
+                // Authorization Check: Patient must be assigned to the current clinician
+                if ($patient_details['assigned_clinician_id'] != $current_clinician_id) {
+                    $error_message = "Authorization failed. You are not assigned to this patient.";
+                    $submission_details = null; // Clear data to prevent display
+                    $patient_details = null;    // Clear data
                 } else {
-                    $stmt_patient->bind_param("i", $patient_id_from_submission);
-                    if ($stmt_patient->execute()) {
-                        $result_patient = $stmt_patient->get_result();
-                        if ($result_patient->num_rows > 0) {
-                            $patient_details = $result_patient->fetch_assoc();
-                            // Authorization Check: Patient must be assigned to the current clinician
-                            if ($patient_details['assigned_clinician_id'] != $current_clinician_id) {
-                                $error_message = "Authorization failed. You are not assigned to this patient.";
-                                $submission_details = null; // Clear data to prevent display
-                                $patient_details = null;    // Clear data
-                            } else {
-                                // Authorized: Decode JSON form data
-                                $form_data_json = $submission_details['form_data'];
-                                if ($form_data_json) {
-                                    $form_data_array = json_decode($form_data_json, true);
-                                    if (json_last_error() !== JSON_ERROR_NONE) {
-                                        $error_message = "Error decoding form data: " . json_last_error_msg();
-                                        $form_data_array = null; // Clear on error
-                                    }
-                                } else {
-                                    $error_message = "No form data found for this submission.";
-                                }
-                            }
-                        } else {
-                            $error_message = "Patient associated with this submission not found.";
+                    // Authorized: Decode JSON form data
+                    $form_data_json = $submission_details['form_data'];
+                    if ($form_data_json) {
+                        $form_data_array = json_decode($form_data_json, true);
+                        if (json_last_error() !== JSON_ERROR_NONE) {
+                            $error_message = "Error decoding form data: " . json_last_error_msg();
+                            $form_data_array = null; // Clear on error
                         }
                     } else {
-                        error_log("Error executing patient authorization statement: " . $stmt_patient->error);
-                        $db_error_message = "An error occurred during patient authorization.";
+                        $error_message = "No form data found for this submission.";
                     }
-                    $stmt_patient->close();
                 }
             } else {
-                $error_message = "Submission not found with ID: " . htmlspecialchars($submission_id);
+                $error_message = "Patient associated with this submission not found.";
             }
         } else {
-            error_log("Error executing submission fetch statement: " . $stmt_submission->error);
-            $db_error_message = "An error occurred while fetching submission data.";
+            $error_message = "Submission not found with ID: " . htmlspecialchars($submission_id);
         }
-        $stmt_submission->close();
+    } catch (PDOException $e) {
+        error_log("Database error on view_submission_detail.php: " . $e->getMessage());
+        $db_error_message = "A database error occurred. Please try again or contact support.";
+        // Optional: ErrorHandler::handleException($e);
     }
 }
 
@@ -159,6 +148,6 @@ include_once $path_to_root . 'includes/header.php';
 </div>
 
 <?php
-// $mysqli->close(); // Connection can be closed at the end by PHP or db_connect
+// No explicit $mysqli->close() or $stmt->close() needed with PDO and Database class
 include_once $path_to_root . 'includes/footer.php';
 ?>

@@ -10,7 +10,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'clinician') {
     exit();
 }
 
-require_once $path_to_root . 'includes/db_connect.php'; // $mysqli connection object
+require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
+require_once $path_to_root . 'includes/Database.php';    // Provides Database class
+
+$db = new Database($pdo); // Instantiate Database class
 
 $patient_id = null;
 $patient_details = null;
@@ -29,27 +32,22 @@ $current_clinician_id = $_SESSION['user_id'];
 
 // 2. Fetch Patient Details from Database
 // Ensure the patient is assigned to the current clinician for authorization
-$stmt_patient = $mysqli->prepare("SELECT id, first_name, last_name, date_of_birth FROM patients WHERE id = ? AND assigned_clinician_id = ?");
-if ($stmt_patient === false) {
-    error_log("Error preparing statement to fetch patient details: " . $mysqli->error);
-    $db_error_message = "An error occurred while preparing to fetch patient data.";
-} else {
-    $stmt_patient->bind_param("ii", $patient_id, $current_clinician_id);
-    if ($stmt_patient->execute()) {
-        $result_patient = $stmt_patient->get_result();
-        if ($result_patient->num_rows > 0) {
-            $patient_details = $result_patient->fetch_assoc();
-        } else {
-            $error_message = "Patient not found or you are not authorized to view this patient's history.";
-        }
-    } else {
-        error_log("Error executing statement to fetch patient details: " . $stmt_patient->error);
-        $db_error_message = "An error occurred while fetching patient data.";
+try {
+    $sql_patient = "SELECT id, first_name, last_name, date_of_birth FROM patients WHERE id = :patient_id AND assigned_clinician_id = :clinician_id";
+    $stmt_patient = $db->prepare($sql_patient);
+    $db->execute($stmt_patient, [':patient_id' => $patient_id, ':clinician_id' => $current_clinician_id]);
+    $patient_details = $db->fetch($stmt_patient);
+
+    if (!$patient_details) {
+        $error_message = "Patient not found or you are not authorized to view this patient's history.";
     }
-    $stmt_patient->close();
+} catch (PDOException $e) {
+    error_log("Error fetching patient details: " . $e->getMessage());
+    $db_error_message = "An error occurred while fetching patient data.";
+    // Optional: ErrorHandler::handleException($e);
 }
 
-// 3. Fetch Form Submissions if patient details were found
+// 3. Fetch Form Submissions if patient details were found and no DB error occurred for patient fetch
 if ($patient_details && empty($db_error_message)) {
     $sql_submissions = "
         SELECT 
@@ -65,27 +63,18 @@ if ($patient_details && empty($db_error_message)) {
         WHERE pfs.patient_id = ? 
         ORDER BY pfs.submission_timestamp DESC";
     
-    $stmt_submissions = $mysqli->prepare($sql_submissions);
-
-    if ($stmt_submissions === false) {
-        error_log("Error preparing statement to fetch form submissions: " . $mysqli->error);
-        $db_error_message = "An error occurred while preparing to fetch submission history.";
-    } else {
-        $stmt_submissions->bind_param("i", $patient_id);
-        if ($stmt_submissions->execute()) {
-            $result_submissions = $stmt_submissions->get_result();
-            while ($row = $result_submissions->fetch_assoc()) {
-                $submissions[] = $row;
-            }
-        } else {
-            error_log("Error executing statement to fetch form submissions: " . $stmt_submissions->error);
-            $db_error_message = "An error occurred while fetching submission history.";
-        }
-        $stmt_submissions->close();
+    try {
+        $stmt_submissions = $db->prepare($sql_submissions);
+        $db->execute($stmt_submissions, [':patient_id' => $patient_id]);
+        $submissions = $db->fetchAll($stmt_submissions);
+    } catch (PDOException $e) {
+        error_log("Error fetching form submissions: " . $e->getMessage());
+        $db_error_message = "An error occurred while fetching submission history.";
+        // Optional: ErrorHandler::handleException($e);
     }
 }
 
-// $mysqli->close(); // Connection can be closed at the end by PHP or db_connect
+// No explicit $mysqli->close() or $stmt->close() needed with PDO and Database class
 
 $page_title = "Patient Form History";
 include_once $path_to_root . 'includes/header.php';

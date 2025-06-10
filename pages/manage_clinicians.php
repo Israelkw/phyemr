@@ -11,26 +11,25 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'admin') {
 }
 
 // $path_to_root is already defined above
-require_once $path_to_root . 'includes/db_connect.php'; // Database connection
+require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
+require_once $path_to_root . 'includes/Database.php';    // Provides Database class
 
-$users_from_db = [];
-$db_error_message = '';
+$db = new Database($pdo); // Instantiate Database class
 
-// Fetch users from the database
-$sql_users = "SELECT id, username, first_name, last_name, role, is_active FROM users ORDER BY role, username";
-$result_users = $mysqli->query($sql_users);
+$users_from_db = []; // Ensure it's initialized
+$db_error_message = ''; // Ensure it's initialized
 
-if ($result_users) {
-    while ($row = $result_users->fetch_assoc()) {
-        $users_from_db[] = $row;
-    }
-    $result_users->free();
-} else {
-    // Handle query error
-    error_log("Error fetching users: " . $mysqli->error);
-    $db_error_message = "Could not load user list. Please try again or contact support.";
+try {
+    $sql_users = "SELECT id, username, first_name, last_name, role, is_active FROM users ORDER BY role, username";
+    $stmt_users = $db->prepare($sql_users);
+    $db->execute($stmt_users);
+    $users_from_db = $db->fetchAll($stmt_users);
+} catch (PDOException $e) {
+    error_log("Error fetching users: " . $e->getMessage());
+    $db_error_message = "Could not load user list due to a database error. Please try again or contact support.";
+    // Optionally, call ErrorHandler::handleException($e) if general error page redirection is preferred.
+    // For this page, displaying the error message on the page itself is acceptable.
 }
-// $mysqli->close(); // Connection might be used by footer or closed by PHP automatically
 
 $page_title = "Manage Users"; // Changed title to reflect it manages all users
 require_once $path_to_root . 'includes/header.php'; 
