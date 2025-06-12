@@ -10,7 +10,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'clinician') {
     exit();
 }
 
-require_once $path_to_root . 'includes/db_connect.php'; // $mysqli connection object
+require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
+require_once $path_to_root . 'includes/Database.php';    // Provides Database class
+$db = new Database($pdo); // Instantiate Database class
 
 $page_title = "Select Patient for Form";
 include_once $path_to_root . 'includes/header.php';
@@ -20,32 +22,22 @@ $db_error_message = '';   // To store any database error messages
 
 if (isset($_SESSION['user_id'])) {
     $clinician_id = $_SESSION['user_id'];
-
-    $sql = "SELECT id, first_name, last_name, date_of_birth FROM patients WHERE assigned_clinician_id = ? ORDER BY last_name, first_name";
-    $stmt = $mysqli->prepare($sql);
-
-    if ($stmt === false) {
-        error_log("Error preparing statement to fetch clinician's patients: " . $mysqli->error);
-        $db_error_message = "An error occurred while preparing to fetch patient data. Please try again later.";
-    } else {
-        $stmt->bind_param("i", $clinician_id);
-        if ($stmt->execute()) {
-            $result = $stmt->get_result();
-            while ($row = $result->fetch_assoc()) {
-                $clinician_patients[] = $row;
-            }
-            $stmt->close();
-        } else {
-            error_log("Error executing statement to fetch clinician's patients: " . $stmt->error);
-            $db_error_message = "An error occurred while fetching patient data. Please try again later.";
-            $stmt->close();
-        }
+    try {
+        $sql = "SELECT id, first_name, last_name, date_of_birth FROM patients WHERE assigned_clinician_id = :clinician_id ORDER BY last_name, first_name";
+        $stmt = $db->prepare($sql);
+        $db->execute($stmt, [':clinician_id' => $clinician_id]);
+        $clinician_patients = $db->fetchAll($stmt);
+    } catch (PDOException $e) {
+        error_log("Error fetching clinician's patients (select_patient_for_form): " . $e->getMessage());
+        $db_error_message = "An error occurred while fetching patient data. Please try again later.";
+        // Optional: ErrorHandler::handleException($e);
     }
 } else {
     // This case should ideally not be reached due to the session check at the top
+    // However, if it is, SessionManager::ensureUserIsLoggedIn would have already handled it.
+    // For robustness, ensure a message if somehow bypassed.
     $db_error_message = "User session not found. Please log in again.";
 }
-// $mysqli->close(); // Connection closed at end of script by PHP or db_connect.php
 
 ?>
 
