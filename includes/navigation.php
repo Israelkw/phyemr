@@ -1,8 +1,11 @@
 <?php
+error_log("DEBUG: Navigation - Execution Start");
 // session_start() should be called in header.php or before including this file.
 // Ensure $path_to_root is defined in the calling script for correct link paths.
 $base_path = isset($path_to_root) ? $path_to_root : '';
+error_log("DEBUG: Navigation - Base path: '" . $base_path . "' (derived from path_to_root: '" . (isset($path_to_root) ? $path_to_root : 'Not Set') . "')");
 $current_page = basename($_SERVER['SCRIPT_NAME']);
+error_log("DEBUG: Navigation - Current page: '" . $current_page . "'");
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
@@ -15,7 +18,9 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                 <li class="nav-item">
                     <a class="nav-link<?php if ($current_page == 'index.php') echo ' active'; ?>" href="<?php echo $base_path; ?>index.php">Home</a>
                 </li>
-                <?php if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])): ?>
+                <?php if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])):
+                    error_log("DEBUG: Navigation - User is logged in. User ID: " . ($_SESSION["user_id"] ?? 'N/A') . ", Role: " . ($_SESSION["role"] ?? 'N/A'));
+                ?>
                     <li class="nav-item">
                         <a class="nav-link<?php if ($current_page == 'dashboard.php') echo ' active'; ?>" href="<?php echo $base_path; ?>pages/dashboard.php">Dashboard</a>
                     </li>
@@ -52,7 +57,9 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                     <li class="nav-item">
                         <a class="nav-link<?php if ($current_page == 'logout.php') echo ' active'; ?>" href="<?php echo $base_path; ?>pages/logout.php">Logout (<?php echo htmlspecialchars(isset($_SESSION["username"]) ? $_SESSION["username"] : ''); ?>)</a>
                     </li>
-                <?php else: ?>
+                <?php else:
+                    error_log("DEBUG: Navigation - User is not logged in (showing Login link).");
+                ?>
                     <li class="nav-item">
                         <a class="nav-link<?php if ($current_page == 'login.php') echo ' active'; ?>" href="<?php echo $base_path; ?>pages/login.php">Login</a>
                     </li>
@@ -64,8 +71,10 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 <div class="session-message-area container"> <!-- Area for global messages if needed -->
     <?php
     if (isset($_SESSION['message'])) {
+        error_log("DEBUG: Navigation - Displaying session message: '" . ($_SESSION['message'] ?? 'No message set') . "'");
         echo '<p class="session-message global-message">' . htmlspecialchars($_SESSION['message']) . '</p>';
         unset($_SESSION['message']);
     }
     ?>
 </div>
+<?php error_log("DEBUG: Navigation - Execution End"); ?>
