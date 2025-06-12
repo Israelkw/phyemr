@@ -59,56 +59,49 @@ if ($form_file_basename !== $form_name_from_url || !file_exists($form_file_path)
     exit();
 }
 
-// Connect to DB to get patient name for display (as session method is removed)
-require_once $path_to_root . 'includes/db_connect.php';
+// Connect to DB to get patient name for display
+require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
+require_once $path_to_root . 'includes/Database.php';    // Provides Database class
+$db = new Database($pdo); // Instantiate Database class
+
 $patient_full_name = "Patient"; // Default
-$stmt_patient_name = $mysqli->prepare("SELECT first_name, last_name FROM patients WHERE id = ?");
-if ($stmt_patient_name) {
-    $stmt_patient_name->bind_param("i", $selected_patient_id);
-    if ($stmt_patient_name->execute()) {
-        $result_patient_name = $stmt_patient_name->get_result();
-        if ($patient_details_db = $result_patient_name->fetch_assoc()) {
-            $patient_full_name = htmlspecialchars($patient_details_db['first_name'] . " " . $patient_details_db['last_name']);
-        } else {
-            $_SESSION['message'] = "Patient details not found in database. Please re-select the patient.";
-            $stmt_patient_name->close();
-            header("Location: " . $select_patient_page);
-            exit();
-        }
+
+try {
+    $stmt_patient_name = $db->prepare("SELECT first_name, last_name FROM patients WHERE id = :id");
+    $db->execute($stmt_patient_name, [':id' => $selected_patient_id]);
+    $patient_details_db = $db->fetch($stmt_patient_name);
+
+    if ($patient_details_db) {
+        $patient_full_name = htmlspecialchars($patient_details_db['first_name'] . " " . $patient_details_db['last_name']);
     } else {
-        error_log("Error executing patient name fetch: " . $stmt_patient_name->error);
-        $_SESSION['message'] = "Error fetching patient details.";
-        $stmt_patient_name->close();
+        $_SESSION['message'] = "Patient details not found in database. Please re-select the patient.";
         header("Location: " . $select_patient_page);
         exit();
     }
-    $stmt_patient_name->close();
-} else {
-    error_log("Error preparing patient name fetch: " . $mysqli->error);
-    $_SESSION['message'] = "Database error fetching patient details.";
+} catch (PDOException $e) {
+    error_log("Database error fetching patient name: " . $e->getMessage());
+    $_SESSION['message'] = "Database error fetching patient details. Please try again or contact support.";
     header("Location: " . $select_patient_page);
     exit();
 }
 
 // Check if the requested form is a clinical evaluation form and if general info is filled
 if ($form_directory_from_url === 'patient_evaluation_form') {
-    $check_stmt = $mysqli->prepare("SELECT COUNT(*) as count FROM patient_form_submissions WHERE patient_id = ? AND form_name = 'general-information.html' AND form_directory = 'patient_general_info'");
-    if (!$check_stmt) {
-        error_log("MySQLi prepare error (check general info form): " . $mysqli->error);
-        $_SESSION['message'] = "Error checking for general information form. Please try again.";
-        header("Location: dashboard.php"); // Or $select_patient_page
-        exit();
-    }
-    $check_stmt->bind_param("i", $selected_patient_id);
-    $check_stmt->execute();
-    $result = $check_stmt->get_result();
-    $row = $result->fetch_assoc();
-    $check_stmt->close();
+    try {
+        $check_stmt = $db->prepare("SELECT COUNT(*) as count FROM patient_form_submissions WHERE patient_id = :patient_id AND form_name = 'general-information.html' AND form_directory = 'patient_general_info'");
+        $db->execute($check_stmt, [':patient_id' => $selected_patient_id]);
+        $row = $db->fetch($check_stmt); // Fetches the single row with the count
 
-    if ($row['count'] == 0) {
-        $_SESSION['message'] = "Please fill out the General Information form for this patient before accessing clinical evaluations.";
-        // Redirect to the general-information.html form
-        header("Location: fill_patient_form.php?form_name=general-information.html&form_directory=patient_general_info&patient_id=" . urlencode($selected_patient_id));
+        if ($row && $row['count'] == 0) {
+            $_SESSION['message'] = "Please fill out the General Information form for this patient before accessing clinical evaluations.";
+            // Redirect to the general-information.html form
+            header("Location: fill_patient_form.php?form_name=general-information.html&form_directory=patient_general_info&patient_id=" . urlencode($selected_patient_id));
+            exit();
+        }
+    } catch (PDOException $e) {
+        error_log("Database error checking for general info form: " . $e->getMessage());
+        $_SESSION['message'] = "Error checking for general information form. Please try again or contact support.";
+        header("Location: dashboard.php"); // Or $select_patient_page
         exit();
     }
 }

@@ -12,31 +12,23 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== 'nurse') {
 
 $page_title = "Select Patient";
 require_once $path_to_root . 'includes/header.php';
-require_once $path_to_root . 'includes/db_connect.php'; // $mysqli connection object
+require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
+require_once $path_to_root . 'includes/Database.php';    // Provides Database class
+$db = new Database($pdo); // Instantiate Database class
 
 $patients = []; // Initialize to ensure it's an array
 $db_error_message = '';   // To store any database error messages
 
-$sql = "SELECT id, first_name, last_name, date_of_birth FROM patients ORDER BY last_name, first_name";
-$stmt = $mysqli->prepare($sql);
-
-if ($stmt === false) {
-    error_log("Error preparing statement to fetch all patients: " . $mysqli->error);
-    $db_error_message = "An error occurred while preparing to fetch patient data. Please try again later.";
-} else {
-    if ($stmt->execute()) {
-        $result = $stmt->get_result();
-        while ($row = $result->fetch_assoc()) {
-            $patients[] = $row;
-        }
-        $stmt->close();
-    } else {
-        error_log("Error executing statement to fetch all patients: " . $stmt->error);
-        $db_error_message = "An error occurred while fetching patient data. Please try again later.";
-        $stmt->close();
-    }
+try {
+    $sql = "SELECT id, first_name, last_name, date_of_birth FROM patients ORDER BY last_name, first_name";
+    $stmt = $db->prepare($sql);
+    $db->execute($stmt);
+    $patients = $db->fetchAll($stmt);
+} catch (PDOException $e) {
+    error_log("Error fetching all patients: " . $e->getMessage());
+    $db_error_message = "An error occurred while fetching patient data. Please try again later.";
+    // Optional: ErrorHandler::handleException($e);
 }
-// $mysqli->close(); // Connection closed at end of script by PHP or db_connect.php
 
 ?>
 

@@ -24,38 +24,33 @@ $patient_id = $_GET['patient_id'];
 $_SESSION['selected_patient_id_for_form'] = $patient_id;
 
 // 4. Fetch patient details from database
+require_once $path_to_root . 'includes/Database.php'; // Ensure Database class is included
+$db = new Database($pdo); // $pdo is from db_connect.php already included
+
 $patient_name = "Selected Patient"; // Default name
+$db_error_message = null;
 
-$stmt = $mysqli->prepare("SELECT first_name, last_name FROM patients WHERE id = ?");
-if ($stmt === false) {
-    error_log("Error preparing statement to fetch patient name: " . $mysqli->error);
-    $_SESSION['message'] = "An error occurred while fetching patient details.";
-    header("Location: select_patient_for_form.php"); // Sibling page
-    exit();
-}
+try {
+    $sql_patient = "SELECT first_name, last_name FROM patients WHERE id = :patient_id";
+    $stmt_patient = $db->prepare($sql_patient);
+    $db->execute($stmt_patient, [':patient_id' => $patient_id]);
+    $patient_db = $db->fetch($stmt_patient);
 
-$stmt->bind_param("i", $patient_id); // Assuming patient_id is an integer
-
-if ($stmt->execute()) {
-    $result = $stmt->get_result();
-    if ($patient_db = $result->fetch_assoc()) {
+    if ($patient_db) {
         $patient_name = htmlspecialchars($patient_db['first_name'] . " " . $patient_db['last_name']);
     } else {
         // Patient not found in database
         $_SESSION['message'] = "Selected patient not found in the database (ID: " . htmlspecialchars($patient_id) . ").";
-        $stmt->close();
-        header("Location: select_patient_for_form.php");
+        header("Location: select_patient_for_form.php"); // Redirect to self or patient selection
         exit();
     }
-    $stmt->close();
-} else {
-    error_log("Error executing statement to fetch patient name: " . $stmt->error);
-    $_SESSION['message'] = "An error occurred while retrieving patient information.";
-    $stmt->close();
-    header("Location: select_patient_for_form.php"); // Sibling page
+} catch (PDOException $e) {
+    error_log("Error fetching patient name (select_form_for_patient): " . $e->getMessage());
+    $_SESSION['message'] = "An error occurred while fetching patient details. Please try again or contact support.";
+    // $db_error_message = $_SESSION['message']; // Optionally set for display on current page if not redirecting
+    header("Location: select_patient_for_form.php"); // Redirect on error
     exit();
 }
-// $mysqli->close(); // Connection closed at end of script
 
 // 5. Set page title
 $page_title = "Select Form for " . $patient_name; // $patient_name is now from DB
