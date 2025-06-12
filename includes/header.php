@@ -1,6 +1,8 @@
 <?php
+error_log("DEBUG: Header - Execution Start. Path to root: " . (isset($path_to_root) ? $path_to_root : 'Not Set'));
 require_once __DIR__ . '/SessionManager.php'; // Ensure SessionManager is available
 SessionManager::startSession(); // Centralized session start
+error_log("DEBUG: Header - After SessionManager include and start. Session ID: " . session_id());
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,8 +14,14 @@ SessionManager::startSession(); // Centralized session start
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo isset($path_to_root) ? $path_to_root : ''; ?>css/style.css">
+    <?php error_log("DEBUG: Header - Head section processed. Page title: " . (isset($page_title) ? $page_title : 'Not Set')); ?>
 </head>
 <body>
     <div class="page-container"> <!-- Wrapper for overall page content -->
-        <?php include_once 'navigation.php'; // Include navigation ?>
+        <?php
+        error_log("DEBUG: Header - Before Navigation Include");
+        include_once 'navigation.php'; // Include navigation
+        error_log("DEBUG: Header - After Navigation Include");
+        ?>
+        <?php error_log("DEBUG: Header - End of header.php, before main content tag"); ?>
         <main class="main-content container"> <!-- Main content area -->
