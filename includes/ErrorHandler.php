@@ -24,8 +24,8 @@ class ErrorHandler {
         // For this subtask, we will redirect to a generic error page.
         // A more sophisticated approach might check the context (e.g., current page or type of exception)
         // For now, all exceptions handled by this will go to pages/error.php
-        // Using a root-relative path assuming 'pages' is directly under the web root.
-        header('Location: /pages/error.php');
+        // Reverting to relative path, assuming ErrorHandler.php is in includes/ and error.php is in pages/
+        header('Location: ../pages/error.php');
         exit;
     }
 
