@@ -1,32 +1,23 @@
 <?php
-error_log("DEBUG: Dashboard - Execution Start");
 $path_to_root = "../"; // Define $path_to_root for includes, moved up for SessionManager
 require_once $path_to_root . 'includes/SessionManager.php';
-error_log("DEBUG: Dashboard - After SessionManager include");
 SessionManager::startSession();
-error_log("DEBUG: Dashboard - After Session Start. Session ID: " . session_id());
 
-error_log("DEBUG: Dashboard - Before Auth Check. User ID isset: " . (isset($_SESSION["user_id"]) ? 'Yes' : 'No') . ", Role isset: " . (isset($_SESSION["role"]) ? 'Yes' : 'No'));
 // Check if the user is logged in, if not then redirect to login page
 if (!isset($_SESSION["user_id"]) || !isset($_SESSION["role"])) {
-    error_log("DEBUG: Dashboard - Auth Check Failed. Redirecting to login.php"); // New log
     // Set a message for the login page if desired
     $_SESSION['message'] = "You must be logged in to view the dashboard.";
     header("location: login.php");
     exit;
 }
-error_log("DEBUG: Dashboard - Auth Check Passed.");
 
 $page_title = "Dashboard";
 // $path_to_root is already defined above
-error_log("DEBUG: Dashboard - Before Header Include");
 require_once $path_to_root . 'includes/header.php'; 
-error_log("DEBUG: Dashboard - After Header Include");
 // The header will include navigation.php which displays $_SESSION['message']
 // The <main class="main-content container"> is already provided by header.php
 ?>
     <?php
-    error_log("DEBUG: Dashboard - Before HTML content generation");
     $user_role = isset($_SESSION['role']) ? $_SESSION['role'] : 'Guest';
     $user_first_name = isset($_SESSION['first_name']) ? $_SESSION['first_name'] : '';
     ?>
@@ -90,6 +81,5 @@ error_log("DEBUG: Dashboard - After Header Include");
         <?php endif; ?>
     </div>
 <?php
-error_log("DEBUG: Dashboard - Before Footer Include (End of main content)");
 require_once $path_to_root . 'includes/footer.php';
 ?>

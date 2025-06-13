@@ -60,7 +60,7 @@ if ($patient_details && empty($db_error_message)) {
             u.last_name AS submitter_last_name
         FROM patient_form_submissions pfs
         LEFT JOIN users u ON pfs.submitted_by_user_id = u.id
-        WHERE pfs.patient_id = ? 
+        WHERE pfs.patient_id = :patient_id
         ORDER BY pfs.submission_timestamp DESC";
     
     try {
