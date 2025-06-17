@@ -117,18 +117,55 @@ include_once $path_to_root . 'includes/header.php';
                 </thead>
                 <tbody>
                     <?php foreach ($form_data_array as $key => $value): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars(ucwords(str_replace('_', ' ', $key))); ?></td>
-                            <td>
-                                <?php 
-                                if (is_array($value)) {
-                                    echo nl2br(htmlspecialchars(print_r($value, true))); // Basic array display
+                        <?php
+                        // Normalize key for display
+                        $displayKey = htmlspecialchars(ucwords(str_replace('_', ' ', $key)));
+                        $displayValue = "";
+                        $shouldDisplayRow = true;
+
+                        if (is_array($value)) {
+                            // For arrays (e.g., checkbox groups, multi-selects)
+                            // Display if the array is not empty.
+                            // Join values with a comma for a cleaner look than print_r.
+                            if (!empty($value)) {
+                                $filtered_values = array_filter($value, function($item) { return $item !== null && $item !== ''; });
+                                if (!empty($filtered_values)) {
+                                    $displayValue = nl2br(htmlspecialchars(implode(', ', $filtered_values)));
                                 } else {
-                                    echo nl2br(htmlspecialchars($value)); 
+                                    $shouldDisplayRow = false; // Don't display if array was all empty/null
                                 }
-                                ?>
-                            </td>
-                        </tr>
+                            } else {
+                                $shouldDisplayRow = false; // Don't display empty arrays
+                            }
+                        } else {
+                            // For scalar values
+                            $trimmedValue = trim((string)$value); // Trim and cast to string
+
+                            // Define falsey and truthy values (lowercase for case-insensitive comparison)
+                            $falseyValues = ["0", "false", "no", "off"];
+                            // Empty string is handled separately to mean "don't display row"
+                            $truthyValues = ["1", "true", "yes", "on"];
+
+                            if ($trimmedValue === '') {
+                                 $shouldDisplayRow = false; // Don't display row for empty strings
+                            } elseif (in_array(strtolower($trimmedValue), $falseyValues, true)) {
+                                 $shouldDisplayRow = false; // Don't display row for "0", "false", "no", "off"
+                            } elseif (in_array(strtolower($trimmedValue), $truthyValues, true)) {
+                                // For "checked" or "true" representations, display a generic confirmation or just the label.
+                                // The key itself acts as the "corresponding text".
+                                $displayValue = "<em>Checked</em>"; // Or "Yes", or even left empty if the key is sufficient.
+                            } else {
+                                // Regular text data
+                                $displayValue = nl2br(htmlspecialchars($trimmedValue));
+                            }
+                        }
+                        ?>
+                        <?php if ($shouldDisplayRow): ?>
+                            <tr>
+                                <td><?php echo $displayKey; ?></td>
+                                <td><?php echo $displayValue; ?></td>
+                            </tr>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 </tbody>
             </table>
