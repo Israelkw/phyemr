@@ -52,7 +52,7 @@ try {
 
     function constraintExists($pdo, $tableName, $constraintName) {
         $sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
-                WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = ? AND CONSTRAINT_TYPE = 'FOREIGN KEY'";
+                WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$tableName, $constraintName]);
         return $stmt->fetchColumn() > 0;
@@ -60,7 +60,7 @@ try {
 
     function getForeignKeyDefinition($pdo, $tableName, $constraintName) {
         $sql = "SELECT DELETE_RULE FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS
-                WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = ? AND CONSTRAINT_TYPE = 'FOREIGN KEY'";
+                WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$tableName, $constraintName]);
         return $stmt->fetchColumn();
