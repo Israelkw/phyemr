@@ -59,7 +59,7 @@ try {
     }
 
     function getForeignKeyDefinition($pdo, $tableName, $constraintName) {
-        $sql = "SELECT REFERENTIAL_INTEGRITY_RULE FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS
+        $sql = "SELECT DELETE_RULE FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS
                 WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = ? AND CONSTRAINT_TYPE = 'FOREIGN KEY'";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$tableName, $constraintName]);
