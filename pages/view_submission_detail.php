@@ -144,7 +144,7 @@ include_once $path_to_root . 'includes/header.php';
                             // Define falsey and truthy values (lowercase for case-insensitive comparison)
                             $falseyValues = ["0", "false", "no", "off"];
                             // Empty string is handled separately to mean "don't display row"
-                            $truthyValues = ["1", "true", "yes", "on"];
+                            $truthyValues = ["1", "true", "yes", "on", "checked"];
 
                             if ($trimmedValue === '') {
                                  $shouldDisplayRow = false; // Don't display row for empty strings
