@@ -24,7 +24,7 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Error</title>
-    <link rel="stylesheet" href="../assets/css/style.css"> <!-- Assuming a general stylesheet exists -->
+    <link rel="stylesheet" href="../css/style.css"> <!-- Corrected path -->
     <style>
         .error-container {
             text-align: center;
