@@ -39,20 +39,49 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search_term'])) {
     $search_term = trim($_GET['search_term']);
     if (!empty($search_term)) {
         try {
-            // Search by name (first or last) or patient ID
+            $params = [];
+            $sql_base = "SELECT patients.id, patients.first_name, patients.last_name, patients.date_of_birth,
+                                u_assigned.first_name as assigned_fn, u_assigned.last_name as assigned_ln,
+                                u_assigned.username as assigned_username
+                         FROM patients
+                         LEFT JOIN users u_assigned ON patients.assigned_clinician_id = u_assigned.id";
+            $where_clauses = [];
+
+            if (is_numeric($search_term)) {
+                $where_clauses[] = "patients.id = :search_id";
+                $params[':search_id'] = $search_term;
+            }
+
+            // Always search by name regardless of whether it's numeric, as an ID could be part of a name or vice-versa.
+            // Or, make it an OR condition if numeric, and also search names.
+            // For simplicity, let's allow search term to match ID OR name fields.
+            // The previous query `patients.id = :search_id OR patients.first_name LIKE :search_name OR patients.last_name LIKE :search_name`
+            // is actually fine if :search_id is bound to the same $search_term. PDO handles type casting.
+            // The issue is more likely data not existing or a different subtle problem.
+
+            // Reverting to a slightly modified version of the original for less disruptive change first.
+            // Ensure parameter names are distinct if they were to hold different values.
             $sql_search = "SELECT patients.id, patients.first_name, patients.last_name, patients.date_of_birth,
                                   u_assigned.first_name as assigned_fn, u_assigned.last_name as assigned_ln,
                                   u_assigned.username as assigned_username
                            FROM patients
                            LEFT JOIN users u_assigned ON patients.assigned_clinician_id = u_assigned.id
-                           WHERE patients.id = :search_id OR patients.first_name LIKE :search_name OR patients.last_name LIKE :search_name
+                           WHERE patients.id = :search_term_id OR patients.first_name LIKE :search_term_name OR patients.last_name LIKE :search_term_name
                            ORDER BY patients.last_name, patients.first_name";
+
             $stmt_search = $db->prepare($sql_search);
-            $db->execute($stmt_search, [
-                ':search_id' => $search_term,
-                ':search_name' => "%" . $search_term . "%"
-            ]);
+            $execute_params = [
+                ':search_term_id' => $search_term, // Let PDO handle if it's not a number for this part
+                ':search_term_name' => "%" . $search_term . "%"
+            ];
+            $db->execute($stmt_search, $execute_params);
             $search_results = $db->fetchAll($stmt_search);
+
+            // For debugging, one might add:
+            // if (empty($search_results)) {
+            //     error_log("No results for search term: " . $search_term . " with params: " . json_encode($execute_params));
+            // }
+
         } catch (PDOException $e) {
             error_log("Error searching patients: " . $e->getMessage());
             SessionManager::set('error_message', "An error occurred while searching for patients.");
