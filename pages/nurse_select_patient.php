@@ -66,7 +66,7 @@ try {
                         <td><?php echo htmlspecialchars($patient['last_name']); ?></td>
                         <td><?php echo htmlspecialchars($patient['date_of_birth']); ?></td>
                         <td>
-                            <a href="nurse_select_form.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>" class="btn btn-primary btn-sm">Select</a>
+                            <a href="fill_patient_form.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>&form_name=vital_signs.html&form_directory=patient_general_info" class="btn btn-primary btn-sm">Enter Vitals</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
