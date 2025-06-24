@@ -27,83 +27,89 @@ if (!SessionManager::validateCsrfToken($submitted_token)) {
     echo json_encode(['error' => 'Invalid or missing CSRF token.']);
     exit;
 }
-unset($data['csrf_token']); // Remove CSRF token from data to prevent saving
+unset($data['csrf_token']); // Remove CSRF token from the main data array as it's already validated
 
 // Basic initial validation
 $patient_id = $data['patient_id'] ?? null;
-// 'clinician_id' from JS corresponds to 'submitted_by_user_id'
-$submitted_by_user_id = $data['clinician_id'] ?? ($_SESSION['user_id'] ?? null);
+$submitted_by_user_id = $data['clinician_id'] ?? ($_SESSION['user_id'] ?? null); // 'clinician_id' from JS
 $form_name = $data['form_name'] ?? 'unknown_form';
+$fields_array = $data['fields'] ?? []; // This is the new array of field objects
 
-if (empty($patient_id) || empty($submitted_by_user_id) || $form_name === 'unknown_form') {
-    echo json_encode(['error' => 'Missing required data: patient_id, submitted_by_user_id, or form_name.']);
+if (empty($patient_id) || empty($submitted_by_user_id) || $form_name === 'unknown_form' || !is_array($fields_array)) {
+    echo json_encode(['error' => 'Missing required data: patient_id, submitted_by_user_id, form_name, or fields array.']);
     exit;
 }
 
-// Helper function to extract value from data array using multiple possible keys
-function get_field_value($data_array, $keys, $default = null) { // Renamed $data to $data_array to avoid conflict
-    foreach ($keys as $key) {
-        if (isset($data_array[$key]) && $data_array[$key] !== '') {
-            return $data_array[$key];
+// Helper function to find a field's value from the new 'fields' array structure
+// It searches for the first occurrence of a field name within a list of possible keys.
+function find_field_value_from_array(array $fields_array, array $possible_field_names, $default = null) {
+    foreach ($possible_field_names as $field_name_to_find) {
+        foreach ($fields_array as $field_object) {
+            if (isset($field_object['name']) && $field_object['name'] === $field_name_to_find) {
+                // Return the value if it's set and not an empty string.
+                // For checkboxes, 'value' might be 'checked', 'on', etc. or a specific value.
+                // If an empty string should be considered valid, this condition needs adjustment.
+                if (isset($field_object['value']) && $field_object['value'] !== '') {
+                    return $field_object['value'];
+                }
+                // If value is an empty string, it might be intentional, but for extraction
+                // to dedicated columns, we usually want non-empty.
+                // If an empty string is a valid distinct value, this logic might change.
+                // For now, if found but empty, we continue to check other possible keys or return default.
+            }
         }
     }
     return $default;
 }
 
-// Define keys for extraction
-$all_extracted_keys = [];
-
+// Define keys for extraction (these are the 'name' attributes from form elements)
 $treating_clinician_keys = ['treating_clinician', 'GA_B5_TreatingClinician', 'PA_P1_B5_TreatingClinician'];
-$all_extracted_keys = array_merge($all_extracted_keys, $treating_clinician_keys);
 $chief_complaint_keys = ['chief-complaint', 'chief_complaint', 'GA_B6_ChiefComplaint', 'PA_P1_B6_ChiefComplaint', 'presenting_complaint'];
-$all_extracted_keys = array_merge($all_extracted_keys, $chief_complaint_keys);
 $eval_diag_keys = ['medical-diagnosis', 'evaluation_summary_diagnosis', 'GA2_B8_PtDiagnosis', 'PA_P3_B1_Assessment', 'cervical_specific_diagnosis', 'lumbar_specific_diagnosis', 'thoracic_specific_diagnosis', 'neuro_specific_diagnosis', 'pediatric_specific_diagnosis', 'diagnosis'];
-$all_extracted_keys = array_merge($all_extracted_keys, $eval_diag_keys);
 $submission_notes_keys = ['submission_notes', 'notes', 'assessment_notes', 'general_notes'];
-$all_extracted_keys = array_merge($all_extracted_keys, $submission_notes_keys);
 
 // Vitals keys
-$temperature_keys = ['temperature', 'temp', 'vital_temperature']; $all_extracted_keys = array_merge($all_extracted_keys, $temperature_keys);
-$pulse_rate_keys = ['pulse-rate', 'pulse', 'vital_pulse_rate']; $all_extracted_keys = array_merge($all_extracted_keys, $pulse_rate_keys);
-$bp_systolic_keys = ['bp-systolic', 'systolic', 'bp_sys', 'vital_bp_systolic']; $all_extracted_keys = array_merge($all_extracted_keys, $bp_systolic_keys);
-$bp_diastolic_keys = ['bp-diastolic', 'diastolic', 'bp_dia', 'vital_bp_diastolic']; $all_extracted_keys = array_merge($all_extracted_keys, $bp_diastolic_keys);
-$respiratory_rate_keys = ['respiratory-rate', 'resp_rate', 'vital_respiratory_rate']; $all_extracted_keys = array_merge($all_extracted_keys, $respiratory_rate_keys);
-$oxygen_saturation_keys = ['oxygen-saturation', 'spo2', 'vital_oxygen_saturation']; $all_extracted_keys = array_merge($all_extracted_keys, $oxygen_saturation_keys);
-$height_cm_keys = ['height_cm', 'height', 'vital_height']; $all_extracted_keys = array_merge($all_extracted_keys, $height_cm_keys);
-$weight_kg_keys = ['weight_kg', 'weight', 'vital_weight']; $all_extracted_keys = array_merge($all_extracted_keys, $weight_kg_keys);
-$bmi_keys = ['bmi', 'vital_bmi']; $all_extracted_keys = array_merge($all_extracted_keys, $bmi_keys);
-$pain_scale_keys = ['pain-scale', 'pain', 'vital_pain_scale']; $all_extracted_keys = array_merge($all_extracted_keys, $pain_scale_keys);
+$temperature_keys = ['temperature', 'temp', 'vital_temperature'];
+$pulse_rate_keys = ['pulse-rate', 'pulse', 'vital_pulse_rate'];
+$bp_systolic_keys = ['bp-systolic', 'systolic', 'bp_sys', 'vital_bp_systolic'];
+$bp_diastolic_keys = ['bp-diastolic', 'diastolic', 'bp_dia', 'vital_bp_diastolic'];
+$respiratory_rate_keys = ['respiratory-rate', 'resp_rate', 'vital_respiratory_rate'];
+$oxygen_saturation_keys = ['oxygen-saturation', 'spo2', 'vital_oxygen_saturation'];
+$height_cm_keys = ['height_cm', 'height', 'vital_height'];
+$weight_kg_keys = ['weight_kg', 'weight', 'vital_weight'];
+$bmi_keys = ['bmi', 'vital_bmi'];
+$pain_scale_keys = ['pain-scale', 'pain', 'vital_pain_scale'];
 
 // Clinical Details keys
-$allergies_keys = ['allergies', 'allergic-history', 'known_allergies']; $all_extracted_keys = array_merge($all_extracted_keys, $allergies_keys);
-$medical_history_summary_keys = ['medical_history_summary', 'history-of-present-illness', 'medical_history', 'PA_P1_B7_MedHistory']; $all_extracted_keys = array_merge($all_extracted_keys, $medical_history_summary_keys);
-$current_medications_keys = ['current_medications', 'medications', 'PA_P1_B8_Meds']; $all_extracted_keys = array_merge($all_extracted_keys, $current_medications_keys);
-$eval_treatment_plan_summary_keys = ['evaluation_treatment_plan_summary', 'treatment_plan', 'plan_of_care', 'PA_P3_B2_PlanOfCare']; $all_extracted_keys = array_merge($all_extracted_keys, $eval_treatment_plan_summary_keys);
-$eval_short_term_goals_keys = ['evaluation_short_term_goals', 'short_term_goals', 'PA_P3_B3_ShortTermGoals']; $all_extracted_keys = array_merge($all_extracted_keys, $eval_short_term_goals_keys);
-$eval_long_term_goals_keys = ['evaluation_long_term_goals', 'long_term_goals', 'PA_P3_B4_LongTermGoals']; $all_extracted_keys = array_merge($all_extracted_keys, $eval_long_term_goals_keys);
+$allergies_keys = ['allergies', 'allergic-history', 'known_allergies'];
+$medical_history_summary_keys = ['medical_history_summary', 'history-of-present-illness', 'medical_history', 'PA_P1_B7_MedHistory'];
+$current_medications_keys = ['current_medications', 'medications', 'PA_P1_B8_Meds'];
+$eval_treatment_plan_summary_keys = ['evaluation_treatment_plan_summary', 'treatment_plan', 'plan_of_care', 'PA_P3_B2_PlanOfCare'];
+$eval_short_term_goals_keys = ['evaluation_short_term_goals', 'short_term_goals', 'PA_P3_B3_ShortTermGoals'];
+$eval_long_term_goals_keys = ['evaluation_long_term_goals', 'long_term_goals', 'PA_P3_B4_LongTermGoals'];
 
-// Extract data for patient_form_submissions
-$treating_clinician = get_field_value($data, $treating_clinician_keys);
-$chief_complaint = get_field_value($data, $chief_complaint_keys);
-$evaluation_summary_diagnosis = get_field_value($data, $eval_diag_keys);
-$submission_notes = get_field_value($data, $submission_notes_keys);
+// Extract data for patient_form_submissions using the new helper
+$treating_clinician = find_field_value_from_array($fields_array, $treating_clinician_keys);
+$chief_complaint = find_field_value_from_array($fields_array, $chief_complaint_keys);
+$evaluation_summary_diagnosis = find_field_value_from_array($fields_array, $eval_diag_keys);
+$submission_notes = find_field_value_from_array($fields_array, $submission_notes_keys);
 
 // Extract data for submission_vitals
 $vitals_data = [
-    'temperature' => get_field_value($data, $temperature_keys),
-    'pulse_rate' => get_field_value($data, $pulse_rate_keys),
-    'bp_systolic' => get_field_value($data, $bp_systolic_keys),
-    'bp_diastolic' => get_field_value($data, $bp_diastolic_keys),
-    'respiratory_rate' => get_field_value($data, $respiratory_rate_keys),
-    'oxygen_saturation' => get_field_value($data, $oxygen_saturation_keys),
-    'height_cm' => get_field_value($data, $height_cm_keys),
-    'weight_kg' => get_field_value($data, $weight_kg_keys),
-    'bmi' => get_field_value($data, $bmi_keys),
-    'pain_scale' => get_field_value($data, $pain_scale_keys),
+    'temperature' => find_field_value_from_array($fields_array, $temperature_keys),
+    'pulse_rate' => find_field_value_from_array($fields_array, $pulse_rate_keys),
+    'bp_systolic' => find_field_value_from_array($fields_array, $bp_systolic_keys),
+    'bp_diastolic' => find_field_value_from_array($fields_array, $bp_diastolic_keys),
+    'respiratory_rate' => find_field_value_from_array($fields_array, $respiratory_rate_keys),
+    'oxygen_saturation' => find_field_value_from_array($fields_array, $oxygen_saturation_keys),
+    'height_cm' => find_field_value_from_array($fields_array, $height_cm_keys),
+    'weight_kg' => find_field_value_from_array($fields_array, $weight_kg_keys),
+    'bmi' => find_field_value_from_array($fields_array, $bmi_keys),
+    'pain_scale' => find_field_value_from_array($fields_array, $pain_scale_keys),
 ];
 $has_vitals_data = false;
 foreach ($vitals_data as $value) {
-    if ($value !== null) {
+    if ($value !== null) { // Note: find_field_value_from_array returns null if not found or empty after checks
         $has_vitals_data = true;
         break;
     }
@@ -111,12 +117,12 @@ foreach ($vitals_data as $value) {
 
 // Extract data for submission_clinical_details
 $clinical_details_data = [
-    'allergies' => get_field_value($data, $allergies_keys),
-    'medical_history_summary' => get_field_value($data, $medical_history_summary_keys),
-    'current_medications' => get_field_value($data, $current_medications_keys),
-    'evaluation_treatment_plan_summary' => get_field_value($data, $eval_treatment_plan_summary_keys),
-    'evaluation_short_term_goals' => get_field_value($data, $eval_short_term_goals_keys),
-    'evaluation_long_term_goals' => get_field_value($data, $eval_long_term_goals_keys),
+    'allergies' => find_field_value_from_array($fields_array, $allergies_keys),
+    'medical_history_summary' => find_field_value_from_array($fields_array, $medical_history_summary_keys),
+    'current_medications' => find_field_value_from_array($fields_array, $current_medications_keys),
+    'evaluation_treatment_plan_summary' => find_field_value_from_array($fields_array, $eval_treatment_plan_summary_keys),
+    'evaluation_short_term_goals' => find_field_value_from_array($fields_array, $eval_short_term_goals_keys),
+    'evaluation_long_term_goals' => find_field_value_from_array($fields_array, $eval_long_term_goals_keys),
 ];
 $has_clinical_details_data = false;
 foreach ($clinical_details_data as $value) {
@@ -127,35 +133,26 @@ foreach ($clinical_details_data as $value) {
 }
 
 // Determine form_directory (simple inference, can be expanded)
+// This uses $data['form_name'] which is still a top-level key in the payload
 $form_directory = 'unknown_directory';
-if (isset($data['form_name'])) {
-    $fn = $data['form_name'];
+if (isset($data['form_name'])) { // $form_name variable already holds $data['form_name']
+    $fn = $form_name;
     if (strpos($fn, 'general-information') !== false || strpos($fn, 'basic_info') !== false || strpos($fn, 'demo') !== false ) {
         $form_directory = 'patient_general_info';
     } elseif (strpos($fn, 'generalAssessmentForm') !== false || strpos($fn, 'cervical') !== false ||
               strpos($fn, 'lumbar') !== false || strpos($fn, 'neuro') !== false ||
-              strpos($fn, 'pediatric_assessment') !== false || strpos($fn, 'thoracic') !== false || // Corrected pediatric_assesment
+              strpos($fn, 'pediatric_assessment') !== false || strpos($fn, 'thoracic') !== false ||
               strpos($fn, 'evaluation') !== false ) {
         $form_directory = 'patient_evaluation_form';
     }
 }
 
-// Create $remaining_data for JSON storage
-$remaining_data = $data; // $data already has csrf_token removed
-$unique_extracted_keys = array_unique($all_extracted_keys);
-foreach ($unique_extracted_keys as $key_to_remove) {
-    unset($remaining_data[$key_to_remove]);
-}
-// Also remove keys that are part of the main table structure but not in $all_extracted_keys
-unset($remaining_data['patient_id']);
-unset($remaining_data['clinician_id']); // This was the key in JS payload for submitted_by_user_id
-unset($remaining_data['form_name']);
-// Note: 'treating_clinician' etc. are handled by $all_extracted_keys
+// The entire $fields_array (which contains {name, value, label} objects)
+// will be stored in the form_data column.
+$form_data_to_store_in_json = json_encode($fields_array);
 
-$form_data_to_store_in_json = json_encode($remaining_data);
 if ($form_data_to_store_in_json === false) {
-    // Handle JSON encoding error, perhaps log it
-    echo json_encode(['error' => 'Failed to encode remaining form data. JSON Error: ' . json_last_error_msg()]);
+    echo json_encode(['error' => 'Failed to encode fields array for storage. JSON Error: ' . json_last_error_msg()]);
     exit;
 }
 
