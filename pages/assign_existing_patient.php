@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search_term'])) {
     if (!empty($search_term)) {
         try {
             // Search by name (first or last) or patient ID
-            $sql_search = "SELECT id, first_name, last_name, date_of_birth,
+            $sql_search = "SELECT patients.id, patients.first_name, patients.last_name, patients.date_of_birth,
                                   u_assigned.first_name as assigned_fn, u_assigned.last_name as assigned_ln,
                                   u_assigned.username as assigned_username
                            FROM patients
