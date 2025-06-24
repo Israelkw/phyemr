@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search_term'])) {
 
             // Reverting to a slightly modified version of the original for less disruptive change first.
             // Ensure parameter names are distinct if they were to hold different values.
-            $sql_search = "SELECT patients.id, patients.first_name, patients.last_name, patients.date_of_birth,
+            $sql_search = "SELECT patients.id, patients.first_name, patients.last_name, patients.date_of_birth, patients.assigned_clinician_id,
                                   u_assigned.first_name as assigned_fn, u_assigned.last_name as assigned_ln,
                                   u_assigned.username as assigned_username
                            FROM patients
