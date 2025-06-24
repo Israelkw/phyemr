@@ -16,58 +16,66 @@ function initFormSubmissionHandler(formId, messageElementId) {
         messageElement.textContent = ''; // Clear previous messages
         messageElement.className = ''; // Clear previous classes
 
-        const formData = {};
+        const formElementsArray = [];
         const elements = form.elements;
+        const processedRadioGroups = new Set(); // To handle radio groups correctly
 
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
             if (element.name) {
+                const label = element.dataset.label || element.name; // Fallback to name if data-label is missing
+                let value = element.value;
+
                 switch (element.type) {
                     case 'checkbox':
                         if (element.checked) {
-                            // For single checkboxes like in the cervical form (where name implies one control or value is 'checked')
-                            // If multiple checkboxes could share a name (less common for this app's structure),
-                            // you'd handle it by pushing to an array:
-                            // if (formData[element.name]) {
-                            //     if (!Array.isArray(formData[element.name])) {
-                            //         formData[element.name] = [formData[element.name]];
-                            //     }
-                            //     formData[element.name].push(element.value);
-                            // } else {
-                            //     formData[element.name] = element.value;
-                            // }
-                            formData[element.name] = element.value; // Assigns the value attribute (e.g., "checked")
+                            formElementsArray.push({ name: element.name, value: value, label: label });
                         }
-                        // If an unchecked checkbox should send a specific value (e.g., '0' or 'false'),
-                        // add an 'else' block here. Standard behavior is to not send unchecked boxes.
+                        // Unchecked checkboxes are not included
                         break;
                     case 'radio':
-                        if (element.checked) {
-                            formData[element.name] = element.value;
+                        // Process radio group only once
+                        if (!processedRadioGroups.has(element.name)) {
+                            const checkedRadio = form.querySelector(`input[name="${element.name}"]:checked`);
+                            if (checkedRadio) {
+                                // Use the label from the actually checked radio button
+                                const checkedLabel = checkedRadio.dataset.label || checkedRadio.name;
+                                formElementsArray.push({ name: element.name, value: checkedRadio.value, label: checkedLabel });
+                            }
+                            processedRadioGroups.add(element.name);
                         }
                         break;
                     case 'select-multiple':
-                        formData[element.name] = [];
+                        const selectedOptions = [];
                         for (let j = 0; j < element.options.length; j++) {
                             if (element.options[j].selected) {
-                                formData[element.name].push(element.options[j].value);
+                                selectedOptions.push(element.options[j].value);
                             }
                         }
-                        // Optional: remove if no options selected, or server handles empty array.
-                        // if (formData[element.name].length === 0) {
-                        //     delete formData[element.name];
-                        // }
+                        if (selectedOptions.length > 0) {
+                            formElementsArray.push({ name: element.name, value: selectedOptions, label: label });
+                        }
+                        break;
+                    case 'button':
+                    case 'submit':
+                    case 'reset':
+                    case 'fieldset': // Fieldset elements don't have values in this context
+                        // Skip these elements
                         break;
                     default:
-                        // For all other input types (text, hidden, select-one, textarea, password, etc.)
-                        formData[element.name] = element.value;
+                        // For text, hidden, select-one, textarea, password, etc.
+                        // Only add if value is not empty, or if it's a hidden field (which might intentionally be empty)
+                        // This behavior can be adjusted based on requirements for empty fields.
+                        // For now, let's include them even if empty, server-side can filter if needed.
+                        formElementsArray.push({ name: element.name, value: value, label: label });
                         break;
                 }
             }
         }
 
+        const payload = {};
+
         // Retrieve patient_id and clinician_id from global window variables
-        // These should have been set by fill_patient_form.php
         if (typeof window.currentPatientId === 'undefined' || typeof window.currentClinicianId === 'undefined') {
             console.error('Patient ID or Clinician ID is not defined. Ensure they are set in fill_patient_form.php.');
             messageElement.textContent = 'Error: Critical patient or clinician information is missing. Cannot submit form.';
@@ -75,37 +83,31 @@ function initFormSubmissionHandler(formId, messageElementId) {
             return; // Prevent submission
         }
 
-        formData.patient_id = window.currentPatientId;
-        formData.clinician_id = window.currentClinicianId;
+        payload.patient_id = window.currentPatientId;
+        payload.clinician_id = window.currentClinicianId; // Server-side maps this to submitted_by_user_id
         
-        // form_name might also come from window.currentFormName if needed, 
-        // but existing logic takes it from form.name or formId.
-        // If window.currentFormName is more reliable, could use:
-        // formData.form_name = window.currentFormName || form.name || formId;
-        // For now, stick to existing form_name logic unless specified otherwise.
-        if (!formData.form_name && window.currentFormName) {
-             formData.form_name = window.currentFormName;
-        } else if (!formData.form_name) {
-            formData.form_name = form.name || formId; // Fallback if window.currentFormName also not set
+        if (window.currentFormName) {
+            payload.form_name = window.currentFormName;
+        } else {
+            payload.form_name = form.name || formId; // Fallback
         }
 
         // Add CSRF token to payload if available
         if (window.csrfToken) {
-            formData.csrf_token = window.csrfToken;
+            payload.csrf_token = window.csrfToken;
         } else {
             console.warn('CSRF token not found on window object. Submission might fail server-side validation.');
-            // Optionally, prevent submission:
-            // messageElement.textContent = 'Error: CSRF token missing. Cannot submit form.';
-            // messageElement.className = 'error-message';
-            // return;
+            // Optionally, prevent submission if CSRF is strictly required client-side as well
         }
+
+        payload.fields = formElementsArray; // Add the array of field objects
 
         fetch('../php/save_submission.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(payload),
         })
         .then(response => {
             if (response.ok) {

@@ -111,24 +111,23 @@ include_once $path_to_root . 'includes/header.php';
             <table class="table table-bordered table-striped">
                 <thead class="thead-light">
                     <tr>
-                        <th>Field Name</th>
+                        <th>Field Label</th>
                         <th>Value</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($form_data_array as $key => $value): ?>
+                    <?php foreach ($form_data_array as $field_object): ?>
                         <?php
-                        // Normalize key for display
-                        $displayKey = htmlspecialchars(ucwords(str_replace('_', ' ', $key)));
+                        // $field_object is expected to be an array like ['name' => ..., 'value' => ..., 'label' => ...]
+                        $displayLabel = htmlspecialchars($field_object['label'] ?? ucwords(str_replace('_', ' ', $field_object['name'] ?? 'Unknown Field')));
+                        $rawValue = $field_object['value'] ?? null;
                         $displayValue = "";
                         $shouldDisplayRow = true;
 
-                        if (is_array($value)) {
-                            // For arrays (e.g., checkbox groups, multi-selects)
-                            // Display if the array is not empty.
-                            // Join values with a comma for a cleaner look than print_r.
-                            if (!empty($value)) {
-                                $filtered_values = array_filter($value, function($item) { return $item !== null && $item !== ''; });
+                        if (is_array($rawValue)) {
+                            // For arrays (e.g., multi-selects)
+                            if (!empty($rawValue)) {
+                                $filtered_values = array_filter($rawValue, function($item) { return $item !== null && $item !== ''; });
                                 if (!empty($filtered_values)) {
                                     $displayValue = nl2br(htmlspecialchars(implode(', ', $filtered_values)));
                                 } else {
@@ -137,24 +136,32 @@ include_once $path_to_root . 'includes/header.php';
                             } else {
                                 $shouldDisplayRow = false; // Don't display empty arrays
                             }
-                        } else {
-                            // For scalar values
-                            $trimmedValue = trim((string)$value); // Trim and cast to string
+                        } elseif ($rawValue === null) {
+                            $shouldDisplayRow = false; // Don't display if value is null
+                        }
+                        else {
+                            // For scalar values (text, select-one, radio, checked checkbox value etc.)
+                            $trimmedValue = trim((string)$rawValue);
 
-                            // Define falsey and truthy values (lowercase for case-insensitive comparison)
-                            $falseyValues = ["0", "false", "no", "off"];
-                            // Empty string is handled separately to mean "don't display row"
-                            $truthyValues = ["1", "true", "yes", "on", "checked"];
+                            // Define falsey and truthy values for checkboxes/binary states
+                            $falseyValues = ["0", "false", "no", "off"]; // Not typically sent by current JS for unchecked
+                            $truthyValues = ["1", "true", "yes", "on", "checked"]; // "checked" is a common value for checkboxes
 
                             if ($trimmedValue === '') {
-                                 $shouldDisplayRow = false; // Don't display row for empty strings
-                            } elseif (in_array(strtolower($trimmedValue), $falseyValues, true)) {
-                                 $shouldDisplayRow = false; // Don't display row for "0", "false", "no", "off"
+                                 // For text fields that are submitted empty, we might still want to show the row
+                                 // $shouldDisplayRow = false; // Uncomment to hide rows for empty strings
+                                 $displayValue = '<em>(empty)</em>'; // Or keep $shouldDisplayRow = true and display this
                             } elseif (in_array(strtolower($trimmedValue), $truthyValues, true)) {
-                                // For "checked" or "true" representations, display a generic confirmation or just the label.
-                                // The key itself acts as the "corresponding text".
-                                $displayValue = "<em>Checked</em>"; // Or "Yes", or even left empty if the key is sufficient.
-                            } else {
+                                // For values like "checked", "true", "yes", "on"
+                                $displayValue = "<em>Yes</em>"; // Or "Checked", or use the label itself if appropriate
+                                // Example: If label is "Is Active?" and value is "checked", "Yes" is good.
+                                // If label is "Agree to Terms" and value is "checked", "Yes" is good.
+                            } elseif (in_array(strtolower($trimmedValue), $falseyValues, true)) {
+                                // This case might not be hit if form_handler.js doesn't send unchecked boxes
+                                // or if they are not assigned these explicit falsey string values.
+                                $displayValue = "<em>No</em>";
+                            }
+                             else {
                                 // Regular text data
                                 $displayValue = nl2br(htmlspecialchars($trimmedValue));
                             }
@@ -162,14 +169,14 @@ include_once $path_to_root . 'includes/header.php';
                         ?>
                         <?php if ($shouldDisplayRow): ?>
                             <tr>
-                                <td><?php echo $displayKey; ?></td>
+                                <td><?php echo $displayLabel; ?></td>
                                 <td><?php echo $displayValue; ?></td>
                             </tr>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        <?php elseif (empty($error_message)): // No specific error message, but form data array is empty or null
+        <?php elseif (empty($error_message)): // No specific error message, but form_data_array is empty or null
             echo "<div class='alert alert-info'>No detailed form data to display or data was empty.</div>";
         endif; ?>
         
