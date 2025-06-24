@@ -66,13 +66,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search_term'])) {
                                   u_assigned.username as assigned_username
                            FROM patients
                            LEFT JOIN users u_assigned ON patients.assigned_clinician_id = u_assigned.id
-                           WHERE patients.id = :search_term_id OR patients.first_name LIKE :search_term_name OR patients.last_name LIKE :search_term_name
+                           WHERE patients.id = :search_term_id OR patients.first_name LIKE :search_term_name_first OR patients.last_name LIKE :search_term_name_last
                            ORDER BY patients.last_name, patients.first_name";
 
             $stmt_search = $db->prepare($sql_search);
             $execute_params = [
-                ':search_term_id' => $search_term, // Let PDO handle if it's not a number for this part
-                ':search_term_name' => "%" . $search_term . "%"
+                ':search_term_id' => $search_term,
+                ':search_term_name_first' => "%" . $search_term . "%",
+                ':search_term_name_last' => "%" . $search_term . "%"
             ];
             $db->execute($stmt_search, $execute_params);
             $search_results = $db->fetchAll($stmt_search);
@@ -83,8 +84,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search_term'])) {
             // }
 
         } catch (PDOException $e) {
-            error_log("Error searching patients: " . $e->getMessage());
-            SessionManager::set('error_message', "An error occurred while searching for patients.");
+            error_log("Error searching patients: " . $e->getMessage()); // Log the detailed error
+            // Provide the detailed error message to the user for debugging if not in production
+            // For production, the generic message is better.
+            // For this debugging phase with the user, let's show a more detailed (but safe) error.
+            // $exception_message = htmlspecialchars($e->getMessage());
+            // SessionManager::set('error_message', "Database search error. Please check logs. Message: " . $exception_message);
+            SessionManager::set('error_message', "An error occurred while searching for patients. Please check system logs."); // Keep it generic for user
         }
     } else {
         SessionManager::set('message', "Please enter a term to search for patients.");
