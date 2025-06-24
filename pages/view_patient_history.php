@@ -47,8 +47,50 @@ try {
     // Optional: ErrorHandler::handleException($e);
 }
 
-// 3. Fetch Form Submissions if patient details were found and no DB error occurred for patient fetch
+// Initialize flags for nurse-submitted forms
+$hasNurseVitals = false;
+$hasNurseGeneralOverview = false;
+
+// 3. Check for specific nurse-submitted forms AND Fetch All Form Submissions
+// if patient details were found and no DB error occurred for patient fetch
 if ($patient_details && empty($db_error_message)) {
+    try {
+        // Check for nurse-submitted vital_signs.html
+        $sql_check_vitals = "SELECT 1 FROM patient_form_submissions pfs
+                             JOIN users u ON pfs.submitted_by_user_id = u.id
+                             WHERE pfs.patient_id = :patient_id
+                             AND pfs.form_name = 'vital_signs.html'
+                             AND pfs.form_directory = 'patient_general_info'
+                             AND u.role = 'nurse'
+                             LIMIT 1";
+        $stmt_check_vitals = $db->prepare($sql_check_vitals);
+        $db->execute($stmt_check_vitals, [':patient_id' => $patient_id]);
+        if ($db->fetch($stmt_check_vitals)) {
+            $hasNurseVitals = true;
+        }
+
+        // Check for nurse-submitted general_patient_overview.html
+        $sql_check_overview = "SELECT 1 FROM patient_form_submissions pfs
+                               JOIN users u ON pfs.submitted_by_user_id = u.id
+                               WHERE pfs.patient_id = :patient_id
+                               AND pfs.form_name = 'general_patient_overview.html'
+                               AND pfs.form_directory = 'patient_general_info'
+                               AND u.role = 'nurse'
+                               LIMIT 1";
+        $stmt_check_overview = $db->prepare($sql_check_overview);
+        $db->execute($stmt_check_overview, [':patient_id' => $patient_id]);
+        if ($db->fetch($stmt_check_overview)) {
+            $hasNurseGeneralOverview = true;
+        }
+
+    } catch (PDOException $e) {
+        error_log("Error checking for nurse-specific forms: " . $e->getMessage());
+        // Don't set $db_error_message here as it might overwrite a patient fetch error
+        // This check is supplementary; failing it shouldn't block viewing history if patient data is okay.
+        // We can add a specific message for this if needed.
+    }
+
+    // Fetch all submissions (existing logic)
     $sql_submissions = "
         SELECT 
             pfs.id, 
@@ -97,6 +139,21 @@ include_once $path_to_root . 'includes/header.php';
             <strong>Date of Birth:</strong> <?php echo htmlspecialchars($patient_details['date_of_birth']); ?><br>
             <strong>Patient ID:</strong> <?php echo htmlspecialchars($patient_details['id']); ?>
         </p>
+
+        <?php // Prompts for missing nurse information ?>
+        <?php if (!$hasNurseVitals): ?>
+            <div class="alert alert-warning">
+                <strong>Action Required:</strong> Vital signs information from a nurse is missing for this patient.
+                <a href="fill_patient_form.php?patient_id=<?php echo htmlspecialchars($patient_id); ?>&form_name=vital_signs.html&form_directory=patient_general_info" class="btn btn-sm btn-outline-warning ms-2">Enter Vitals</a>
+            </div>
+        <?php endif; ?>
+        <?php if (!$hasNurseGeneralOverview): ?>
+            <div class="alert alert-warning mt-2">
+                <strong>Action Required:</strong> General patient overview (allergies, medications) from a nurse is missing.
+                <a href="fill_patient_form.php?patient_id=<?php echo htmlspecialchars($patient_id); ?>&form_name=general_patient_overview.html&form_directory=patient_general_info" class="btn btn-sm btn-outline-warning ms-2">Enter General Overview</a>
+            </div>
+        <?php endif; ?>
+
 
         <h4 class="mt-4 mb-3">Submissions</h4>
         <?php if (!empty($submissions)): ?>

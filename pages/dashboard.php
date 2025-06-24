@@ -20,6 +20,28 @@ require_once $path_to_root . 'includes/header.php';
     <?php
     $user_role = isset($_SESSION['role']) ? $_SESSION['role'] : 'Guest';
     $user_first_name = isset($_SESSION['first_name']) ? $_SESSION['first_name'] : '';
+    $user_id = $_SESSION['user_id']; // For clinician patient count
+
+    // Database connection for clinician patient count
+    $active_patient_count = 0;
+    if ($user_role === 'clinician') {
+        require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
+        require_once $path_to_root . 'includes/Database.php';    // Provides Database class
+        $db = new Database($pdo);
+        try {
+            $sql_count = "SELECT COUNT(*) as count FROM patients WHERE assigned_clinician_id = :clinician_id";
+            // Assuming 'active' status is implied by being assigned. If there's an explicit 'is_active' flag for patients, it should be added.
+            $stmt_count = $db->prepare($sql_count);
+            $db->execute($stmt_count, [':clinician_id' => $user_id]);
+            $result = $db->fetch($stmt_count);
+            if ($result) {
+                $active_patient_count = $result['count'];
+            }
+        } catch (PDOException $e) {
+            error_log("Error fetching clinician's active patient count: " . $e->getMessage());
+            // Optionally set an error message to display to the user
+        }
+    }
     ?>
     <h2 class="mb-4">Welcome, <?php echo htmlspecialchars(ucfirst($user_role)) . " " . htmlspecialchars($user_first_name); ?>!</h2>
 
@@ -32,7 +54,10 @@ require_once $path_to_root . 'includes/header.php';
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">Receptionist Actions</h5>
                         <p class="card-text flex-grow-1">As a receptionist, your primary role is to register new patients and assign them to available clinicians. You can also manage patient appointments and basic records.</p>
-                        <a href="add_patient.php" class="btn btn-primary mt-auto align-self-start">Register & Assign Patient</a>
+                        <div class="mt-auto align-self-start">
+                            <a href="add_patient.php" class="btn btn-primary d-block mb-2">Register New Patient</a>
+                            <a href="assign_existing_patient.php" class="btn btn-info d-block">Assign Existing Patient</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -51,10 +76,11 @@ require_once $path_to_root . 'includes/header.php';
                 <div class="card h-100">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">Clinician Actions</h5>
+                        <p class="lead">You currently have <strong><?php echo $active_patient_count; ?></strong> active patient(s) assigned.</p>
                         <p class="card-text flex-grow-1">As a clinician, you can manage your assigned patients, add new patients (assigning them to yourself), fill out clinical evaluation forms, and view comprehensive patient history.</p>
                         <div class="mt-auto">
                             <a href="add_patient.php" class="btn btn-primary d-block mb-2">Add Patient</a>
-                            <a href="view_my_patients.php" class="btn btn-info d-block mb-2">My Assigned Patients</a>
+                            <a href="view_my_patients.php" class="btn btn-info d-block mb-2">My Assigned Patients (<?php echo $active_patient_count; ?>)</a>
                             <a href="select_patient_for_form.php" class="btn btn-success d-block mb-2">Select Patient for Clinical Form</a>
                             <a href="view_patient_history.php" class="btn btn-secondary d-block">View Patient History</a>
                         </div>

@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS patients (
     address TEXT NULL,
     phone_number VARCHAR(50) NULL,
     email VARCHAR(255) NULL UNIQUE,
+    insurance_details TEXT NULL,
+    reason_for_visit TEXT NULL,
     assigned_clinician_id INT NULL, -- Added from PHP script
     registered_by_user_id INT NOT NULL, -- Added from PHP script (NOT NULL based on PHP)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Was registration_date in PHP, aligned to created_at
@@ -79,6 +81,7 @@ CREATE TABLE IF NOT EXISTS submission_vitals (
 CREATE TABLE IF NOT EXISTS submission_clinical_details (
     id INT AUTO_INCREMENT PRIMARY KEY,
     submission_id INT NOT NULL UNIQUE,
+    allergies TEXT NULL,
     medical_history_summary TEXT NULL,
     current_medications TEXT NULL,
     evaluation_treatment_plan_summary TEXT NULL,

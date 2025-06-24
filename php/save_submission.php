@@ -75,6 +75,7 @@ $bmi_keys = ['bmi', 'vital_bmi']; $all_extracted_keys = array_merge($all_extract
 $pain_scale_keys = ['pain-scale', 'pain', 'vital_pain_scale']; $all_extracted_keys = array_merge($all_extracted_keys, $pain_scale_keys);
 
 // Clinical Details keys
+$allergies_keys = ['allergies', 'allergic-history', 'known_allergies']; $all_extracted_keys = array_merge($all_extracted_keys, $allergies_keys);
 $medical_history_summary_keys = ['medical_history_summary', 'history-of-present-illness', 'medical_history', 'PA_P1_B7_MedHistory']; $all_extracted_keys = array_merge($all_extracted_keys, $medical_history_summary_keys);
 $current_medications_keys = ['current_medications', 'medications', 'PA_P1_B8_Meds']; $all_extracted_keys = array_merge($all_extracted_keys, $current_medications_keys);
 $eval_treatment_plan_summary_keys = ['evaluation_treatment_plan_summary', 'treatment_plan', 'plan_of_care', 'PA_P3_B2_PlanOfCare']; $all_extracted_keys = array_merge($all_extracted_keys, $eval_treatment_plan_summary_keys);
@@ -110,6 +111,7 @@ foreach ($vitals_data as $value) {
 
 // Extract data for submission_clinical_details
 $clinical_details_data = [
+    'allergies' => get_field_value($data, $allergies_keys),
     'medical_history_summary' => get_field_value($data, $medical_history_summary_keys),
     'current_medications' => get_field_value($data, $current_medications_keys),
     'evaluation_treatment_plan_summary' => get_field_value($data, $eval_treatment_plan_summary_keys),
@@ -197,12 +199,13 @@ try {
     // Insert into submission_clinical_details if data exists
     if ($has_clinical_details_data) {
         $sql_clinical = "INSERT INTO submission_clinical_details
-                            (submission_id, medical_history_summary, current_medications,
+                            (submission_id, allergies, medical_history_summary, current_medications,
                              evaluation_treatment_plan_summary, evaluation_short_term_goals, evaluation_long_term_goals)
-                            VALUES (?, ?, ?, ?, ?, ?)";
+                            VALUES (?, ?, ?, ?, ?, ?, ?)"; // Added one placeholder for allergies
         $stmt_clinical = $pdo->prepare($sql_clinical);
         $stmt_clinical->execute([
             $submission_id,
+            $clinical_details_data['allergies'], // Added allergies
             $clinical_details_data['medical_history_summary'], $clinical_details_data['current_medications'],
             $clinical_details_data['evaluation_treatment_plan_summary'], $clinical_details_data['evaluation_short_term_goals'],
             $clinical_details_data['evaluation_long_term_goals']
@@ -215,18 +218,30 @@ try {
     $response = [
         'success' => true,
         'submission_id' => $submission_id,
-        'message' => 'Form submitted successfully.' // Generic success message
+        'message' => 'Form data saved successfully.' // Generic success message
     ];
 
-    if ($form_name === 'demo.html' && $form_directory === 'patient_general_info') {
-        // $patient_id is available from the top of the script ($data['patient_id'])
-        // The path should be relative to the 'pages' directory where fill_patient_form.php is located.
-        // Since save_submission.php is in 'php/', and fill_patient_form.php is in 'pages/',
-        // the URL generated for client-side redirect should be relative to the current page (which is fill_patient_form.php)
-        // or an absolute/root-relative path.
-        // "fill_patient_form.php?..." will be resolved by the browser relative to the current URL in 'pages/'.
-        $response['next_form_url'] = "fill_patient_form.php?form_name=general-information.html&form_directory=patient_general_info&patient_id=" . urlencode($patient_id);
-        $response['message'] = 'Demographics form submitted successfully. Proceeding to General Information form.';
+    $user_role = SessionManager::get("role");
+
+    // Specific redirection for new patient registration (demographics -> general info)
+    if ($form_name === 'demo.html' && $form_directory === 'patient_general_info' && ($user_role === 'receptionist' || $user_role === 'clinician')) {
+        // This was the old flow for new patients, it's now handled by add_patient.php directly.
+        // This if-block might need review if demo.html is still used post add_patient.php.
+        // For now, assume add_patient.php is comprehensive and this specific redirect might not be hit often for this form.
+        // If it is, it should probably go to dashboard or patient view.
+        // $response['next_form_url'] = "fill_patient_form.php?form_name=general-information.html&form_directory=patient_general_info&patient_id=" . urlencode($patient_id);
+        // $response['message'] = 'Demographics form submitted. Proceeding to General Information form.';
+    }
+    // Nurse workflow: Vitals -> General Overview
+    elseif ($user_role === 'nurse' && $form_name === 'vital_signs.html' && $form_directory === 'patient_general_info') {
+        $response['next_form_url'] = "fill_patient_form.php?form_name=general_patient_overview.html&form_directory=patient_general_info&patient_id=" . urlencode($patient_id);
+        $response['message'] = 'Vital signs saved. Proceeding to General Patient Overview.';
+    }
+    // After nurse submits general_patient_overview.html, or any other form not part of a specific sequence
+    else {
+        // Default success message is already set. No specific next_form_url for other cases here.
+        // Could redirect to dashboard or patient history view.
+        // $response['redirect_url'] = '../pages/dashboard.php'; // Example
     }
 
     echo json_encode($response);

@@ -117,6 +117,15 @@ require_once $path_to_root . 'includes/header.php';
                    value="<?php echo htmlspecialchars($old_input['email'] ?? ''); ?>">
         </div>
 
+        <div class="mb-3">
+            <label for="insurance_details" class="form-label">Insurance Details</label>
+            <textarea class="form-control" id="insurance_details" name="insurance_details" rows="3"><?php echo htmlspecialchars($old_input['insurance_details'] ?? ''); ?></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="reason_for_visit" class="form-label">Reason for Visit</label>
+            <textarea class="form-control" id="reason_for_visit" name="reason_for_visit" rows="3"><?php echo htmlspecialchars($old_input['reason_for_visit'] ?? ''); ?></textarea>
+        </div>
 
         <?php if ($current_user_role === 'receptionist'): ?>
             <div class="mb-3">

@@ -34,6 +34,10 @@ try {
 
 $page_title = "My Assigned Patients";
 // $path_to_root must be defined before including header.php for its internal use.
+
+// Generate a CSRF token for forms on this page
+$csrf_token = SessionManager::generateCsrfToken();
+
 require_once __DIR__ . '/../includes/header.php'; 
 // header.php includes navigation.php, which handles displaying $_SESSION['message'] (global messages)
 ?>
@@ -66,9 +70,14 @@ require_once __DIR__ . '/../includes/header.php';
                         <td><?php echo htmlspecialchars($patient['first_name']); ?></td>
                         <td><?php echo htmlspecialchars($patient['last_name']); ?></td>
                         <td><?php echo htmlspecialchars($patient['date_of_birth']); ?></td>
-                        <td>
-                            <a href="view_patient_history.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>" class="btn btn-info btn-sm">View History</a>
-                            <!-- Add other actions here if needed, e.g., Edit Patient -->
+                        <td class="text-nowrap">
+                            <a href="view_patient_history.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>" class="btn btn-info btn-sm mb-1 me-1">View History</a>
+                            <a href="select_form_for_patient.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>" class="btn btn-success btn-sm mb-1 me-1">Add Form</a>
+                            <form action="<?php echo $path_to_root; ?>php/handle_remove_patient_from_list.php" method="POST" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to remove this patient from your active list? This patient will become unassigned.');">
+                                <input type="hidden" name="patient_id" value="<?php echo htmlspecialchars($patient['id']); ?>">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); // Use page-level token ?>">
+                                <button type="submit" class="btn btn-danger btn-sm mb-1">Remove from List</button>
+                            </form>
                         </td>
                     </tr>
                 <?php endforeach; ?>
