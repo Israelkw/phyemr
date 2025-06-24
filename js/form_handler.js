@@ -22,15 +22,46 @@ function initFormSubmissionHandler(formId, messageElementId) {
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
             if (element.name) {
-                if (element.type === 'select-multiple') {
-                    formData[element.name] = [];
-                    for (let j = 0; j < element.options.length; j++) {
-                        if (element.options[j].selected) {
-                            formData[element.name].push(element.options[j].value);
+                switch (element.type) {
+                    case 'checkbox':
+                        if (element.checked) {
+                            // For single checkboxes like in the cervical form (where name implies one control or value is 'checked')
+                            // If multiple checkboxes could share a name (less common for this app's structure),
+                            // you'd handle it by pushing to an array:
+                            // if (formData[element.name]) {
+                            //     if (!Array.isArray(formData[element.name])) {
+                            //         formData[element.name] = [formData[element.name]];
+                            //     }
+                            //     formData[element.name].push(element.value);
+                            // } else {
+                            //     formData[element.name] = element.value;
+                            // }
+                            formData[element.name] = element.value; // Assigns the value attribute (e.g., "checked")
                         }
-                    }
-                } else {
-                    formData[element.name] = element.value;
+                        // If an unchecked checkbox should send a specific value (e.g., '0' or 'false'),
+                        // add an 'else' block here. Standard behavior is to not send unchecked boxes.
+                        break;
+                    case 'radio':
+                        if (element.checked) {
+                            formData[element.name] = element.value;
+                        }
+                        break;
+                    case 'select-multiple':
+                        formData[element.name] = [];
+                        for (let j = 0; j < element.options.length; j++) {
+                            if (element.options[j].selected) {
+                                formData[element.name].push(element.options[j].value);
+                            }
+                        }
+                        // Optional: remove if no options selected, or server handles empty array.
+                        // if (formData[element.name].length === 0) {
+                        //     delete formData[element.name];
+                        // }
+                        break;
+                    default:
+                        // For all other input types (text, hidden, select-one, textarea, password, etc.)
+                        formData[element.name] = element.value;
+                        break;
                 }
             }
         }
