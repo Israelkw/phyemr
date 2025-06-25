@@ -1,17 +1,11 @@
 <?php
-// Define path to root for includes, assuming this file is in pages/
+// Define path to root for includes/
 $path_to_root = "../";
 
 require_once $path_to_root . 'includes/SessionManager.php';
 SessionManager::startSession(); // Start session management
 
-// Session messages are now handled directly by base_layout.php by accessing $_SESSION.
-// However, we still need to ensure they are cleared after being potentially set by other processes (like handle_login.php).
-// The base_layout.php will display and then unset them.
-// If they were set and not yet displayed, base_layout.php handles it.
-// If they were displayed by a previous load of base_layout.php, they'd be unset already.
-// This section can be simplified if base_layout.php is guaranteed to run and clear them.
-// For now, let's ensure they are cleared if they exist, matching previous behavior of clearing after read.
+
 if (SessionManager::get('login_error')) {
     // The value is retrieved by SessionManager::get but not used here.
     // base_layout.php will access $_SESSION['login_error'] directly.
@@ -50,5 +44,5 @@ $content_template_path = __DIR__ . '/views/login_content.php';
 // All variables defined above ($page_title, $csrf_token, $form_action_path, etc.)
 // will be available in the scope of base_layout.php and login_content.php.
 require_once $path_to_root . 'includes/layout/base_layout.php';
-
+require_once $path_to_root . 'includes/header.php'; 
 ?>
