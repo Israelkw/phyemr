@@ -116,23 +116,26 @@ include_once $path_to_root . 'includes/header.php';
 
 <!-- Inject JavaScript variables for patient_id and clinician_id (user_id) -->
 <script>
-    window.currentPatientId = <?php echo json_encode($selected_patient_id); ?>;
-    window.currentClinicianId = <?php echo json_encode($current_user_id); ?>;
-    // Also make form_name available if js/form_handler.js needs it directly, though it's also in hidden field
-    window.currentFormName = <?php echo json_encode($form_file_basename); ?>; 
-    window.csrfToken = <?php echo json_encode($csrf_token); ?>; // Inject CSRF token
+window.currentPatientId = <?php echo json_encode($selected_patient_id); ?>;
+window.currentClinicianId = <?php echo json_encode($current_user_id); ?>;
+// Also make form_name available if js/form_handler.js needs it directly, though it's also in hidden field
+window.currentFormName = <?php echo json_encode($form_file_basename); ?>;
+window.csrfToken = <?php echo json_encode($csrf_token); ?>; // Inject CSRF token
 </script>
 
 <?php
 // 8. Display heading
 ?>
-<div class="container mt-4"> <!-- Added mt-4 for spacing -->
-    <h2 class="mb-4">
-        <?php echo htmlspecialchars($form_display_name); ?>
-        <small class="text-muted">for <?php echo $patient_full_name; ?></small>
-    </h2>
 
-    <?php
+
+
+<!-- Added mt-4 for spacing -->
+<h2 class="mb-4">
+    <?php echo htmlspecialchars($form_display_name); ?>
+    <small class="text-muted">for <?php echo $patient_full_name; ?></small>
+</h2>
+
+<?php
     // 9. Read the content of the selected HTML form file
     $form_content = file_get_contents($form_file_path);
     if ($form_content === false) {
@@ -145,14 +148,17 @@ include_once $path_to_root . 'includes/header.php';
     }
     ?>
 
-    <!-- 13. Navigation links -->
-    <div class="mt-4 mb-4">
-        <a href="<?php echo $select_form_page; ?>?patient_id=<?php echo htmlspecialchars($selected_patient_id); ?>" class="btn btn-secondary">Back to Form Selection</a>
-        <a href="dashboard.php" class="btn btn-info">Back to Dashboard</a>
-    </div>
+<!-- 13. Navigation links -->
+<div class="mt-4 mb-4">
+    <a href="<?php echo $select_form_page; ?>?patient_id=<?php echo htmlspecialchars($selected_patient_id); ?>"
+        class="btn btn-secondary">Back to Form Selection</a>
+    <a href="dashboard.php" class="btn btn-info">Back to Dashboard</a>
 </div>
+
 
 <?php
 // 14. Include footer
 include_once $path_to_root . 'includes/footer.php';
+
+
 ?>

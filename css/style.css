@@ -91,7 +91,7 @@ form {
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    max-width: 500px; /* Max width for forms */
+    max-width: auto; /* Max width for forms */
     margin: 20px auto; /* Center forms on the page */
 }
 
@@ -483,3 +483,84 @@ form legend {
    Add this in header.php:
    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
 */
+fieldset:not(.expanded) *:not(legend) {
+    display: none !important;
+  }
+  
+  /* Legend style */
+  legend {
+    cursor: pointer;
+    position: relative;
+    padding-right: 0;
+    font-weight: bold;
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 0;
+    padding: 8px 0;
+    line-height: 1.5;
+    outline: none;
+  }
+  
+  fieldset + fieldset {
+    margin-top: 1rem;
+  }
+  
+  /* Expand/collapse arrow */
+  legend::after {
+    content: "\25BC"; /* ▼ */
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9em;
+    transition: transform 0.3s ease, content 0.3s ease;
+    display: inline-block;
+    line-height: 1;
+  }
+  
+  fieldset.expanded legend::after {
+    content: "\25B2"; /* ▲ */
+    transform: translateY(-50%);
+  }
+  
+  legend:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+    z-index: 1;
+  }
+  
+  /* When expanded — show all contents as block elements */
+  fieldset.expanded *:not(legend) {
+    display: block;
+  }
+  
+  /* Spacing when expanded */
+  fieldset.expanded > :not(legend):first-of-type {
+    margin-top: 1rem;
+  }
+  fieldset.expanded > :not(legend) + :not(legend) {
+    margin-top: 0.5rem;
+  }
+  fieldset.expanded > div + div {
+    margin-top: 0.75rem;
+  }
+  fieldset.expanded > p.fw-bold + div {
+    margin-top: 0.5rem;
+  }
+  fieldset.expanded > div + p.fw-bold {
+    margin-top: 1rem;
+  }
+  fieldset.expanded > div.form-check + input.form-control {
+    margin-top: 0.25rem;
+  }
+  fieldset.expanded > fieldset {
+    margin-top: 1rem;
+  }
+  fieldset.expanded fieldset > legend::after {
+    content: "\25BC";
+  }
+  fieldset.expanded fieldset.expanded > legend::after {
+    content: "\25B2";
+  }
+  
+  
