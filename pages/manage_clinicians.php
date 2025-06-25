@@ -78,11 +78,18 @@ require_once $path_to_root . 'includes/header.php';
                                 <?php echo $user['is_active'] ? 'Active' : 'Inactive'; ?>
                             </td>
                             <td>
-                                No actions available yet
-                                <?php /* Example for future actions:
-                                <a href="edit_user.php?id=<?php echo htmlspecialchars($user['id']); ?>" class="btn btn-sm btn-warning">Edit</a>
-                                <a href="delete_user.php?id=<?php echo htmlspecialchars($user['id']); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');">Delete</a>
-                                */ ?>
+                                <form action="<?php echo $path_to_root; ?>php/handle_user_status.php" method="POST" style="display: inline-block; margin-right: 5px;">
+                                    <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user['id']); ?>">
+                                    <input type="hidden" name="csrf_token" value="<?php echo SessionManager::generateCsrfToken(); ?>">
+                                    <?php if ($user['is_active']): ?>
+                                        <input type="hidden" name="action" value="deactivate">
+                                        <button type="submit" class="btn btn-sm btn-warning" <?php echo ($user['id'] == $_SESSION['user_id']) ? 'disabled title="Cannot deactivate yourself"' : ''; ?>>Deactivate</button>
+                                    <?php else: ?>
+                                        <input type="hidden" name="action" value="activate">
+                                        <button type="submit" class="btn btn-sm btn-success">Activate</button>
+                                    <?php endif; ?>
+                                </form>
+                                <a href="admin_change_password.php?user_id=<?php echo htmlspecialchars($user['id']); ?>" class="btn btn-sm btn-info">Change Password</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

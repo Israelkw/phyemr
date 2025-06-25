@@ -150,5 +150,27 @@ class Validator {
     private function regex($value, $pattern) {
         return preg_match($pattern, $value) === 1;
     }
+
+    /**
+     * Checks if a password meets basic strength requirements.
+     * For example, minimum length. More complex rules can be added here.
+     * @param string $password The password to check.
+     * @param int $minLength Minimum length requirement.
+     * @return bool True if the password meets requirements, false otherwise.
+     */
+    public static function isPasswordStrongEnough($password, $minLength = 8) {
+        if (empty($password)) {
+            return false; // Should be caught by 'required' if used, but good to have.
+        }
+        if (mb_strlen((string)$password) < $minLength) {
+            return false;
+        }
+        // Add more rules here if needed (e.g., requires numbers, uppercase, special chars)
+        // preg_match('/[A-Z]/', $password) // Has uppercase
+        // preg_match('/[a-z]/', $password) // Has lowercase
+        // preg_match('/[0-9]/', $password) // Has number
+        // preg_match('/[\W_]/', $password) // Has special character (non-alphanumeric)
+        return true;
+    }
 }
 ?>
