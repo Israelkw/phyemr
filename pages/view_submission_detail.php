@@ -148,9 +148,7 @@ include_once $path_to_root . 'includes/header.php';
                             $truthyValues = ["1", "true", "yes", "on", "checked"]; // "checked" is a common value for checkboxes
 
                             if ($trimmedValue === '') {
-                                 // For text fields that are submitted empty, we might still want to show the row
-                                 // $shouldDisplayRow = false; // Uncomment to hide rows for empty strings
-                                 $displayValue = '<em>(empty)</em>'; // Or keep $shouldDisplayRow = true and display this
+                                 $shouldDisplayRow = false;
                             } elseif (in_array(strtolower($trimmedValue), $truthyValues, true)) {
                                 // For values like "checked", "true", "yes", "on"
                                 $displayValue = "<em>Yes</em>"; // Or "Checked", or use the label itself if appropriate
