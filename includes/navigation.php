@@ -6,8 +6,8 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <img class="navbar-brand" src=" <?php echo $base_path; ?>/includes/Easelogoicon.png" alt="aaa"
-            style="width: 5vw; height: 5vw;">
+        <img class="navbar-brand" src=" <?php echo $base_path; ?>.//includes/Easelogoicon.png" alt="Ease logo"
+            style="width: 7vw; height: 7vw;">
         <a class="navbar-brand" href="<?php echo $base_path; ?>index.php">EMR system</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,10 +47,10 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                     <a class="nav-link<?php if ($current_page == 'view_my_patients.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/view_my_patients.php">My Assigned Patients</a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link<?php if ($current_page == 'view_patient_history.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/view_patient_history.php">View Patient History</a>
-                </li>
+                </li> -->
                 <?php elseif ($_SESSION["role"] === 'admin'): ?>
                 <li class="nav-item">
                     <a class="nav-link<?php if ($current_page == 'manage_clinicians.php') echo ' active'; ?>"

@@ -86,38 +86,47 @@ include_once $path_to_root . 'includes/header.php';
     <h2 class="mb-4"><?php echo htmlspecialchars($page_title); ?></h2>
 
     <?php if (!empty($error_message)): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
+    <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
     <?php endif; ?>
     <?php if (!empty($db_error_message)): ?>
-        <div class="alert alert-danger">Database error: <?php echo htmlspecialchars($db_error_message); ?> Please contact support.</div>
+    <div class="alert alert-danger">Database error: <?php echo htmlspecialchars($db_error_message); ?> Please contact
+        support.</div>
     <?php endif; ?>
 
     <?php if ($submission_details && $patient_details && empty($error_message) && empty($db_error_message)): ?>
-        <div class="card mb-4">
-            <div class="card-header">
-                Submission Overview
-            </div>
-            <div class="card-body">
-                <p><strong>Patient:</strong> <?php echo htmlspecialchars($patient_details['first_name'] . ' ' . $patient_details['last_name']); ?> (ID: <?php echo htmlspecialchars($patient_details['id']); ?>)</p>
-                <p><strong>Form Name:</strong> <?php echo htmlspecialchars(ucwords(str_replace(['_', '-'], ' ', pathinfo($submission_details['form_name'], PATHINFO_FILENAME)))); ?></p>
-                <p><strong>Form Directory:</strong> <?php echo htmlspecialchars(ucwords(str_replace(['_', '-'], ' ', $submission_details['form_directory']))); ?></p>
-                <p><strong>Submitted At:</strong> <?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($submission_details['submission_timestamp']))); ?></p>
-                <p><strong>Submission ID:</strong> <?php echo htmlspecialchars($submission_id); ?></p>
-            </div>
+    <div class="card mb-4">
+        <div class="card-header">
+            Submission Overview
         </div>
+        <div class="card-body">
+            <p><strong>Patient:</strong>
+                <?php echo htmlspecialchars($patient_details['first_name'] . ' ' . $patient_details['last_name']); ?>
+                (ID: <?php echo htmlspecialchars($patient_details['id']); ?>)</p>
+            <p><strong>Examination form:</strong>
+                <?php echo htmlspecialchars(ucwords(str_replace(['_', '-'], ' ', pathinfo($submission_details['form_name'], PATHINFO_FILENAME)))); ?>
+            </p>
+            <!-- <p><strong>Form Directory:</strong>
+                <?php echo htmlspecialchars(ucwords(str_replace(['_', '-'], ' ', $submission_details['form_directory']))); ?>
+            </p> -->
+            <p><strong>Data entry Date and time:</strong>
+                <?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($submission_details['submission_timestamp']))); ?>
+            </p>
+            <p><strong>Submission ID:</strong> <?php echo htmlspecialchars($submission_id); ?></p>
+        </div>
+    </div>
 
-        <h4 class="mt-4 mb-3">Submitted Form Data</h4>
-        <?php if ($form_data_array && !empty($form_data_array)): ?>
-            <table class="table table-bordered table-striped">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Field Label</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($form_data_array as $field_object): ?>
-                        <?php
+    <h4 class="mt-4 mb-3">Patient clinical Data</h4>
+    <?php if ($form_data_array && !empty($form_data_array)): ?>
+    <table class="table table-bordered table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Clinical Examination type</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($form_data_array as $field_object): ?>
+            <?php
                         // $field_object is expected to be an array like ['name' => ..., 'value' => ..., 'label' => ...]
                         $displayLabel = htmlspecialchars($field_object['label'] ?? ucwords(str_replace('_', ' ', $field_object['name'] ?? 'Unknown Field')));
                         $rawValue = $field_object['value'] ?? null;
@@ -165,23 +174,24 @@ include_once $path_to_root . 'includes/header.php';
                             }
                         }
                         ?>
-                        <?php if ($shouldDisplayRow): ?>
-                            <tr>
-                                <td><?php echo $displayLabel; ?></td>
-                                <td><?php echo $displayValue; ?></td>
-                            </tr>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php elseif (empty($error_message)): // No specific error message, but form_data_array is empty or null
+            <?php if ($shouldDisplayRow): ?>
+            <tr>
+                <td><?php echo $displayLabel; ?></td>
+                <td><?php echo $displayValue; ?></td>
+            </tr>
+            <?php endif; ?>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php elseif (empty($error_message)): // No specific error message, but form_data_array is empty or null
             echo "<div class='alert alert-info'>No detailed form data to display or data was empty.</div>";
         endif; ?>
-        
-        <div class="mt-4">
-            <a href="view_patient_history.php?patient_id=<?php echo htmlspecialchars($patient_details['id']); ?>" class="btn btn-secondary">Back to Patient History</a>
-            <a href="dashboard.php" class="btn btn-info">Back to Dashboard</a>
-        </div>
+
+    <div class="mt-4">
+        <a href="view_patient_history.php?patient_id=<?php echo htmlspecialchars($patient_details['id']); ?>"
+            class="btn btn-secondary">Back to Patient History</a>
+        <a href="dashboard.php" class="btn btn-info">Back to Dashboard</a>
+    </div>
 
     <?php elseif (empty($error_message) && empty($db_error_message)): // Fallback if data is missing but no explicit error was set
         echo "<div class='alert alert-warning'>Could not retrieve submission details. Ensure the submission ID is correct and you are authorized.</div>";
