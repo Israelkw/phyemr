@@ -67,42 +67,42 @@
     <fieldset class="expanded mt-0">
         <legend>General Patient Information</legend>
         <div class="mb-2">
-            <label for="medical-diagnosis" class="form-label">Medical Diagnosis:</label>
-            <input type="text" id="medical-diagnosis" name="medical-diagnosis" class="form-control form-control-sm" required placeholder="Enter medical diagnosis">
+            <label for="medical diagnosis" class="form-label">Medical Diagnosis:</label>
+            <input type="text" id="medical diagnosis" name="medical diagnosis" class="form-control form-control-sm" required placeholder="Enter medical diagnosis">
         </div>
 
         <div class="mb-2">
-            <label for="pain-scale" class="form-label">Pain Scale:</label>
-            <input type="range" id="pain-scale" name="pain-scale" class="form-range" min="0" max="10" step="1" value="0" oninput="document.getElementById('painScaleValue').innerText = this.value + '/10'">
+            <label for="pain scale" class="form-label">Pain Scale:</label>
+            <input type="range" id="pain scale" name="pain scale" class="form-range" min="0" max="10" step="1" value="0" oninput="document.getElementById('painScaleValue').innerText = this.value + '/10'">
             <span id="painScaleValue">0/10</span>
         </div>
 
         <div class="mb-2">
-            <label for="chief-complaint" class="form-label">Chief Complaint:</label>
-            <input type="text" id="chief-complaint" name="chief-complaint" class="form-control form-control-sm" required placeholder="Enter chief complaint">
+            <label for="chief complaint" class="form-label">Chief Complaint:</label>
+            <input type="text" id="chief complaint" name="chief complaint" class="form-control form-control-sm" required placeholder="Enter chief complaint">
         </div>
 
         <div class="mb-2">
-            <label for="history-of-present-illness" class="form-label">History of Present Illness:</label>
-            <input type="text" id="history-of-present-illness" name="history-of-present-illness" class="form-control form-control-sm" required placeholder="Enter history of present illness">
+            <label for="history of present illness" class="form-label">History of Present Illness:</label>
+            <input type="text" id="history of present illness" name="history of present illness" class="form-control form-control-sm" required placeholder="Enter history of present illness">
         </div>
 
         <div class="mb-2">
-            <label for="past-medical-history" class="form-label">Past Medical and Surgical History:</label>
-            <input type="text" id="past-medical-history" name="past-medical-history" class="form-control form-control-sm" required placeholder="Enter past medical and surgical history">
+            <label for="past medical history" class="form-label">Past Medical and Surgical History:</label>
+            <input type="text" id="past medical history" name="past medical history" class="form-control form-control-sm" required placeholder="Enter past medical and surgical history">
         </div>
 
         <div class="mb-2">
-            <label for="allergic-history" class="form-label">Allergic History:</label>
-            <input type="text" id="allergic-history" name="allergic-history" class="form-control form-control-sm" required placeholder="Enter allergic history">
+            <label for="Allergic history" class="form-label">Allergic History:</label>
+            <input type="text" id="Allergic history" name="Allergic history" class="form-control form-control-sm" required placeholder="Enter allergic history">
         </div>
     </fieldset>
 
     <fieldset class="mt-4">
         <legend>Vitals</legend>
         <div class="mb-2">
-            <label for="temp" class="form-label">Temperature (°C):</label>
-            <input type="number" id="temp" name="temp" class="form-control form-control-sm" required placeholder="Enter temperature" onchange="checkVitals()">
+            <label for="Temperature(°C)" class="form-label">Temperature (°C):</label>
+            <input type="number" id="Temperature(°C)" name="Temperature(°C)" class="form-control form-control-sm" required placeholder="Enter temperature" onchange="checkVitals()">
         </div>
 
         <div class="mb-2">
@@ -112,27 +112,27 @@
 
         <p class="fw-bold mb-1 mt-2">Blood Pressure</p>
         <div class="mb-2">
-            <label for="systolic-blood-pressure" class="form-label">Systolic Blood Pressure (mmHg):</label>
-            <input type="number" id="systolic-blood-pressure" name="systolic-blood-pressure" class="form-control form-control-sm" required placeholder="Enter systolic BP" onchange="checkVitals()">
+            <label for="Systolic Blood Pressure" class="form-label">Systolic Blood Pressure (mmHg):</label>
+            <input type="number" id="Systolic Blood Pressure" name="Systolic Blood Pressure" class="form-control form-control-sm" required placeholder="Enter systolic BP" onchange="checkVitals()">
         </div>
         <div class="mb-2">
-            <label for="diastolic-blood-pressure" class="form-label">Diastolic Blood Pressure (mmHg):</label>
-            <input type="number" id="diastolic-blood-pressure" name="diastolic-blood-pressure" class="form-control form-control-sm" required placeholder="Enter diastolic BP" onchange="checkVitals()">
-        </div>
-
-        <div class="mb-2">
-            <label for="respiratory-rate" class="form-label">Respiratory Rate (breaths/min):</label>
-            <input type="number" id="respiratory-rate" name="respiratory-rate" class="form-control form-control-sm" required placeholder="Enter respiratory rate" onchange="checkVitals()">
+            <label for="diastolic Blood Pressure" class="form-label">Diastolic Blood Pressure (mmHg):</label>
+            <input type="number" id="diastolic Blood Pressure" name="diastolic Blood Pressure" class="form-control form-control-sm" required placeholder="Enter diastolic BP" onchange="checkVitals()">
         </div>
 
         <div class="mb-2">
-            <label for="oxygen-saturation" class="form-label">Oxygen Saturation (%):</label>
-            <input type="number" id="oxygen-saturation" name="oxygen-saturation" class="form-control form-control-sm" required placeholder="Enter oxygen saturation" onchange="checkVitals()">
+            <label for="Respiratory rate" class="form-label">Respiratory Rate (breaths/min):</label>
+            <input type="number" id="Respiratory rate" name="Respiratory rate" class="form-control form-control-sm" required placeholder="Enter respiratory rate" onchange="checkVitals()">
         </div>
 
         <div class="mb-2">
-            <label for="blood-glucose" class="form-label">Blood Glucose (mg/dl):</label>
-            <input type="number" id="blood-glucose" name="blood-glucose" class="form-control form-control-sm" placeholder="Enter blood glucose" onchange="checkVitals()">
+            <label for="oxygen saturation" class="form-label">Oxygen Saturation (%):</label>
+            <input type="number" id="oxygen saturation" name="oxygen saturation" class="form-control form-control-sm" required placeholder="Enter oxygen saturation" onchange="checkVitals()">
+        </div>
+
+        <div class="mb-2">
+            <label for="blood glucose" class="form-label">Blood Glucose (mg/dl):</label>
+            <input type="number" id="blood glucose" name="blood glucose" class="form-control form-control-sm" placeholder="Enter blood glucose" onchange="checkVitals()">
         </div>
 
         <div class="mb-2">
@@ -230,18 +230,18 @@
     function checkVitals() {
         var temp = document.getElementById("temp")?.value; // Optional chaining for safety
         var pulse = document.getElementById("pulse")?.value;
-        var systolicBloodPressure = document.getElementById("systolic-blood-pressure")?.value;
-        var diastolicBloodPressure = document.getElementById("diastolic-blood-pressure")?.value;
-        var respiratoryRate = document.getElementById("respiratory-rate")?.value;
+        var systolicBloodPressure = document.getElementById("Systolic Blood Pressure")?.value;
+        var diastolicBloodPressure = document.getElementById("diastolicBloodPressure")?.value;
+        var respiratoryRate = document.getElementById("Respiratory rate")?.value;
         var oxygenSaturation = document.getElementById("oxygen-saturation")?.value;
         var bloodGlucose = document.getElementById("blood-glucose")?.value;
         var bmi = document.getElementById("bmi")?.value;
 
         if (document.getElementById("temp")) colorField("temp", temp >= 35 && temp <= 37.5); // Adjusted normal temp range slightly
         if (document.getElementById("pulse")) colorField("pulse", pulse >= 60 && pulse <= 100);
-        if (document.getElementById("systolic-blood-pressure")) colorField("systolic-blood-pressure", systolicBloodPressure >= 90 && systolicBloodPressure <= 140);
-        if (document.getElementById("diastolic-blood-pressure")) colorField("diastolic-blood-pressure", diastolicBloodPressure >= 60 && diastolicBloodPressure <= 90);
-        if (document.getElementById("respiratory-rate")) colorField("respiratory-rate", respiratoryRate >= 12 && respiratoryRate <= 20);
+        if (document.getElementById("Systolic Blood Pressure")) colorField("Systolic Blood Pressure", systolicBloodPressure >= 90 && systolicBloodPressure <= 140);
+        if (document.getElementById("diastolicBloodPressure")) colorField("diastolicBloodPressure", diastolicBloodPressure >= 60 && diastolicBloodPressure <= 90);
+        if (document.getElementById("Respiratory rate")) colorField("Respiratory rate", respiratoryRate >= 12 && respiratoryRate <= 20);
         if (document.getElementById("oxygen-saturation")) colorField("oxygen-saturation", oxygenSaturation >= 95 && oxygenSaturation <= 100);
         
         // Blood glucose is optional, so only color if a value is present
