@@ -15,6 +15,27 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['clinician', '
 $select_patient_page = ($_SESSION['role'] === 'nurse') ? 'nurse_select_patient.php' : 'select_patient_for_form.php';
 $select_form_page = ($_SESSION['role'] === 'nurse') ? 'nurse_select_form.php' : 'select_form_for_patient.php';
 
+// Check if a patient_id is provided in the URL and update/set the session
+// This allows direct linking to this page with a patient context.
+if (isset($_GET['patient_id']) && !empty(trim($_GET['patient_id']))) {
+    $patient_id_from_get = trim($_GET['patient_id']);
+    // Basic validation: ensure it's a positive integer. Adjust if patient IDs have a different format.
+    if (filter_var($patient_id_from_get, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])) {
+        $_SESSION['selected_patient_id_for_form'] = $patient_id_from_get;
+    } else {
+        // Optional: Log this attempt or handle more gracefully.
+        // For now, if an invalid patient_id is passed, it might be better to clear any existing
+        // selected_patient_id_for_form to force re-selection, or redirect with an error.
+        // For simplicity here, we'll let it fall through to the session check below,
+        // which would fail if the GET patient_id was invalid and no valid one was in session.
+        // A more robust handling might be:
+        // $_SESSION['message'] = "Invalid patient ID format provided in URL.";
+        // header("Location: " . $select_patient_page);
+        // exit();
+        // However, if a valid ID is already in session, we might want to use that.
+        // The current approach is to override session if a valid patient_id is in GET.
+    }
+}
 
 // 2. Retrieve form_name and form_directory from URL
 if (!isset($_GET['form_name']) || empty(trim($_GET['form_name']))) {
