@@ -137,8 +137,25 @@ include_once $path_to_root . 'includes/header.php';
     <p>
         <strong>Name:</strong>
         <?php echo htmlspecialchars($patient_details['first_name'] . ' ' . $patient_details['last_name']); ?><br>
-        <strong>Date of Birth:</strong> <?php echo htmlspecialchars($patient_details['date_of_birth']); ?><br>
-        <!-- calculate age -->
+        <strong>Date of Birth:</strong>
+        <?php 
+  $dob = $patient_details['date_of_birth'];
+  echo htmlspecialchars($dob); 
+  
+  $birthDate = new DateTime($dob);
+  $today = new DateTime('today');
+  $diff = $birthDate->diff($today); 
+  
+  if ($diff->y >= 1) {
+    $ageText = $diff->y . " year" . ($diff->y > 1 ? "s" : "");
+  } elseif ($diff->m >= 1) {
+    $ageText = $diff->m . " month" . ($diff->m > 1 ? "s" : "");
+  } else {
+    $ageText = $diff->d . " day" . ($diff->d > 1 ? "s" : "");
+  }
+?>
+        <br>
+        <strong>Age:</strong> <?php echo $ageText; ?>
 
         <strong>Patient ID:</strong> <?php echo htmlspecialchars($patient_details['id']); ?>
     </p>
