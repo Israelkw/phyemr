@@ -126,22 +126,25 @@ include_once $path_to_root . 'includes/header.php';
     <h2 class="mb-4">Patient Form Submission History</h2>
 
     <?php if (!empty($error_message)): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
+    <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
     <?php endif; ?>
     <?php if (!empty($db_error_message)): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($db_error_message); ?></div>
+    <div class="alert alert-danger"><?php echo htmlspecialchars($db_error_message); ?></div>
     <?php endif; ?>
 
     <?php if ($patient_details && empty($error_message) && empty($db_error_message)): ?>
-        <h4 class="mb-3">Patient Details</h4>
-        <p>
-            <strong>Name:</strong> <?php echo htmlspecialchars($patient_details['first_name'] . ' ' . $patient_details['last_name']); ?><br>
-            <strong>Date of Birth:</strong> <?php echo htmlspecialchars($patient_details['date_of_birth']); ?><br>
-            <strong>Patient ID:</strong> <?php echo htmlspecialchars($patient_details['id']); ?>
-        </p>
+    <h4 class="mb-3">Patient Details</h4>
+    <p>
+        <strong>Name:</strong>
+        <?php echo htmlspecialchars($patient_details['first_name'] . ' ' . $patient_details['last_name']); ?><br>
+        <strong>Date of Birth:</strong> <?php echo htmlspecialchars($patient_details['date_of_birth']); ?><br>
+        <!-- calculate age -->
 
-        <?php // Prompts for missing nurse information ?>
-        <?php if (!$hasNurseVitals): ?>
+        <strong>Patient ID:</strong> <?php echo htmlspecialchars($patient_details['id']); ?>
+    </p>
+
+    <?php // Prompts for missing nurse information ?>
+    <!-- <?php if (!$hasNurseVitals): ?>
             <div class="alert alert-warning">
                 <strong>Action Required:</strong> Vital signs information from a nurse is missing for this patient.
                 <a href="fill_patient_form.php?patient_id=<?php echo htmlspecialchars($patient_id); ?>&form_name=vital_signs.html&form_directory=patient_general_info" class="btn btn-sm btn-outline-warning ms-2">Enter Vitals</a>
@@ -152,24 +155,24 @@ include_once $path_to_root . 'includes/header.php';
                 <strong>Action Required:</strong> General patient overview (allergies, medications) from a nurse is missing.
                 <a href="fill_patient_form.php?patient_id=<?php echo htmlspecialchars($patient_id); ?>&form_name=general_patient_overview.html&form_directory=patient_general_info" class="btn btn-sm btn-outline-warning ms-2">Enter General Overview</a>
             </div>
-        <?php endif; ?>
+        <?php endif; ?> -->
 
 
-        <h4 class="mt-4 mb-3">Submissions</h4>
-        <?php if (!empty($submissions)): ?>
-            <table class="table table-striped table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th>Submission ID</th>
-                        <th>Form Name</th>
-                        <th>Date Submitted</th>
-                        <th>Submitted By</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($submissions as $submission): ?>
-                        <?php
+    <h4 class="mt-4 mb-3">Submissions</h4>
+    <?php if (!empty($submissions)): ?>
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Submission ID</th>
+                <th>Form Name</th>
+                <th>Date Submitted</th>
+                <th>Submitted By</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($submissions as $submission): ?>
+            <?php
                             // Format form_name and form_directory for display
                             $form_file_name = pathinfo($submission['form_name'], PATHINFO_FILENAME); // e.g., "cervical"
                             $formatted_form_name = ucwords(str_replace(['_', '-'], ' ', $form_file_name));
@@ -186,24 +189,25 @@ include_once $path_to_root . 'includes/header.php';
                             
                             $view_data_link = "view_submission_detail.php?submission_id=" . htmlspecialchars($submission['id']);
                         ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($submission['id']); ?></td>
-                            <td><?php echo htmlspecialchars($display_form_name); ?></td>
-                            <td><?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($submission['submission_timestamp']))); ?></td>
-                            <td><?php echo $submitter_name; // Already escaped if names exist, or displays ID safely ?></td>
-                            <td>
-                                <a href="<?php echo $view_data_link; ?>" class="btn btn-info btn-sm">View Data</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <div class="alert alert-info">No form submissions found for this patient.</div>
-        <?php endif; ?>
+            <tr>
+                <td><?php echo htmlspecialchars($submission['id']); ?></td>
+                <td><?php echo htmlspecialchars($display_form_name); ?></td>
+                <td><?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($submission['submission_timestamp']))); ?>
+                </td>
+                <td><?php echo $submitter_name; // Already escaped if names exist, or displays ID safely ?></td>
+                <td>
+                    <a href="<?php echo $view_data_link; ?>" class="btn btn-info btn-sm">View Data</a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php else: ?>
+    <div class="alert alert-info">No form submissions found for this patient.</div>
+    <?php endif; ?>
     <?php elseif (empty($error_message) && empty($db_error_message)): ?>
-        <?php // This case should ideally be caught by $error_message if patient not found, but as a fallback: ?>
-        <div class="alert alert-warning">Could not retrieve patient details or history.</div>
+    <?php // This case should ideally be caught by $error_message if patient not found, but as a fallback: ?>
+    <div class="alert alert-warning">Could not retrieve patient details or history.</div>
     <?php endif; ?>
 
     <div class="mt-4">

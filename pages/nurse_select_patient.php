@@ -32,48 +32,52 @@ try {
 
 ?>
 
-<div class="container mt-4"> <!-- Added mt-4 for spacing -->
+<div class="container mt-4">
+    <!-- Added mt-4 for spacing -->
     <h2 class="mb-3">Select a Patient</h2>
-    
+
     <?php if (isset($_SESSION['message'])): ?>
-        <div class="alert alert-info"> <!-- Or appropriate class based on message type -->
-            <?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?>
-        </div>
+    <div class="alert alert-info">
+        <!-- Or appropriate class based on message type -->
+        <?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?>
+    </div>
     <?php endif; ?>
 
     <?php if (!empty($db_error_message)): ?>
-        <div class="alert alert-danger">
-            <?php echo htmlspecialchars($db_error_message); ?>
-        </div>
+    <div class="alert alert-danger">
+        <?php echo htmlspecialchars($db_error_message); ?>
+    </div>
     <?php endif; ?>
 
     <?php if (empty($db_error_message) && !empty($patients)): ?>
-        <table class="table table-striped table-hover table-bordered"> <!-- Ensured consistency and added table-hover -->
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Date of Birth</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($patients as $patient): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($patient['id']); ?></td>
-                        <td><?php echo htmlspecialchars($patient['first_name']); ?></td>
-                        <td><?php echo htmlspecialchars($patient['last_name']); ?></td>
-                        <td><?php echo htmlspecialchars($patient['date_of_birth']); ?></td>
-                        <td>
-                            <a href="fill_patient_form.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>&form_name=general-information.html&form_directory=patient_general_info" class="btn btn-primary btn-sm">Enter Vitals</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+    <table class="table table-striped table-hover table-bordered">
+        <!-- Ensured consistency and added table-hover -->
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($patients as $patient): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($patient['id']); ?></td>
+                <td><?php echo htmlspecialchars($patient['first_name']); ?></td>
+                <td><?php echo htmlspecialchars($patient['last_name']); ?></td>
+                <td><?php echo htmlspecialchars($patient['date_of_birth']); ?></td>
+                <td>
+                    <a href="fill_patient_form.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>&form_name=general-information.html&form_directory=patient_general_info"
+                        class="btn btn-primary btn-sm">Enter Vitals</a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
     <?php elseif (empty($db_error_message) && empty($patients)) : ?>
-        <div class="alert alert-info">No patients found in the system.</div>
+    <div class="alert alert-info">No patients found in the system.</div>
     <?php endif; ?>
 
     <p class="mt-3"><a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a></p> <!-- Sibling page -->

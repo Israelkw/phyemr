@@ -1,67 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>General Information (Collapsible)</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    fieldset:not(.expanded) > :not(legend) {
-      display: none;
-    }
-     fieldset.expanded > label,
-     fieldset.expanded > textarea,
-     fieldset.expanded > input:not([type="checkbox"]):not([type="radio"]),
-     fieldset.expanded > select,
-     fieldset.expanded > fieldset,
-     fieldset.expanded > div,
-     fieldset.expanded > span, /* For painScaleValue */
-     fieldset.expanded > p.fw-bold,
-     fieldset.expanded > button { /* For Calculate BMI button inside fieldset */
-         display: block;
-     }
 
-    legend {
-      cursor: pointer; position: relative; padding-right: 25px; font-weight: bold;
-      outline: none; border-radius: 0; display: block; width: 100%;
-      border-bottom: 1px solid #ddd; margin-bottom: 0; padding-bottom: 8px;
-      padding-top: 8px; line-height: 1.5;
-    }
-     fieldset + fieldset { margin-top: 1rem; }
-    legend::after {
-      content: "\25BC"; position: absolute; right: 5px; top: 50%;
-      transform: translateY(-50%); font-size: 0.9em;
-      transition: transform 0.3s ease, content 0.3s ease;
-      display: inline-block; line-height: 1;
-    }
-    fieldset.expanded legend::after { content: "\25B2"; transform: translateY(-50%); }
-    legend:focus { box-shadow: 0 0 0 .25rem rgba(13,110,253,.25); z-index: 1; }
-
-    fieldset.expanded > :not(legend):first-of-type { margin-top: 1rem; }
-    fieldset.expanded > :not(legend) + :not(legend) { margin-top: 0.5rem; }
-    fieldset.expanded > div + div { margin-top: 0.75rem; }
-    fieldset.expanded > p.fw-bold + div { margin-top: 0.5rem; }
-    fieldset.expanded > div + p.fw-bold { margin-top: 1rem; }
-    fieldset.expanded > fieldset { margin-top: 1rem; }
-    fieldset.expanded fieldset > legend::after { content: "\25BC"; }
-    fieldset.expanded fieldset.expanded > legend::after { content: "\25B2"; }
-
-    /* Specific styling for pain scale value display */
-    #painScaleValue {
-        display: inline-block; /* Or block if preferred on new line */
-        margin-left: 10px;
-        font-weight: bold;
-    }
-    fieldset.expanded > span#painScaleValue { /* ensure span is shown */
-        display: inline-block; /* keep it next to slider if possible */
-    }
-    fieldset.expanded > input[type="range"] + span#painScaleValue {
-        margin-top: 0.25rem; /* if it wraps, give it some space */
-    }
-
-  </style>
-</head>
-<body class="container py-4">
+<div class="container py-4">
 
 <form id="general-information" action="" method="post">
     <fieldset class="expanded mt-0">
@@ -266,5 +204,4 @@
     }
 </script>
 
-</body>
-</html>
+</div>
