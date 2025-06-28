@@ -58,13 +58,13 @@ require_once $path_to_root . 'includes/header.php';
     <h2><?php echo htmlspecialchars($page_title); ?></h2>
 
     <?php if ($page_message): ?>
-        <div class="alert alert-info"><?php echo htmlspecialchars($page_message); ?></div>
+    <div class="alert alert-info"><?php echo htmlspecialchars($page_message); ?></div>
     <?php endif; ?>
     <?php if ($page_error_message): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($page_error_message); ?></div>
+    <div class="alert alert-danger"><?php echo htmlspecialchars($page_error_message); ?></div>
     <?php endif; ?>
     <?php if ($clinician_load_error && $current_user_role === 'receptionist'): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($clinician_load_error); ?></div>
+    <div class="alert alert-danger"><?php echo htmlspecialchars($clinician_load_error); ?></div>
     <?php endif; ?>
 
 
@@ -74,19 +74,19 @@ require_once $path_to_root . 'includes/header.php';
         <div class="mb-3">
             <label for="first_name" class="form-label">First Name</label>
             <input type="text" class="form-control" id="first_name" name="first_name"
-                   value="<?php echo htmlspecialchars($old_input['first_name'] ?? ''); ?>" required>
+                value="<?php echo htmlspecialchars($old_input['first_name'] ?? ''); ?>" required>
         </div>
 
         <div class="mb-3">
             <label for="last_name" class="form-label">Last Name</label>
             <input type="text" class="form-control" id="last_name" name="last_name"
-                   value="<?php echo htmlspecialchars($old_input['last_name'] ?? ''); ?>" required>
+                value="<?php echo htmlspecialchars($old_input['last_name'] ?? ''); ?>" required>
         </div>
 
         <div class="mb-3">
             <label for="date_of_birth" class="form-label">Date of Birth</label>
             <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
-                   value="<?php echo htmlspecialchars($old_input['date_of_birth'] ?? ''); ?>" required>
+                value="<?php echo htmlspecialchars($old_input['date_of_birth'] ?? ''); ?>" required>
         </div>
 
         <!-- Optional fields not explicitly required by form but good to have -->
@@ -94,59 +94,64 @@ require_once $path_to_root . 'includes/header.php';
             <label for="sex" class="form-label">Sex</label>
             <select class="form-select" id="sex" name="sex">
                 <option value="">Select Sex</option>
-                <option value="Male" <?php echo (($old_input['sex'] ?? '') === 'Male') ? 'selected' : ''; ?>>Male</option>
-                <option value="Female" <?php echo (($old_input['sex'] ?? '') === 'Female') ? 'selected' : ''; ?>>Female</option>
-                <option value="Other" <?php echo (($old_input['sex'] ?? '') === 'Other') ? 'selected' : ''; ?>>Other</option>
+                <option value="Male" <?php echo (($old_input['sex'] ?? '') === 'Male') ? 'selected' : ''; ?>>Male
+                </option>
+                <option value="Female" <?php echo (($old_input['sex'] ?? '') === 'Female') ? 'selected' : ''; ?>>Female
+                </option>
+
             </select>
         </div>
 
         <div class="mb-3">
             <label for="address" class="form-label">Address</label>
-            <textarea class="form-control" id="address" name="address" rows="3"><?php echo htmlspecialchars($old_input['address'] ?? ''); ?></textarea>
+            <textarea class="form-control" id="address" name="address"
+                rows="3"><?php echo htmlspecialchars($old_input['address'] ?? ''); ?></textarea>
         </div>
 
         <div class="mb-3">
             <label for="phone_number" class="form-label">Phone Number</label>
             <input type="tel" class="form-control" id="phone_number" name="phone_number"
-                   value="<?php echo htmlspecialchars($old_input['phone_number'] ?? ''); ?>">
+                value="<?php echo htmlspecialchars($old_input['phone_number'] ?? ''); ?>">
         </div>
 
         <div class="mb-3">
             <label for="email" class="form-label">Email Address</label>
             <input type="email" class="form-control" id="email" name="email"
-                   value="<?php echo htmlspecialchars($old_input['email'] ?? ''); ?>">
+                value="<?php echo htmlspecialchars($old_input['email'] ?? ''); ?>">
         </div>
 
         <div class="mb-3">
             <label for="insurance_details" class="form-label">Insurance Details</label>
-            <textarea class="form-control" id="insurance_details" name="insurance_details" rows="3"><?php echo htmlspecialchars($old_input['insurance_details'] ?? ''); ?></textarea>
+            <textarea class="form-control" id="insurance_details" name="insurance_details"
+                rows="3"><?php echo htmlspecialchars($old_input['insurance_details'] ?? ''); ?></textarea>
         </div>
 
         <div class="mb-3">
             <label for="reason_for_visit" class="form-label">Reason for Visit</label>
-            <textarea class="form-control" id="reason_for_visit" name="reason_for_visit" rows="3"><?php echo htmlspecialchars($old_input['reason_for_visit'] ?? ''); ?></textarea>
+            <textarea class="form-control" id="reason_for_visit" name="reason_for_visit"
+                rows="3"><?php echo htmlspecialchars($old_input['reason_for_visit'] ?? ''); ?></textarea>
         </div>
 
         <?php if ($current_user_role === 'receptionist'): ?>
-            <div class="mb-3">
-                <label for="assigned_clinician_id" class="form-label">Assign to Clinician</label>
-                <select class="form-select" id="assigned_clinician_id" name="assigned_clinician_id" required>
-                    <option value="">Select Clinician</option>
-                    <?php if (!empty($clinician_list_from_db)): ?>
-                        <?php foreach ($clinician_list_from_db as $clinician): ?>
-                            <option value="<?php echo htmlspecialchars($clinician['id']); ?>"
-                                    <?php echo (isset($old_input['assigned_clinician_id']) && $old_input['assigned_clinician_id'] == $clinician['id']) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($clinician['first_name'] . ' ' . $clinician['last_name'] . ' (@' . $clinician['username'] . ')'); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <option value="" disabled>No clinicians available or error loading list.</option>
-                    <?php endif; ?>
-                </select>
-                <?php if ($clinician_load_error): ?>
-                     <div class="form-text text-danger"><?php echo htmlspecialchars($clinician_load_error); ?></div>
+        <div class="mb-3">
+            <label for="assigned_clinician_id" class="form-label">Assign to Clinician</label>
+            <select class="form-select" id="assigned_clinician_id" name="assigned_clinician_id" required>
+                <option value="">Select Clinician</option>
+                <?php if (!empty($clinician_list_from_db)): ?>
+                <?php foreach ($clinician_list_from_db as $clinician): ?>
+                <option value="<?php echo htmlspecialchars($clinician['id']); ?>"
+                    <?php echo (isset($old_input['assigned_clinician_id']) && $old_input['assigned_clinician_id'] == $clinician['id']) ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($clinician['first_name'] . ' ' . $clinician['last_name'] . ' (@' . $clinician['username'] . ')'); ?>
+                </option>
+                <?php endforeach; ?>
+                <?php else: ?>
+                <option value="" disabled>No clinicians available or error loading list.</option>
                 <?php endif; ?>
-            </div>
+            </select>
+            <?php if ($clinician_load_error): ?>
+            <div class="form-text text-danger"><?php echo htmlspecialchars($clinician_load_error); ?></div>
+            <?php endif; ?>
+        </div>
         <?php endif; ?>
 
         <button type="submit" class="btn btn-primary">Add Patient</button>
