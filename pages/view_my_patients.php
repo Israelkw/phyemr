@@ -59,36 +59,20 @@ require_once __DIR__ . '/../includes/header.php';
     <thead>
         <tr>
             <th>Patient ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>Name</th>
             <th>Date of Birth</th>
-            <th>Action</th> <!-- Changed from View History for consistency if other actions are added -->
+            <th>View Dashboard</th>
         </tr>
     </thead>
     <tbody>
         <?php foreach ($my_patients as $patient): ?>
         <tr>
             <td><?php echo htmlspecialchars($patient['id']); ?></td>
-            <td><?php echo htmlspecialchars($patient['first_name']); ?></td>
-            <td><?php echo htmlspecialchars($patient['last_name']); ?></td>
+            <td><?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']); ?></td>
             <td><?php echo htmlspecialchars($patient['date_of_birth']); ?></td>
-            <td class="text-nowrap">
-                <a href="view_patient_history.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>"
-                    class="btn btn-info btn-sm mb-1 me-1">View History</a>
-                <a href="select_form_for_patient.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>"
-                    class="btn btn-success btn-sm mb-1 me-1">Add Form</a>
-
-                <a href="fill_patient_form.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>&form_name=general-information.html&form_directory=patient_general_info"
-                    class="btn btn-primary btn-sm">fill general info</a>
-
-                <form action="<?php echo $path_to_root; ?>php/handle_remove_patient_from_list.php" method="POST"
-                    style="display: inline-block;"
-                    onsubmit="return confirm('Are you sure you want to remove this patient from your active list? This patient will become unassigned.');">
-                    <input type="hidden" name="patient_id" value="<?php echo htmlspecialchars($patient['id']); ?>">
-                    <input type="hidden" name="csrf_token"
-                        value="<?php echo htmlspecialchars($csrf_token); // Use page-level token ?>">
-                    <button type="submit" class="btn btn-danger btn-sm mb-1">Remove from List</button>
-                </form>
+            <td>
+                <a href="clinician_patient_dashboard.php?patient_id=<?php echo htmlspecialchars($patient['id']); ?>"
+                   class="btn btn-primary btn-sm">Open Dashboard</a>
             </td>
         </tr>
         <?php endforeach; ?>

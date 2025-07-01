@@ -119,6 +119,38 @@ if ($patient_details && empty($db_error_message)) {
 // No explicit $mysqli->close() or $stmt->close() needed with PDO and Database class
 
 $page_title = "Patient Form History";
+
+// Helper function to fetch contextual general info
+function get_contextual_general_info($db, $patient_id, $current_submission_timestamp) {
+    $sql_context_gen_info = "SELECT form_data
+                             FROM patient_form_submissions
+                             WHERE patient_id = :patient_id
+                               AND form_name = 'general-information.html'
+                               AND form_directory = 'patient_general_info'
+                               AND submission_timestamp <= :current_submission_timestamp
+                             ORDER BY submission_timestamp DESC
+                             LIMIT 1";
+    try {
+        $stmt_context_gen_info = $db->prepare($sql_context_gen_info);
+        $db->execute($stmt_context_gen_info, [
+            ':patient_id' => $patient_id,
+            ':current_submission_timestamp' => $current_submission_timestamp
+        ]);
+        $row = $db->fetch($stmt_context_gen_info);
+        if ($row && !empty($row['form_data'])) {
+            $decoded_data = json_decode($row['form_data'], true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $decoded_data;
+            } else {
+                error_log("JSON decode error for contextual general info: " . json_last_error_msg());
+            }
+        }
+    } catch (PDOException $e) {
+        error_log("DB error fetching contextual general info: " . $e->getMessage());
+    }
+    return null;
+}
+
 include_once $path_to_root . 'includes/header.php';
 ?>
 
@@ -216,6 +248,44 @@ include_once $path_to_root . 'includes/header.php';
                     <a href="<?php echo $view_data_link; ?>" class="btn btn-info btn-sm">View Data</a>
                 </td>
             </tr>
+            <?php
+            // Check if we need to display contextual general info
+            if ($submission['form_name'] !== 'general-information.html') {
+                $contextual_gi_data = get_contextual_general_info($db, $patient_id, $submission['submission_timestamp']);
+                if ($contextual_gi_data) :
+            ?>
+            <tr>
+                <td colspan="5" class="p-0">
+                    <div class="contextual-info-wrapper ps-3 pe-3 pt-2 pb-2" style="background-color: #f8f9fa; border-left: 3px solid #0dcaf0;">
+                        <small class="text-muted d-block mb-1"><strong>Contextual General Information (at the time of above submission):</strong></small>
+                        <dl class="row mb-0">
+                        <?php
+                        if (is_array($contextual_gi_data)) {
+                            $has_content = false;
+                            foreach ($contextual_gi_data as $field) {
+                                if (isset($field['label']) && isset($field['value']) && trim($field['value']) !== '' && $field['name'] !== 'csrf_token') {
+                                    $has_content = true;
+                        ?>
+                            <dt class="col-sm-4"><small><?php echo htmlspecialchars($field['label']); ?>:</small></dt>
+                            <dd class="col-sm-8"><small><?php echo nl2br(htmlspecialchars($field['value'])); ?></small></dd>
+                        <?php
+                                }
+                            }
+                            if (!$has_content) {
+                                echo "<dd class='col-sm-12'><small><em>No specific details recorded in this general info submission.</em></small></dd>";
+                            }
+                        } else {
+                            echo "<dd class='col-sm-12'><small><em>General information data is not in the expected format.</em></small></dd>";
+                        }
+                        ?>
+                        </dl>
+                    </div>
+                </td>
+            </tr>
+            <?php
+                endif; // end if $contextual_gi_data
+            } // end if not general-information.html
+            ?>
             <?php endforeach; ?>
         </tbody>
     </table>

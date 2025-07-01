@@ -131,6 +131,36 @@ if ($form_directory_from_url === 'patient_evaluation_form') {
 $form_display_name = ucwords(str_replace(['_', '-'], ' ', pathinfo($form_file_basename, PATHINFO_FILENAME)));
 $page_title = "Fill Form: " . htmlspecialchars($form_display_name) . " for " . $patient_full_name;
 
+// ---- START: Fetch Recent General Info for Clinician's Evaluation Forms ----
+$recent_general_info_data = null;
+if ($_SESSION['role'] === 'clinician' && $form_directory_from_url === 'patient_evaluation_form') {
+    try {
+        $sql_gen_info = "SELECT form_data
+                         FROM patient_form_submissions
+                         WHERE patient_id = :patient_id
+                           AND form_name = 'general-information.html'
+                           AND form_directory = 'patient_general_info'
+                         ORDER BY submission_timestamp DESC
+                         LIMIT 1";
+        $stmt_gen_info = $db->prepare($sql_gen_info);
+        $db->execute($stmt_gen_info, [':patient_id' => $selected_patient_id]);
+        $gen_info_row = $db->fetch($stmt_gen_info);
+
+        if ($gen_info_row && !empty($gen_info_row['form_data'])) {
+            $recent_general_info_data = json_decode($gen_info_row['form_data'], true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                // Log error, don't break page
+                error_log("JSON decode error for recent general info: " . json_last_error_msg());
+                $recent_general_info_data = null; // Reset on error
+            }
+        }
+    } catch (PDOException $e) {
+        error_log("Database error fetching recent general info: " . $e->getMessage());
+        // Don't break the page, just won't show the info
+    }
+}
+// ---- END: Fetch Recent General Info ----
+
 // 7. Include header
 include_once $path_to_root . 'includes/header.php';
 ?>
@@ -148,13 +178,45 @@ window.csrfToken = <?php echo json_encode($csrf_token); ?>; // Inject CSRF token
 // 8. Display heading
 ?>
 
-
-
 <!-- Added mt-4 for spacing -->
 <h2 class="mb-4">
     <?php echo htmlspecialchars($form_display_name); ?>
     <small class="text-muted">for <?php echo $patient_full_name; ?></small>
 </h2>
+
+<?php
+// ---- START: Display Recent General Info ----
+if ($recent_general_info_data && $_SESSION['role'] === 'clinician' && $form_directory_from_url === 'patient_evaluation_form') :
+?>
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">
+        <strong>Most Recent General Information (Read-Only)</strong>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <?php
+            // Iterate through the decoded JSON data. Assuming it's an array of field objects {name, value, label}.
+            // You might need to adjust this based on the actual structure of 'general-information.html' form_data.
+            if (is_array($recent_general_info_data)) {
+                foreach ($recent_general_info_data as $field) :
+                    if (isset($field['label']) && isset($field['value']) && !empty(trim($field['value']))):
+            ?>
+                <dt class="col-sm-4"><?php echo htmlspecialchars($field['label']); ?>:</dt>
+                <dd class="col-sm-8"><?php echo nl2br(htmlspecialchars($field['value'])); ?></dd>
+            <?php
+                    endif;
+                endforeach;
+            } else {
+                echo "<dd class='col-sm-12'>General information data is not in the expected format.</dd>";
+            }
+            ?>
+        </dl>
+    </div>
+</div>
+<?php
+endif;
+// ---- END: Display Recent General Info ----
+?>
 
 <?php
     // 9. Read the content of the selected HTML form file
