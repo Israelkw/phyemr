@@ -13,6 +13,7 @@ $submission_id = null;
 $submission_details = null;
 $patient_details = null;
 $form_data_array = null;
+$contextual_general_info_data = null; // For contextual general info
 $error_message = '';
 $db_error_message = '';
 $page_title = "Form Submission Details";
@@ -65,6 +66,42 @@ if (!isset($_GET['submission_id']) || empty($_GET['submission_id']) || !is_numer
                     } else {
                         $error_message = "No form data found for this submission.";
                     }
+
+                    // ---- START: Fetch Contextual General Info ----
+                    // This should only run if the main submission is successfully fetched and authorized
+                    if ($submission_details && $patient_details && empty($error_message) &&
+                        $submission_details['form_name'] !== 'general-information.html') {
+
+                        try {
+                            $sql_context_gen_info = "SELECT form_data
+                                                     FROM patient_form_submissions
+                                                     WHERE patient_id = :patient_id
+                                                       AND form_name = 'general-information.html'
+                                                       AND form_directory = 'patient_general_info'
+                                                       AND submission_timestamp <= :current_submission_timestamp
+                                                     ORDER BY submission_timestamp DESC
+                                                     LIMIT 1";
+                            $stmt_context_gen_info = $db->prepare($sql_context_gen_info);
+                            $db->execute($stmt_context_gen_info, [
+                                ':patient_id' => $patient_id_from_submission,
+                                ':current_submission_timestamp' => $submission_details['submission_timestamp']
+                            ]);
+                            $context_row = $db->fetch($stmt_context_gen_info);
+                            if ($context_row && !empty($context_row['form_data'])) {
+                                $decoded_context_data = json_decode($context_row['form_data'], true);
+                                if (json_last_error() === JSON_ERROR_NONE) {
+                                    $contextual_general_info_data = $decoded_context_data;
+                                } else {
+                                    error_log("JSON decode error for contextual general info (view_submission_detail): " . json_last_error_msg());
+                                    // $contextual_general_info_data remains null
+                                }
+                            }
+                        } catch (PDOException $e_context) {
+                             error_log("DB error fetching contextual general info (view_submission_detail): " . $e_context->getMessage());
+                             // $contextual_general_info_data remains null, don't break the page
+                        }
+                    }
+                    // ---- END: Fetch Contextual General Info ----
                 }
             } else {
                 $error_message = "Patient associated with this submission not found.";
@@ -92,6 +129,45 @@ include_once $path_to_root . 'includes/header.php';
     <div class="alert alert-danger">Database error: <?php echo htmlspecialchars($db_error_message); ?> Please contact
         support.</div>
     <?php endif; ?>
+
+    <?php
+    // ---- START: Display Contextual General Info ----
+    // This should only display if the main submission is also being displayed successfully
+    if ($submission_details && $patient_details && empty($error_message) && empty($db_error_message) && $contextual_general_info_data):
+    ?>
+    <div class="card mb-4 border-info">
+        <div class="card-header bg-info text-white">
+            <strong>Contextual General Information (Read-Only, from just before this submission)</strong>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <?php
+                if (is_array($contextual_general_info_data)) {
+                    $has_content = false;
+                    foreach ($contextual_general_info_data as $field) {
+                        // Ensure field 'name' is checked and converted to lowercase for 'csrf_token' comparison
+                        if (isset($field['label']) && isset($field['value']) && trim($field['value']) !== '' && (!isset($field['name']) || strtolower($field['name']) !== 'csrf_token') ) {
+                            $has_content = true;
+                ?>
+                    <dt class="col-sm-4"><?php echo htmlspecialchars($field['label']); ?>:</dt>
+                    <dd class="col-sm-8"><?php echo nl2br(htmlspecialchars($field['value'])); ?></dd>
+                <?php
+                        }
+                    }
+                    if (!$has_content) {
+                        echo "<dd class='col-sm-12'><em>No specific details recorded in this general info submission.</em></dd>";
+                    }
+                } else {
+                    echo "<dd class='col-sm-12'><em>General information data is not in the expected format.</em></dd>";
+                }
+                ?>
+            </dl>
+        </div>
+    </div>
+    <?php
+    endif;
+    // ---- END: Display Contextual General Info ----
+    ?>
 
     <?php if ($submission_details && $patient_details && empty($error_message) && empty($db_error_message)): ?>
     <div class="card mb-4">
