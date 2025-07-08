@@ -210,16 +210,21 @@ if (isset($_GET['report_name']) && $_GET['report_name'] === 'total_collected') {
                         AND EXISTS (
                             SELECT 1 FROM patient_procedures pp
                             WHERE pp.patient_id = pat.id
-                            AND pp.date_performed >= :start_date AND pp.date_performed <= :end_date
+                            AND pp.date_performed >= :pp_start_date AND pp.date_performed <= :pp_end_date
                             UNION ALL
                             SELECT 1 FROM patient_form_submissions pfs
                             WHERE pfs.patient_id = pat.id
-                            AND pfs.submission_timestamp >= :start_date AND pfs.submission_timestamp <= :end_date
+                            AND pfs.submission_timestamp >= :pfs_start_date AND pfs.submission_timestamp <= :pfs_end_date
                         )
                         ORDER BY pat.last_name, pat.first_name";
 
                 $stmt = $db->prepare($sql);
-                $db->execute($stmt, [':start_date' => $start_date, ':end_date' => $end_date]);
+                $db->execute($stmt, [
+                    ':pp_start_date' => $start_date,
+                    ':pp_end_date' => $end_date,
+                    ':pfs_start_date' => $start_date,
+                    ':pfs_end_date' => $end_date
+                ]);
                 $active_patients_list = $db->fetchAll($stmt);
                 $active_patients_count = count($active_patients_list);
 
