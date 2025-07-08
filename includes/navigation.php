@@ -72,10 +72,6 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                     <a class="nav-link<?php if ($current_page == 'generate_invoice.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/generate_invoice.php">Generate Invoice</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link<?php if ($current_page == 'admin_reports.php') echo ' active'; ?>"
-                        href="<?php echo $base_path; ?>pages/admin_reports.php">Reports</a>
-                </li>
                 <?php // Add other admin links here if they exist ?>
                 <?php endif; ?>
                 <?php endif; ?>

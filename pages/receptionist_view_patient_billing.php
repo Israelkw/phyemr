@@ -36,7 +36,6 @@ if ($searchTerm) {
 
 $patient_invoices = [];
 $patient_details = null;
-$filter_payment_status = filter_input(INPUT_GET, 'filter_payment_status', FILTER_SANITIZE_STRING);
 
 if ($selected_patient_id) {
     // Fetch selected patient's details
@@ -45,24 +44,14 @@ if ($selected_patient_id) {
     $patient_details = $db->fetch($stmt_patient_details);
 
     if ($patient_details) {
-        // Base SQL for invoices
-        $sql_invoices_base = "
+        // Fetch invoices for this patient
+        $sql_invoices = "
             SELECT id AS invoice_id, invoice_number, invoice_date, due_date, total_amount, amount_paid, payment_status
             FROM invoices
-            WHERE patient_id = :patient_id";
-
-        $params = [':patient_id' => $selected_patient_id];
-
-        // Apply payment status filter if provided
-        if (!empty($filter_payment_status) && in_array($filter_payment_status, ['unpaid', 'partially_paid', 'paid', 'void'])) {
-            $sql_invoices_base .= " AND payment_status = :payment_status";
-            $params[':payment_status'] = $filter_payment_status;
-        }
-
-        $sql_invoices_base .= " ORDER BY invoice_date DESC, id DESC";
-
-        $stmt_invoices = $db->prepare($sql_invoices_base);
-        $db->execute($stmt_invoices, $params);
+            WHERE patient_id = :patient_id
+            ORDER BY invoice_date DESC, id DESC";
+        $stmt_invoices = $db->prepare($sql_invoices);
+        $db->execute($stmt_invoices, [':patient_id' => $selected_patient_id]);
         $patient_invoices = $db->fetchAll($stmt_invoices);
     } else {
         SessionManager::set('message', 'Selected patient not found.');
@@ -116,35 +105,15 @@ require_once $path_to_root . 'includes/header.php';
 
     <?php if ($selected_patient_id && $patient_details): ?>
         <hr>
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center">
             <h3 class="mt-4">Invoices for: <?php echo htmlspecialchars($patient_details['first_name'] . ' ' . $patient_details['last_name']); ?> (ID: <?php echo $selected_patient_id; ?>)</h3>
             <a href="<?php echo $path_to_root; ?>pages/generate_invoice.php?patient_id=<?php echo $selected_patient_id; ?>" class="btn btn-success">
                 <i class="fas fa-plus-circle"></i> Generate New Invoice
             </a>
         </div>
 
-        <!-- Filter Form -->
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET" class="mb-3 p-3 border rounded bg-light">
-            <input type="hidden" name="patient_id" value="<?php echo $selected_patient_id; ?>">
-            <div class="row align-items-end">
-                <div class="col-md-4">
-                    <label for="filter_payment_status" class="form-label">Filter by Payment Status:</label>
-                    <select name="filter_payment_status" id="filter_payment_status" class="form-select">
-                        <option value="">All Statuses</option>
-                        <option value="unpaid" <?php echo (isset($_GET['filter_payment_status']) && $_GET['filter_payment_status'] === 'unpaid') ? 'selected' : ''; ?>>Unpaid</option>
-                        <option value="partially_paid" <?php echo (isset($_GET['filter_payment_status']) && $_GET['filter_payment_status'] === 'partially_paid') ? 'selected' : ''; ?>>Partially Paid</option>
-                        <option value="paid" <?php echo (isset($_GET['filter_payment_status']) && $_GET['filter_payment_status'] === 'paid') ? 'selected' : ''; ?>>Paid</option>
-                        <option value="void" <?php echo (isset($_GET['filter_payment_status']) && $_GET['filter_payment_status'] === 'void') ? 'selected' : ''; ?>>Void</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
-                </div>
-            </div>
-        </form>
-
         <?php if (empty($patient_invoices)): ?>
-            <p class="alert alert-info mt-3">No invoices found for this patient<?php echo (isset($_GET['filter_payment_status']) && !empty($_GET['filter_payment_status'])) ? ' matching the selected filter' : ''; ?>.</p>
+            <p class="alert alert-info mt-3">No invoices found for this patient.</p>
         <?php else: ?>
             <table class="table table-striped table-hover mt-3">
                 <thead class="table-dark">
