@@ -90,3 +90,31 @@ CREATE TABLE IF NOT EXISTS submission_clinical_details (
     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_details_submission FOREIGN KEY (submission_id) REFERENCES patient_form_submissions(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- Procedures Table
+CREATE TABLE IF NOT EXISTS procedures (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_procedure_name (name)
+) ENGINE=InnoDB;
+
+-- Patient Procedures Table (Linking table)
+CREATE TABLE IF NOT EXISTS patient_procedures (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT NOT NULL,
+    procedure_id INT NOT NULL,
+    clinician_id INT NOT NULL, -- User ID of the clinician who performed/ordered
+    date_performed DATE NOT NULL,
+    notes TEXT NULLABLE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_pp_patient FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
+    CONSTRAINT fk_pp_procedure FOREIGN KEY (procedure_id) REFERENCES procedures(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_pp_clinician FOREIGN KEY (clinician_id) REFERENCES users(id) ON DELETE RESTRICT,
+    INDEX idx_pp_patient_id (patient_id),
+    INDEX idx_pp_procedure_id (procedure_id),
+    INDEX idx_pp_clinician_id (clinician_id),
+    INDEX idx_pp_date_performed (date_performed)
+) ENGINE=InnoDB;
