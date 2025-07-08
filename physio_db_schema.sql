@@ -81,7 +81,6 @@ CREATE TABLE IF NOT EXISTS submission_vitals (
 CREATE TABLE IF NOT EXISTS submission_clinical_details (
     id INT AUTO_INCREMENT PRIMARY KEY,
     submission_id INT NOT NULL UNIQUE,
-    allergies TEXT NULL,
     medical_history_summary TEXT NULL,
     current_medications TEXT NULL,
     evaluation_treatment_plan_summary TEXT NULL,
@@ -108,7 +107,7 @@ CREATE TABLE IF NOT EXISTS patient_procedures (
     procedure_id INT NOT NULL,
     clinician_id INT NOT NULL, -- User ID of the clinician who performed/ordered
     date_performed DATE NOT NULL,
-    notes TEXT NULLABLE,
+    notes TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_pp_patient FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
     CONSTRAINT fk_pp_procedure FOREIGN KEY (procedure_id) REFERENCES procedures(id) ON DELETE RESTRICT,
