@@ -117,9 +117,9 @@ CREATE TABLE IF NOT EXISTS patient_procedures (
     INDEX idx_pp_procedure_id (procedure_id),
     INDEX idx_pp_clinician_id (clinician_id),
     INDEX idx_pp_date_performed (date_performed),
-    invoice_id INT NULLABLE DEFAULT NULL, -- Added for invoicing
-    INDEX idx_pp_invoice_id (invoice_id), -- Added for invoicing
-    CONSTRAINT fk_pp_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE SET NULL -- Added for invoicing
+    invoice_id INT NULL DEFAULT NULL, -- Corrected
+    INDEX idx_pp_invoice_id (invoice_id),
+    CONSTRAINT fk_pp_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- Invoices Table
@@ -128,13 +128,13 @@ CREATE TABLE IF NOT EXISTS invoices (
     patient_id INT NOT NULL,
     invoice_number VARCHAR(50) NOT NULL UNIQUE,
     invoice_date DATE NOT NULL,
-    due_date DATE NULLABLE,
+    due_date DATE NULL, -- Corrected
     total_amount DECIMAL(10, 2) NOT NULL,
     amount_paid DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     payment_status ENUM('unpaid', 'paid', 'partially_paid', 'void') NOT NULL DEFAULT 'unpaid',
-    payment_date DATETIME NULLABLE,
-    payment_method VARCHAR(50) NULLABLE,
-    payment_notes TEXT NULLABLE,
+    payment_date DATETIME NULL, -- Corrected
+    payment_method VARCHAR(50) NULL, -- Corrected
+    payment_notes TEXT NULL, -- Corrected
     created_by_user_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

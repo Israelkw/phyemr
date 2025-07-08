@@ -18,13 +18,13 @@ try {
         patient_id INT NOT NULL,
         invoice_number VARCHAR(50) NOT NULL UNIQUE,
         invoice_date DATE NOT NULL,
-        due_date DATE NULLABLE,
+        due_date DATE NULL,
         total_amount DECIMAL(10, 2) NOT NULL,
         amount_paid DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
         payment_status ENUM('unpaid', 'paid', 'partially_paid', 'void') NOT NULL DEFAULT 'unpaid',
-        payment_date DATETIME NULLABLE,
-        payment_method VARCHAR(50) NULLABLE,
-        payment_notes TEXT NULLABLE,
+        payment_date DATETIME NULL,
+        payment_method VARCHAR(50) NULL,
+        payment_notes TEXT NULL,
         created_by_user_id INT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -65,7 +65,7 @@ try {
     if (!$columnExists) {
         $sqlAlterPatientProceduresTable = "
         ALTER TABLE patient_procedures
-        ADD COLUMN invoice_id INT NULLABLE DEFAULT NULL,
+        ADD COLUMN invoice_id INT NULL DEFAULT NULL,
         ADD CONSTRAINT fk_pp_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE SET NULL,
         ADD INDEX idx_pp_invoice_id (invoice_id);";
         $pdo->exec($sqlAlterPatientProceduresTable);
