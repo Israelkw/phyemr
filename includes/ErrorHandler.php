@@ -12,7 +12,7 @@ class ErrorHandler {
     public static function handleException(Exception $e, $logFilePath = __DIR__ . '/../error.log') {
         // Log the detailed error message
         $errorMessage = "[" . date("Y-m-d H:i:s") . "] Exception: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine() . PHP_EOL;
-        // error_log($errorMessage, 3, $logFilePath); // Temporarily commented out to bypass permission issues for table setup
+        error_log($errorMessage, 3, $logFilePath);
 
         // Start session before using $_SESSION
         SessionManager::startSession();
