@@ -207,9 +207,16 @@ require_once $path_to_root . 'includes/header.php';
                             </select>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="payment_notes" class="form-label">Payment Notes (Optional)</label>
-                        <textarea class="form-control" id="payment_notes" name="payment_notes" rows="2"><?php echo htmlspecialchars($old_input_payment['payment_notes'] ?? ''); ?></textarea>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="manual_receipt_number" class="form-label">Manual Receipt Number (Optional)</label>
+                            <input type="text" class="form-control" id="manual_receipt_number" name="manual_receipt_number"
+                                   value="<?php echo htmlspecialchars($old_input_payment['manual_receipt_number'] ?? ''); ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="payment_notes" class="form-label">Payment Notes (Optional)</label>
+                            <textarea class="form-control" id="payment_notes" name="payment_notes" rows="2"><?php echo htmlspecialchars($old_input_payment['payment_notes'] ?? ''); ?></textarea>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Record Payment</button>
                 </form>
