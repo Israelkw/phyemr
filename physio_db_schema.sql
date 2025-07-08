@@ -116,5 +116,44 @@ CREATE TABLE IF NOT EXISTS patient_procedures (
     INDEX idx_pp_patient_id (patient_id),
     INDEX idx_pp_procedure_id (procedure_id),
     INDEX idx_pp_clinician_id (clinician_id),
-    INDEX idx_pp_date_performed (date_performed)
+    INDEX idx_pp_date_performed (date_performed),
+    invoice_id INT NULLABLE DEFAULT NULL, -- Added for invoicing
+    INDEX idx_pp_invoice_id (invoice_id), -- Added for invoicing
+    CONSTRAINT fk_pp_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE SET NULL -- Added for invoicing
+) ENGINE=InnoDB;
+
+-- Invoices Table
+CREATE TABLE IF NOT EXISTS invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT NOT NULL,
+    invoice_number VARCHAR(50) NOT NULL UNIQUE,
+    invoice_date DATE NOT NULL,
+    due_date DATE NULLABLE,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    amount_paid DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    payment_status ENUM('unpaid', 'paid', 'partially_paid', 'void') NOT NULL DEFAULT 'unpaid',
+    payment_date DATETIME NULLABLE,
+    payment_method VARCHAR(50) NULLABLE,
+    payment_notes TEXT NULLABLE,
+    created_by_user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_invoices_patient_id (patient_id),
+    INDEX idx_invoices_invoice_number (invoice_number),
+    INDEX idx_invoices_payment_status (payment_status),
+    CONSTRAINT fk_invoices_patient FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_invoices_created_by FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+-- Invoice Items Table
+CREATE TABLE IF NOT EXISTS invoice_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_id INT NOT NULL,
+    patient_procedure_id INT NOT NULL,
+    procedure_name_snapshot VARCHAR(255) NOT NULL,
+    price_snapshot DECIMAL(10, 2) NOT NULL,
+    INDEX idx_invoiceitems_invoice_id (invoice_id),
+    INDEX idx_invoiceitems_patient_procedure_id (patient_procedure_id),
+    CONSTRAINT fk_invoiceitems_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
+    CONSTRAINT fk_invoiceitems_patient_procedure FOREIGN KEY (patient_procedure_id) REFERENCES patient_procedures(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
