@@ -20,17 +20,23 @@ require_once $path_to_root . 'includes/header.php';
 <?php
     $user_role = isset($_SESSION['role']) ? $_SESSION['role'] : 'Guest';
     $user_first_name = isset($_SESSION['first_name']) ? $_SESSION['first_name'] : '';
-    $user_id = $_SESSION['user_id']; // For clinician patient count
+    $user_id = $_SESSION['user_id'];
 
-    // Database connection for clinician patient count
-    $active_patient_count = 0;
+    // Initialize variables for stats
+    $active_patient_count = 0; // For clinician
+    $stat_total_patients = 0;
+    $stat_total_payments_value = 0;
+    $stat_total_users = 0;
+    $stat_total_invoices = 0;
+
+    // Database connection is needed for any role that fetches data
+    require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
+    require_once $path_to_root . 'includes/Database.php';    // Provides Database class
+    $db = new Database($pdo);
+
     if ($user_role === 'clinician') {
-        require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
-        require_once $path_to_root . 'includes/Database.php';    // Provides Database class
-        $db = new Database($pdo);
         try {
             $sql_count = "SELECT COUNT(*) as count FROM patients WHERE assigned_clinician_id = :clinician_id";
-            // Assuming 'active' status is implied by being assigned. If there's an explicit 'is_active' flag for patients, it should be added.
             $stmt_count = $db->prepare($sql_count);
             $db->execute($stmt_count, [':clinician_id' => $user_id]);
             $result = $db->fetch($stmt_count);
@@ -39,7 +45,33 @@ require_once $path_to_root . 'includes/header.php';
             }
         } catch (PDOException $e) {
             error_log("Error fetching clinician's active patient count: " . $e->getMessage());
-            // Optionally set an error message to display to the user
+        }
+    } elseif ($user_role === 'admin') {
+        try {
+            // a. Total Registered Patients
+            $stmt_total_patients = $db->prepare("SELECT COUNT(*) AS total_patients FROM patients");
+            $db->execute($stmt_total_patients);
+            $stat_total_patients = ($db->fetch($stmt_total_patients)['total_patients']) ?? 0;
+
+            // b. Total Payments Received (sum from payments table)
+            $stmt_total_payments = $db->prepare("SELECT SUM(amount_paid) AS total_revenue FROM payments");
+            $db->execute($stmt_total_payments);
+            $stat_total_payments_value = ($db->fetch($stmt_total_payments)['total_revenue']) ?? 0;
+
+            // c. Total Number of Users
+            $stmt_total_users = $db->prepare("SELECT COUNT(*) AS total_users FROM users");
+            $db->execute($stmt_total_users);
+            $stat_total_users = ($db->fetch($stmt_total_users)['total_users']) ?? 0;
+
+            // d. Total Invoices Generated
+            $stmt_total_invoices = $db->prepare("SELECT COUNT(*) AS total_invoices FROM invoices");
+            $db->execute($stmt_total_invoices);
+            $stat_total_invoices = ($db->fetch($stmt_total_invoices)['total_invoices']) ?? 0;
+
+        } catch (PDOException $e) {
+            error_log("Error fetching admin dashboard statistics: " . $e->getMessage());
+            // Optionally set a general error message for admin stats area
+            SessionManager::set('dashboard_admin_error', 'Could not load all statistics.');
         }
     }
     ?>
@@ -97,14 +129,63 @@ require_once $path_to_root . 'includes/header.php';
         </div>
     </div>
     <?php elseif ($user_role === 'admin'): ?>
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">Admin Actions</h5>
-                <p class="card-text flex-grow-1">As an administrator, you have oversight of the system, including
-                    managing user accounts (like clinicians) and ensuring the smooth operation of the application.</p>
-                <a href="manage_clinicians.php" class="btn btn-danger mt-auto align-self-start">Manage Clinicians</a>
-                <?php // Add other admin links here if they exist ?>
+    <div class="col-lg-12"> <!-- Changed to full width for admin -->
+        <div class="row">
+            <!-- Statistics Section -->
+            <div class="col-12 mb-4">
+                <h4>System Statistics</h4>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card text-white bg-primary h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo $stat_total_patients; ?></h5>
+                                <p class="card-text">Total Registered Patients</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card text-white bg-success h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">$<?php echo number_format($stat_total_payments_value, 2); ?></h5>
+                                <p class="card-text">Total Payments Received</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card text-white bg-info h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo $stat_total_users; ?></h5>
+                                <p class="card-text">Total System Users</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card text-white bg-warning h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo $stat_total_invoices; ?></h5>
+                                <p class="card-text">Total Invoices Generated</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions/Links Section -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Admin Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Quickly access key management areas of the system.</p>
+                        <div class="d-grid gap-2 d-md-block">
+                            <a href="<?php echo $path_to_root; ?>pages/manage_clinicians.php" class="btn btn-primary me-md-2 mb-2"><i class="fas fa-users-cog"></i> Manage Users</a>
+                            <a href="<?php echo $path_to_root; ?>pages/admin_manage_procedures.php" class="btn btn-info me-md-2 mb-2"><i class="fas fa-cogs"></i> Manage Procedures</a>
+                            <a href="<?php echo $path_to_root; ?>pages/admin_reports.php" class="btn btn-secondary me-md-2 mb-2"><i class="fas fa-chart-line"></i> View Reports</a>
+                            <a href="<?php echo $path_to_root; ?>pages/generate_invoice.php" class="btn btn-success mb-2"><i class="fas fa-file-invoice-dollar"></i> Generate Invoice</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
