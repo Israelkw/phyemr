@@ -4,7 +4,7 @@ require_once $path_to_root . 'includes/SessionManager.php';
 SessionManager::startSession();
 
 // Ensure user is logged in
-if (!SessionManager::isLoggedIn()) {
+if (!SessionManager::isUserLoggedIn()) { // Changed isLoggedIn to isUserLoggedIn
     SessionManager::set('message', 'Please login to change your password.');
     header("Location: " . $path_to_root . "pages/login.php");
     exit;
