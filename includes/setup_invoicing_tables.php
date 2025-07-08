@@ -9,7 +9,8 @@ ErrorHandler::register(); // Register the error handler
 echo "<h1>Invoicing Module Setup Script</h1>";
 
 try {
-    $pdo->beginTransaction();
+    // Transactions are generally not needed for DDL statements as they are often auto-committing.
+    // Removing explicit transaction handling to prevent "no active transaction" errors with DDL.
 
     // 1. Create 'invoices' table
     $sqlCreateInvoicesTable = "
@@ -75,10 +76,13 @@ try {
         // Optionally, check if FK and index exist and add them if not. For simplicity, assuming if column exists, setup was done.
     }
 
-    $pdo->commit();
+    // $pdo->commit(); // Removed as DDL statements are generally auto-committing.
     echo "<h2 style='color:green;'>Invoicing module database setup completed successfully.</h2>";
 
 } catch (PDOException $e) {
+    // No explicit rollback needed here if we didn't start a transaction,
+    // but checking pdo->inTransaction() before rollback is safe if other operations were mixed.
+    // For a pure DDL script like this, rollback in catch might not be strictly necessary.
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
