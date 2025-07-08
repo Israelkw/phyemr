@@ -48,9 +48,22 @@ try {
     $db->execute($stmt_items, [':invoice_id' => $invoice_id]);
     $invoice_items = $db->fetchAll($stmt_items);
 
+    // Fetch latest payment details
+    $latest_payment = null;
+    if ($invoice_details) { // Only fetch if invoice exists
+        $sql_latest_payment = "SELECT payment_date, payment_method, payment_notes
+                               FROM payments
+                               WHERE invoice_id = :invoice_id
+                               ORDER BY payment_date DESC, id DESC
+                               LIMIT 1";
+        $stmt_latest_payment = $db->prepare($sql_latest_payment);
+        $db->execute($stmt_latest_payment, [':invoice_id' => $invoice_id]);
+        $latest_payment = $db->fetch($stmt_latest_payment);
+    }
+
 } catch (PDOException $e) {
-    error_log("Error fetching invoice details: " . $e->getMessage());
-    SessionManager::set('message', "Error fetching invoice details: Database operation failed.");
+    error_log("Error fetching invoice or payment details: " . $e->getMessage());
+    SessionManager::set('message', "Error fetching invoice or payment details: Database operation failed.");
     header("Location: " . $path_to_root . "pages/receptionist_view_patient_billing.php"); // Redirect on DB error
     exit;
 }
@@ -113,14 +126,14 @@ require_once $path_to_root . 'includes/header.php';
                     ?>
                     <span class="<?php echo $status_class; ?>"><?php echo ucfirst(str_replace('_', ' ', $invoice_details['payment_status'])); ?></span>
                 </p>
-                <?php if (isset($invoice_details['payment_date']) && $invoice_details['payment_date']): ?>
-                <p><strong>Last Payment Date:</strong> <?php echo htmlspecialchars(date('M d, Y H:i', strtotime($invoice_details['payment_date']))); ?></p>
+                <?php if ($latest_payment && isset($latest_payment['payment_date']) && $latest_payment['payment_date']): ?>
+                <p><strong>Last Payment Date:</strong> <?php echo htmlspecialchars(date('M d, Y H:i', strtotime($latest_payment['payment_date']))); ?></p>
                 <?php endif; ?>
-                <?php if (isset($invoice_details['payment_method']) && $invoice_details['payment_method']): ?>
-                <p><strong>Last Payment Method:</strong> <?php echo htmlspecialchars($invoice_details['payment_method']); ?></p>
+                <?php if ($latest_payment && isset($latest_payment['payment_method']) && $latest_payment['payment_method']): ?>
+                <p><strong>Last Payment Method:</strong> <?php echo htmlspecialchars($latest_payment['payment_method']); ?></p>
                 <?php endif; ?>
-                 <?php if (isset($invoice_details['payment_notes']) && !empty(trim($invoice_details['payment_notes']))): ?>
-                <p><strong>Payment Notes:</strong> <?php echo nl2br(htmlspecialchars($invoice_details['payment_notes'])); ?></p>
+                 <?php if ($latest_payment && isset($latest_payment['payment_notes']) && !empty(trim($latest_payment['payment_notes']))): ?>
+                <p><strong>Payment Notes:</strong> <?php echo nl2br(htmlspecialchars($latest_payment['payment_notes'])); ?></p>
                 <?php endif; ?>
             </div>
         </div>
