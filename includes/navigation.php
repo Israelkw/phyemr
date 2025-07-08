@@ -51,10 +51,6 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                     <a class="nav-link<?php if ($current_page == 'view_my_patients.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/view_my_patients.php">My Assigned Patients</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link<?php if ($current_page == 'clinician_assign_procedures.php') echo ' active'; ?>"
-                        href="<?php echo $base_path; ?>pages/clinician_assign_procedures.php">Assign Procedures</a>
-                </li>
                 <!-- <li class="nav-item">
                     <a class="nav-link<?php if ($current_page == 'view_patient_history.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/view_patient_history.php">View Patient History</a>
