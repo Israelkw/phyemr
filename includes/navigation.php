@@ -72,12 +72,20 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                     <a class="nav-link<?php if ($current_page == 'generate_invoice.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/generate_invoice.php">Generate Invoice</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link<?php if ($current_page == 'admin_reports.php') echo ' active'; ?>"
+                        href="<?php echo $base_path; ?>pages/admin_reports.php">Reports</a>
+                </li>
                 <?php // Add other admin links here if they exist ?>
                 <?php endif; ?>
                 <?php endif; ?>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <?php if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])): ?>
+                <li class="nav-item">
+                    <a class="nav-link<?php if ($current_page == 'change_password.php') echo ' active'; ?>"
+                        href="<?php echo $base_path; ?>pages/change_password.php">Change Password</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link<?php if ($current_page == 'logout.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/logout.php">Logout
