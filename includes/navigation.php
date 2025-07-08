@@ -32,6 +32,10 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                     <a class="nav-link<?php if ($current_page == 'add_patient.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/add_patient.php">Register & Assign Patient</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link<?php if ($current_page == 'receptionist_view_patient_billing.php') echo ' active'; ?>"
+                        href="<?php echo $base_path; ?>pages/receptionist_view_patient_billing.php">Patient Billing</a>
+                </li>
                 <?php elseif ($_SESSION["role"] === 'nurse'): ?>
                 <li class="nav-item">
                     <a class="nav-link<?php if ($current_page == 'nurse_select_patient.php') echo ' active'; ?>"
@@ -47,6 +51,10 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                     <a class="nav-link<?php if ($current_page == 'view_my_patients.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/view_my_patients.php">My Assigned Patients</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link<?php if ($current_page == 'clinician_assign_procedures.php') echo ' active'; ?>"
+                        href="<?php echo $base_path; ?>pages/clinician_assign_procedures.php">Assign Procedures</a>
+                </li>
                 <!-- <li class="nav-item">
                     <a class="nav-link<?php if ($current_page == 'view_patient_history.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/view_patient_history.php">View Patient History</a>
@@ -54,7 +62,11 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                 <?php elseif ($_SESSION["role"] === 'admin'): ?>
                 <li class="nav-item">
                     <a class="nav-link<?php if ($current_page == 'manage_clinicians.php') echo ' active'; ?>"
-                        href="<?php echo $base_path; ?>pages/manage_clinicians.php">Manage Clinicians</a>
+                        href="<?php echo $base_path; ?>pages/manage_clinicians.php">Manage Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?php if ($current_page == 'admin_manage_procedures.php') echo ' active'; ?>"
+                        href="<?php echo $base_path; ?>pages/admin_manage_procedures.php">Manage Procedures</a>
                 </li>
                 <?php // Add other admin links here if they exist ?>
                 <?php endif; ?>

@@ -74,6 +74,9 @@ require_once $path_to_root . 'includes/header.php';
             <a href="fill_patient_form.php?patient_id=<?php echo $patient_id; ?>&form_name=general-information.html&form_directory=patient_general_info" class="list-group-item list-group-item-action">
                 <i class="fas fa-notes-medical"></i> Fill General Information
             </a>
+            <a href="clinician_assign_procedures.php?patient_id=<?php echo $patient_id; ?>" class="list-group-item list-group-item-action">
+                <i class="fas fa-tasks"></i> Assign Procedures for this Patient
+            </a>
         </div>
 
         <hr>
