@@ -119,10 +119,13 @@ require_once $path_to_root . 'includes/header.php';
             <a href="fill_patient_form.php?patient_id=<?php echo $patient_id; ?>&form_name=general-information.html&form_directory=patient_general_info" class="list-group-item list-group-item-action">
                 <i class="fas fa-notes-medical"></i> Fill General Information
             </a>
+            <a href="#assign-procedures-section" class="list-group-item list-group-item-action">
+                <i class="fas fa-file-medical"></i> Procedures
+            </a>
         </div>
 
         <!-- Display Assigned Procedures -->
-        <div class="card mb-4">
+        <div class="card mb-4" id="assigned-procedures-section">
             <div class="card-header">
                 <h4 class="mb-0">Assigned Procedures</h4>
             </div>
@@ -157,7 +160,7 @@ require_once $path_to_root . 'includes/header.php';
         </div>
 
         <!-- Assign New Procedures Form -->
-        <div class="card mb-4">
+        <div class="card mb-4" id="assign-procedures-form-section"> {/* Changed ID to be more specific for the form itself */}
             <div class="card-header">
                 <h4 class="mb-0">Assign New Procedures</h4>
             </div>
