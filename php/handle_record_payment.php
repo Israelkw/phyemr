@@ -87,7 +87,8 @@ try {
     $pdo->beginTransaction();
 
     // Fetch current invoice details to validate payment
-    $stmt_invoice = $db->prepare("SELECT total_amount, amount_paid, payment_status, payment_notes AS existing_notes FROM invoices WHERE id = :invoice_id FOR UPDATE"); // Lock row
+    // Note: Removed 'payment_notes AS existing_notes' as it does not exist in 'invoices' table
+    $stmt_invoice = $db->prepare("SELECT total_amount, amount_paid, payment_status FROM invoices WHERE id = :invoice_id FOR UPDATE"); // Lock row
     $db->execute($stmt_invoice, [':invoice_id' => $invoice_id]);
     $invoice = $db->fetch($stmt_invoice);
 
@@ -106,8 +107,8 @@ try {
     }
 
     $current_total_amount = floatval($invoice['total_amount']);
-    $current_amount_paid = floatval($invoice['amount_paid']);
-    $balance_due = $current_total_amount - $current_amount_paid;
+    $current_amount_paid_on_invoice = floatval($invoice['amount_paid']); // Amount currently marked as paid on the invoice
+    $balance_due = $current_total_amount - $current_amount_paid_on_invoice;
 
     if ($amount_being_paid > $balance_due + 0.001) { // Add small tolerance for float comparisons
         SessionManager::set('message', 'Amount being paid (' . number_format($amount_being_paid,2) . ') cannot be greater than the balance due (' . number_format($balance_due,2) . ').');
@@ -116,38 +117,39 @@ try {
         exit;
     }
 
-    $new_amount_paid = $current_amount_paid + $amount_being_paid;
-    $new_payment_status = $invoice['payment_status'];
+    // Insert new payment record into 'payments' table
+    $sql_insert_payment = "INSERT INTO payments (invoice_id, payment_date, amount_paid, payment_method, payment_notes, recorded_by_user_id)
+                           VALUES (:invoice_id, :payment_date, :amount_paid, :payment_method, :payment_notes, :recorded_by_user_id)";
+    $stmt_insert_payment = $db->prepare($sql_insert_payment);
+    $db->execute($stmt_insert_payment, [
+        ':invoice_id' => $invoice_id,
+        ':payment_date' => $payment_date_sql, // Formatted payment date
+        ':amount_paid' => $amount_being_paid, // The actual amount of this specific payment
+        ':payment_method' => $payment_method,
+        ':payment_notes' => !empty($payment_notes_new) ? trim($payment_notes_new) : null, // Notes from form, or null
+        ':recorded_by_user_id' => $user_id
+    ]);
 
-    if (abs($new_amount_paid - $current_total_amount) < 0.001) { // Check if fully paid
+    // Update invoice: total amount paid and payment status
+    $new_total_amount_paid_on_invoice = $current_amount_paid_on_invoice + $amount_being_paid;
+    $new_payment_status = $invoice['payment_status']; // Default to current
+
+    if (abs($new_total_amount_paid_on_invoice - $current_total_amount) < 0.001) { // Check if fully paid
         $new_payment_status = 'paid';
-    } elseif ($new_amount_paid > 0) {
+    } elseif ($new_total_amount_paid_on_invoice > 0) {
         $new_payment_status = 'partially_paid';
     }
+    // If $new_total_amount_paid_on_invoice is 0 (e.g. if it was negative, though validation prevents this), status remains as is or becomes 'unpaid' if not already.
+    // The existing logic doesn't explicitly set to 'unpaid' if a payment somehow made it zero, but current validation $amount_being_paid > 0 prevents this.
 
-    // Append new notes to existing notes
-    $updated_payment_notes = $invoice['existing_notes'] ? $invoice['existing_notes'] . "\n" : "";
-    $updated_payment_notes .= "Payment on " . date('Y-m-d H:i:s') . ": " . number_format($amount_being_paid,2) . " via " . $payment_method . ".";
-    if (!empty($payment_notes_new)) {
-        $updated_payment_notes .= " Notes: " . $payment_notes_new;
-    }
-
-
-    // Update invoice
     $sql_update_invoice = "UPDATE invoices
                            SET amount_paid = :amount_paid,
-                               payment_status = :payment_status,
-                               payment_date = :payment_date,
-                               payment_method = :payment_method,
-                               payment_notes = :payment_notes
+                               payment_status = :payment_status
                            WHERE id = :invoice_id";
-    $stmt_update = $db->prepare($sql_update_invoice);
-    $db->execute($stmt_update, [
-        ':amount_paid' => $new_amount_paid,
+    $stmt_update_invoice = $db->prepare($sql_update_invoice);
+    $db->execute($stmt_update_invoice, [
+        ':amount_paid' => $new_total_amount_paid_on_invoice,
         ':payment_status' => $new_payment_status,
-        ':payment_date' => $payment_date_sql,
-        ':payment_method' => $payment_method,
-        ':payment_notes' => trim($updated_payment_notes),
         ':invoice_id' => $invoice_id
     ]);
 
