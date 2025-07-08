@@ -17,16 +17,8 @@ $procedures = $db->fetchAll($stmt_procedures);
 $old_input = SessionManager::get('form_old_input', []);
 SessionManager::remove('form_old_input');
 
-// --- DEBUG START for CSRF ---
-echo "<pre style='background-color: #f0f0f0; border: 1px solid #ccc; padding: 10px; margin: 10px; white-space: pre-wrap;'><strong>DEBUG (admin_manage_procedures.php)</strong>\n";
-echo "SESSION before token generation:\n";
-var_dump($_SESSION);
-$generated_csrf_token_for_form = SessionManager::generateCsrfToken(); // Generate and store
-echo "SESSION after token generation:\n";
-var_dump($_SESSION);
-echo "Generated CSRF Token for form: " . htmlspecialchars($generated_csrf_token_for_form);
-echo "</pre>";
-// --- DEBUG END for CSRF ---
+// Generate CSRF token ONCE for all forms on this page load
+$csrf_token_page = SessionManager::generateCsrfToken();
 
 // Include header
 require_once $path_to_root . 'includes/header.php';
@@ -51,7 +43,7 @@ require_once $path_to_root . 'includes/header.php';
         </div>
         <div class="card-body">
             <form action="<?php echo $path_to_root; ?>php/handle_add_procedure.php" method="POST">
-                <input type="hidden" name="csrf_token" value="<?php echo $generated_csrf_token_for_form; ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token_page; ?>">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="name" class="form-label">Procedure Name</label>
@@ -98,7 +90,7 @@ require_once $path_to_root . 'includes/header.php';
                                 <td>
                                     <a href="<?php echo $path_to_root; ?>pages/admin_edit_procedure.php?id=<?php echo $procedure['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
                                     <form action="<?php echo $path_to_root; ?>php/handle_delete_procedure.php" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this procedure?');">
-                                        <input type="hidden" name="csrf_token" value="<?php echo SessionManager::generateCsrfToken(); ?>">
+                                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token_page; ?>">
                                         <input type="hidden" name="procedure_id" value="<?php echo $procedure['id']; ?>">
                                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                     </form>

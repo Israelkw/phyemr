@@ -11,17 +11,6 @@ ErrorHandler::register();
 require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
 require_once $path_to_root . 'includes/Database.php';    // Provides Database class
 
-// --- DEBUG START for CSRF ---
-echo "<pre style='background-color: #f0f0f0; border: 1px solid #ccc; padding: 10px; margin: 10px; white-space: pre-wrap;'><strong>DEBUG (handle_add_procedure.php)</strong>\n";
-echo "SESSION at start of handler:\n";
-var_dump($_SESSION);
-echo "POST data:\n";
-var_dump($_POST);
-$submittedToken_debug = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : 'NOT SET IN POST';
-echo "Submitted CSRF Token (from POST): " . htmlspecialchars($submittedToken_debug);
-echo "</pre>";
-// --- DEBUG END for CSRF ---
-
 // CSRF Token Validation
 $submittedToken = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
 if (!SessionManager::validateCsrfToken($submittedToken)) {
