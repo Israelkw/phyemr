@@ -105,21 +105,116 @@ $clinic_website = "easepartners.et";
         }
 
         @media print {
-            body * { visibility: hidden; } /* Hide everything by default in print */
-            #invoice-printable-area, #invoice-printable-area * { visibility: visible; } /* Show only the printable area and its children */
+            @page {
+                margin: 0cm; /* Attempt to remove browser default margins */
+                /* The following might help clear headers/footers in some browsers but is not universally supported */
+                /* @top-left { content: ""; }
+                   @top-center { content: ""; }
+                   @top-right { content: ""; }
+                   @bottom-left { content: ""; }
+                   @bottom-center { content: ""; }
+                   @bottom-right { content: ""; } */
+            }
+
+            body {
+                margin: 0.5cm; /* Define content margin within the page */
+                font-size: 10pt; /* Base font size for print */
+                -webkit-print-color-adjust: exact; /* Ensures background colors print in Chrome/Safari */
+                print-color-adjust: exact; /* Standard property */
+            }
+
+            .print-button-container, .no-print { /* Add .no-print class to any other elements to hide */
+                display: none !important;
+            }
+
+            body * {
+                visibility: hidden; /* Hide everything by default */
+                background-color: transparent !important; /* Attempt to override background colors for hidden elements */
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+
+            #invoice-printable-area, #invoice-printable-area * {
+                visibility: visible; /* Show only the printable area and its children */
+            }
+
             #invoice-printable-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
+                position: static; /* Changed from absolute to allow natural flow within body margins */
+                width: auto;      /* auto width within the body margins */
                 margin: 0;
                 padding: 0;
                 border: 0;
                 box-shadow: none;
+                font-size: 10pt; /* Ensure consistent font size */
             }
-            .print-button-container { display: none !important; } /* Ensure button container is hidden when printing */
-            /* Basic print styling for the invoice box content if needed, e.g., font size */
-            body { margin: 0.5cm; font-size: 10pt; }
+
+            /* Specific adjustments for compactness, inspired by user's example */
+            #invoice-printable-area .header-section h2 { /* Was h1, changed to h2 for clinic name */
+                font-size: 16px;
+                margin-bottom: 3px;
+            }
+            #invoice-printable-area .header-section .clinic-address {
+                font-size: 9pt;
+                margin-bottom: 1px;
+            }
+            #invoice-printable-area .header-section img {
+                max-width: 120px; /* Slightly smaller logo for print */
+                max-height: 60px;
+                margin-bottom: 5px;
+            }
+
+            #invoice-printable-area .invoice-title {
+                font-size: 22px; /* Reduced */
+                margin-bottom: 3px;
+            }
+            #invoice-printable-area .invoice-meta p {
+                font-size: 9pt;
+                margin: 1px 0;
+            }
+
+            #invoice-printable-area .address-section td {
+                padding: 3px;
+                font-size: 9pt;
+            }
+             #invoice-printable-area .address-section .billed-to {
+                margin-bottom: 2px;
+            }
+
+
+            #invoice-printable-area .items-section th, #invoice-printable-area .items-section td {
+                padding: 5px; /* Reduced padding */
+                font-size: 9pt;
+            }
+            #invoice-printable-area .items-section th {
+                font-weight: bold; /* Ensure it's bold */
+            }
+
+
+            #invoice-printable-area .totals-section {
+                margin-top: 10px; /* Reduced margin */
+            }
+            #invoice-printable-area .totals-section td {
+                padding: 3px 5px; /* Reduced padding */
+                font-size: 9pt;
+            }
+            #invoice-printable-area .totals-section tr.highlight td {
+                font-size: 10pt; /* Slightly larger for highlight */
+            }
+
+            #invoice-printable-area .notes-section h5 {
+                font-size: 10pt;
+                margin-top: 10px;
+                margin-bottom: 2px;
+            }
+            #invoice-printable-area .notes-section p {
+                font-size: 9pt;
+            }
+
+            #invoice-printable-area .footer-section {
+                font-size: 8pt;
+                margin-top: 15px;
+                padding-top: 5px;
+            }
         }
     </style>
 </head>
