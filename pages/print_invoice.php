@@ -49,11 +49,15 @@ try {
 
 $balance_due = floatval($invoice_details['total_amount']) - floatval($invoice_details['amount_paid']);
 
-// Basic Clinic Information (Consider making this configurable, e.g., from a settings table or config file)
-$clinic_name = "Physio Clinic EMR"; // Replace with actual or dynamic clinic name
-$clinic_address_line1 = "123 Wellness Way";
-$clinic_address_line2 = "Healthville, HC 54321";
-$clinic_contact_info = "Phone: (555) 123-4567 | Email: contact@physioclinicemr.com";
+// Clinic Information
+$clinic_logo_path = $path_to_root . "includes/Easelogoicon.png"; // Adjusted path
+$clinic_name = "Ease Physiotherapy Speciality Clinic"; // Updated Name
+$clinic_address_line1 = "Debrework Building, Mexico";
+$clinic_address_line2 = "Addis Ababa, Ethiopia";
+$clinic_phone1 = "+251973363738";
+$clinic_phone2 = "+251978363738";
+$clinic_email = "info@easepartners.et";
+$clinic_website = "easepartners.et";
 
 ?>
 <!DOCTYPE html>
@@ -94,23 +98,38 @@ $clinic_contact_info = "Phone: (555) 123-4567 | Email: contact@physioclinicemr.c
         .notes-section p { font-size: 11px; white-space: pre-wrap; }
 
         .footer-section { text-align: center; font-size: 10px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
-        .print-button-area { display: none; text-align: center; margin: 20px; }
+        .print-button-container { text-align: center; margin: 20px 0; } /* Changed from .print-button-area */
+
+        @media screen { /* Styles for screen view */
+            .print-button-container { display: block; }
+        }
 
         @media print {
+            body * { visibility: hidden; } /* Hide everything by default in print */
+            #invoice-printable-area, #invoice-printable-area * { visibility: visible; } /* Show only the printable area and its children */
+            #invoice-printable-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                border: 0;
+                box-shadow: none;
+            }
+            .print-button-container { display: none !important; } /* Ensure button container is hidden when printing */
+            /* Basic print styling for the invoice box content if needed, e.g., font size */
             body { margin: 0.5cm; font-size: 10pt; }
-            .invoice-box { border: 0; box-shadow: none; padding: 0; max-width:100%; }
-            .print-button-area { display: none !important; }
-            /* Add any other print-specific overrides */
         }
     </style>
 </head>
 <body>
-    <div class="print-button-area">
-        <button onclick="window.print();">Print Invoice</button>
-        <button onclick="window.close();">Close</button>
+    <div class="print-button-container" id="print-controls"> <!-- Changed class, added ID -->
+        <button id="print-button" onclick="window.print();" class="btn btn-primary">Print Invoice</button>
+        <button onclick="window.close();" class="btn btn-secondary">Close</button>
     </div>
 
-    <div class="invoice-box">
+    <div class="invoice-box" id="invoice-printable-area"> <!-- Added ID here -->
         <table cellpadding="0" cellspacing="0" style="width:100%;">
             <tr class="top">
                 <td colspan="2" style="padding:0;">
@@ -118,10 +137,16 @@ $clinic_contact_info = "Phone: (555) 123-4567 | Email: contact@physioclinicemr.c
                         <tr>
                             <td class="title" style="vertical-align:top; width:60%;">
                                 <div class="header-section">
-                                    <h1><?php echo htmlspecialchars($clinic_name); ?></h1>
+                                    <img src="<?php echo $clinic_logo_path; ?>" alt="Clinic Logo" style="max-width:150px; max-height:70px; margin-bottom:10px;">
+                                    <h2><?php echo htmlspecialchars($clinic_name); ?></h2>
                                     <p class="clinic-address"><?php echo htmlspecialchars($clinic_address_line1); ?></p>
                                     <p class="clinic-address"><?php echo htmlspecialchars($clinic_address_line2); ?></p>
-                                    <p class="clinic-address"><?php echo htmlspecialchars($clinic_contact_info); ?></p>
+                                    <p class="clinic-address">
+                                        Phone: <?php echo htmlspecialchars($clinic_phone1); ?> / <?php echo htmlspecialchars($clinic_phone2); ?>
+                                    </p>
+                                    <p class="clinic-address">
+                                        Email: <?php echo htmlspecialchars($clinic_email); ?> | Website: <?php echo htmlspecialchars($clinic_website); ?>
+                                    </p>
                                 </div>
                             </td>
                             <td style="vertical-align:top; text-align:right; width:40%;">
