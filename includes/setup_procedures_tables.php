@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1); // Temporarily display errors
+error_reporting(E_ALL);     // Report all PHP errors
+
 // Include the database connection file
 require_once 'db_connect.php'; // Provides $pdo
 require_once 'ErrorHandler.php'; // Include ErrorHandler
