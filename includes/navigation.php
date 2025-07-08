@@ -34,7 +34,11 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                 </li>
                 <li class="nav-item">
                     <a class="nav-link<?php if ($current_page == 'receptionist_view_patient_billing.php') echo ' active'; ?>"
-                        href="<?php echo $base_path; ?>pages/receptionist_view_patient_billing.php">Patient Billing</a>
+                        href="<?php echo $base_path; ?>pages/receptionist_view_patient_billing.php">Patient Invoices</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?php if ($current_page == 'generate_invoice.php') echo ' active'; ?>"
+                        href="<?php echo $base_path; ?>pages/generate_invoice.php">Generate Invoice</a>
                 </li>
                 <?php elseif ($_SESSION["role"] === 'nurse'): ?>
                 <li class="nav-item">
@@ -63,6 +67,10 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
                 <li class="nav-item">
                     <a class="nav-link<?php if ($current_page == 'admin_manage_procedures.php') echo ' active'; ?>"
                         href="<?php echo $base_path; ?>pages/admin_manage_procedures.php">Manage Procedures</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?php if ($current_page == 'generate_invoice.php') echo ' active'; ?>"
+                        href="<?php echo $base_path; ?>pages/generate_invoice.php">Generate Invoice</a>
                 </li>
                 <?php // Add other admin links here if they exist ?>
                 <?php endif; ?>

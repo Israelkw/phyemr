@@ -1,153 +1,164 @@
 <?php
-$path_to_root = "../"; // Define $path_to_root for includes
+$path_to_root = "../";
 require_once $path_to_root . 'includes/SessionManager.php';
 SessionManager::startSession();
-SessionManager::hasRole(['receptionist', 'admin'], $path_to_root . 'pages/dashboard.php', 'You do not have permission to access this page.'); // Allow admin for testing
+SessionManager::hasRole(['receptionist', 'admin'], $path_to_root . 'pages/dashboard.php', 'Access Denied.');
 
-require_once $path_to_root . 'includes/db_connect.php'; // Provides $pdo
-require_once $path_to_root . 'includes/Database.php';    // Provides Database class
+require_once $path_to_root . 'includes/db_connect.php';
+require_once $path_to_root . 'includes/Database.php';
 $db = new Database($pdo);
 
-// Fetch all patients for selection
-$stmt_patients = $db->prepare("SELECT id, first_name, last_name FROM patients ORDER BY last_name, first_name ASC");
-$db->execute($stmt_patients);
-$patients = $db->fetchAll($stmt_patients);
+$page_title = "Patient Invoicing & Billing";
 
-$selected_patient_id = null;
-$patient_procedures_details = [];
-$total_cost = 0;
-$patient_name = '';
+// Patient Search/Selection part
+$all_patients_for_select = []; // For initial dropdown if no search
+$searched_patients_list = [];    // For search results
+$searchTerm = filter_input(INPUT_GET, 'search_term', FILTER_SANITIZE_STRING);
+$selected_patient_id = filter_input(INPUT_GET, 'patient_id', FILTER_VALIDATE_INT);
 
-// Check if a patient is selected via GET (e.g., from another page or after form submission) or POST (from this page's form)
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['patient_id'])) {
-    $selected_patient_id = filter_input(INPUT_POST, 'patient_id', FILTER_VALIDATE_INT);
-} elseif (isset($_GET['patient_id'])) {
-    $selected_patient_id = filter_input(INPUT_GET, 'patient_id', FILTER_VALIDATE_INT);
+if ($searchTerm) {
+    $stmt_patients_search = $db->prepare("SELECT id, first_name, last_name, date_of_birth FROM patients
+                                          WHERE first_name LIKE :term OR last_name LIKE :term OR id LIKE :term_id
+                                          ORDER BY last_name, first_name LIMIT 20");
+    $db->execute($stmt_patients_search, [':term' => "%" . $searchTerm . "%", ':term_id' => $searchTerm]);
+    $searched_patients_list = $db->fetchAll($stmt_patients_search);
+} else if (!$selected_patient_id) {
+    // Optionally, load all patients if no search and no selection, for a dropdown.
+    // For performance, this might be removed if the patient list is very large.
+    // $stmt_all_patients = $db->prepare("SELECT id, first_name, last_name FROM patients ORDER BY last_name, first_name LIMIT 100"); // Limit for sanity
+    // $db->execute($stmt_all_patients);
+    // $all_patients_for_select = $db->fetchAll($stmt_all_patients);
 }
 
+$patient_invoices = [];
+$patient_details = null;
 
 if ($selected_patient_id) {
-    // Fetch patient's name
-    $stmt_patient_info = $db->prepare("SELECT first_name, last_name FROM patients WHERE id = :patient_id");
-    $db->execute($stmt_patient_info, [':patient_id' => $selected_patient_id]);
-    $patient_info_data = $db->fetch($stmt_patient_info);
-    if ($patient_info_data) {
-        $patient_name = htmlspecialchars($patient_info_data['first_name'] . ' ' . $patient_info_data['last_name']);
+    // Fetch selected patient's details
+    $stmt_patient_details = $db->prepare("SELECT id, first_name, last_name FROM patients WHERE id = :patient_id");
+    $db->execute($stmt_patient_details, [':patient_id' => $selected_patient_id]);
+    $patient_details = $db->fetch($stmt_patient_details);
+
+    if ($patient_details) {
+        // Fetch invoices for this patient
+        $sql_invoices = "
+            SELECT id AS invoice_id, invoice_number, invoice_date, due_date, total_amount, amount_paid, payment_status
+            FROM invoices
+            WHERE patient_id = :patient_id
+            ORDER BY invoice_date DESC, id DESC";
+        $stmt_invoices = $db->prepare($sql_invoices);
+        $db->execute($stmt_invoices, [':patient_id' => $selected_patient_id]);
+        $patient_invoices = $db->fetchAll($stmt_invoices);
     } else {
-        SessionManager::set('message', "Selected patient not found.");
-        $selected_patient_id = null; // Reset if patient not found
-    }
-
-    if ($selected_patient_id) { // Proceed if patient was found
-        // Fetch procedures assigned to the selected patient along with procedure details
-        $sql_patient_procedures = "
-            SELECT
-                pp.id, pp.date_performed, pp.notes,
-                p.name AS procedure_name, p.price AS procedure_price,
-                u.username AS clinician_username, u.first_name AS clinician_first_name, u.last_name AS clinician_last_name
-            FROM patient_procedures pp
-            JOIN procedures p ON pp.procedure_id = p.id
-            JOIN users u ON pp.clinician_id = u.id
-            WHERE pp.patient_id = :patient_id
-            ORDER BY pp.date_performed DESC, p.name ASC";
-
-        $stmt_patient_procedures = $db->prepare($sql_patient_procedures);
-        $db->execute($stmt_patient_procedures, [':patient_id' => $selected_patient_id]);
-        $patient_procedures_details = $db->fetchAll($stmt_patient_procedures);
-
-        foreach ($patient_procedures_details as $detail) {
-            $total_cost += floatval($detail['procedure_price']);
-        }
+        SessionManager::set('message', 'Selected patient not found.');
+        $selected_patient_id = null;
     }
 }
 
-// Include header
 require_once $path_to_root . 'includes/header.php';
 ?>
 
 <div class="container mt-5">
-    <h2 class="mb-4">Patient Billing Information</h2>
+    <h2><?php echo $page_title; ?></h2>
 
     <?php if (SessionManager::has('message')): ?>
-        <div class="alert <?php echo strpos(strtolower(SessionManager::get('message')), 'success') !== false ? 'alert-success' : (strpos(strtolower(SessionManager::get('message')), 'error') !== false || strpos(strtolower(SessionManager::get('message')), 'fail') !== false ? 'alert-danger' : 'alert-info'); ?>">
-            <?php
-                echo htmlspecialchars(SessionManager::get('message'));
-                SessionManager::remove('message');
-            ?>
+    <div class="alert <?php echo strpos(strtolower(SessionManager::get('message')), 'success') !== false ? 'alert-success' : 'alert-danger'; ?>">
+        <?php echo htmlspecialchars(SessionManager::get('message')); SessionManager::remove('message'); ?>
+    </div>
+    <?php endif; ?>
+
+    <!-- Patient Search Form -->
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET" class="mb-4 card card-body">
+        <h5 class="card-title">Find Patient</h5>
+        <div class="row">
+            <div class="col-md-8 mb-2">
+                <label for="search_term" class="form-label visually-hidden">Search Patient (Name or ID)</label>
+                <input type="text" class="form-control" id="search_term" name="search_term" placeholder="Enter Name or ID" value="<?php echo htmlspecialchars($searchTerm ?? ''); ?>">
+            </div>
+            <div class="col-md-4 mb-2">
+                <button type="submit" class="btn btn-info w-100"><i class="fas fa-search"></i> Search Patient</button>
+            </div>
+        </div>
+         <!-- Hidden patient_id input if a patient is already selected, to persist selection if user searches again (optional) -->
+        <?php if ($selected_patient_id && !$searchTerm): ?>
+            <!-- <input type="hidden" name="patient_id" value="<?php echo $selected_patient_id; ?>"> -->
+        <?php endif; ?>
+    </form>
+
+    <?php if ($searchTerm && empty($searched_patients_list) && !$selected_patient_id): ?>
+        <p class="alert alert-warning">No patients found matching "<?php echo htmlspecialchars($searchTerm); ?>". Try a different search.</p>
+    <?php elseif (!empty($searched_patients_list) && !$selected_patient_id): ?>
+        <h4 class="mt-3">Search Results:</h4>
+        <div class="list-group mb-4">
+            <?php foreach ($searched_patients_list as $p): ?>
+                <a href="?patient_id=<?php echo $p['id']; ?>" class="list-group-item list-group-item-action">
+                    <?php echo htmlspecialchars($p['last_name'] . ', ' . $p['first_name'] . ' (ID: ' . $p['id'] . ', DOB: ' . $p['date_of_birth'] . ')'); ?>
+                </a>
+            <?php endforeach; ?>
         </div>
     <?php endif; ?>
 
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" class="mb-4">
-        <input type="hidden" name="csrf_token" value="<?php echo SessionManager::generateCsrfToken(); // For potential future use, not strictly necessary for a GET-like action ?>">
-        <div class="row">
-            <div class="col-md-8">
-                <label for="patient_id" class="form-label">Select Patient</label>
-                <select class="form-select" id="patient_id" name="patient_id" required>
-                    <option value="">-- Select a Patient --</option>
-                    <?php foreach ($patients as $patient): ?>
-                        <option value="<?php echo htmlspecialchars($patient['id']); ?>"
-                                <?php echo ($selected_patient_id == $patient['id']) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($patient['last_name'] . ', ' . $patient['first_name'] . ' (ID: ' . $patient['id'] . ')'); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="col-md-4 align-self-end">
-                <button type="submit" class="btn btn-primary w-100">View Billing Details</button>
-            </div>
-        </div>
-    </form>
 
-    <?php if ($selected_patient_id && $patient_name): ?>
+    <?php if ($selected_patient_id && $patient_details): ?>
         <hr>
-        <h3 class="mt-4">Billing Details for: <?php echo $patient_name; ?> (ID: <?php echo $selected_patient_id; ?>)</h3>
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="mt-4">Invoices for: <?php echo htmlspecialchars($patient_details['first_name'] . ' ' . $patient_details['last_name']); ?> (ID: <?php echo $selected_patient_id; ?>)</h3>
+            <a href="<?php echo $path_to_root; ?>pages/generate_invoice.php?patient_id=<?php echo $selected_patient_id; ?>" class="btn btn-success">
+                <i class="fas fa-plus-circle"></i> Generate New Invoice
+            </a>
+        </div>
 
-        <?php if (!empty($patient_procedures_details)): ?>
-            <table class="table table-striped mt-3">
-                <thead>
+        <?php if (empty($patient_invoices)): ?>
+            <p class="alert alert-info mt-3">No invoices found for this patient.</p>
+        <?php else: ?>
+            <table class="table table-striped table-hover mt-3">
+                <thead class="table-dark">
                     <tr>
-                        <th>Date Performed</th>
-                        <th>Procedure Name</th>
-                        <th>Clinician</th>
-                        <th>Notes</th>
-                        <th class="text-end">Price</th>
+                        <th>Invoice #</th>
+                        <th>Invoice Date</th>
+                        <th>Due Date</th>
+                        <th class="text-end">Total Amount</th>
+                        <th class="text-end">Amount Paid</th>
+                        <th class="text-center">Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($patient_procedures_details as $detail): ?>
+                    <?php foreach ($patient_invoices as $invoice):
+                        $balance_due = floatval($invoice['total_amount']) - floatval($invoice['amount_paid']);
+                        $status_class = '';
+                        switch ($invoice['payment_status']) {
+                            case 'paid': $status_class = 'badge bg-success'; break;
+                            case 'partially_paid': $status_class = 'badge bg-warning text-dark'; break;
+                            case 'unpaid': $status_class = 'badge bg-danger'; break;
+                            case 'void': $status_class = 'badge bg-secondary'; break;
+                        }
+                    ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($detail['date_performed']); ?></td>
-                            <td><?php echo htmlspecialchars($detail['procedure_name']); ?></td>
-                            <td><?php echo htmlspecialchars($detail['clinician_first_name'] . ' ' . $detail['clinician_last_name'] . ' (' . $detail['clinician_username'] . ')'); ?></td>
-                            <td><?php echo nl2br(htmlspecialchars($detail['notes'] ?? 'N/A')); ?></td>
-                            <td class="text-end"><?php echo htmlspecialchars(number_format($detail['procedure_price'], 2)); ?></td>
+                            <td><?php echo htmlspecialchars($invoice['invoice_number']); ?></td>
+                            <td><?php echo htmlspecialchars(date('M d, Y', strtotime($invoice['invoice_date']))); ?></td>
+                            <td><?php echo $invoice['due_date'] ? htmlspecialchars(date('M d, Y', strtotime($invoice['due_date']))) : 'N/A'; ?></td>
+                            <td class="text-end"><?php echo htmlspecialchars(number_format($invoice['total_amount'], 2)); ?></td>
+                            <td class="text-end"><?php echo htmlspecialchars(number_format($invoice['amount_paid'], 2)); ?></td>
+                            <td class="text-center"><span class="<?php echo $status_class; ?>"><?php echo ucfirst(str_replace('_', ' ', $invoice['payment_status'])); ?></span></td>
+                            <td>
+                                <a href="<?php echo $path_to_root; ?>pages/view_invoice_details.php?invoice_id=<?php echo $invoice['invoice_id']; ?>" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <!-- Print button could also be here or on details page -->
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="4" class="text-end">Total Cost:</th>
-                        <th class="text-end"><?php echo htmlspecialchars(number_format($total_cost, 2)); ?></th>
-                    </tr>
-                </tfoot>
             </table>
-
-            <div class="text-center mt-4">
-                <a href="<?php echo $path_to_root; ?>pages/print_payment_attachment.php?patient_id=<?php echo $selected_patient_id; ?>"
-                   class="btn btn-success" target="_blank">
-                    <i class="fas fa-print"></i> Print Payment Attachment
-                </a>
-            </div>
-
-        <?php else: ?>
-            <p class="mt-3">No procedures found for this patient.</p>
         <?php endif; ?>
-    <?php elseif ($selected_patient_id && !$patient_name): ?>
-         <p class="mt-3 alert alert-warning">Could not load details for the selected patient ID.</p>
+         <p class="mt-3"><a href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">Clear Patient Selection / Search Again</a></p>
+    <?php elseif ($selected_patient_id && !$patient_details): ?>
+         <p class="alert alert-danger mt-3">Could not load details for Patient ID <?php echo $selected_patient_id; ?>.</p>
     <?php endif; ?>
+
 </div>
 
 <?php
-// Include footer
 require_once $path_to_root . 'includes/footer.php';
 ?>
