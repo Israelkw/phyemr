@@ -17,9 +17,13 @@ $selected_patient_id = filter_input(INPUT_GET, 'patient_id', FILTER_VALIDATE_INT
 
 if ($searchTerm) {
     $stmt_patients = $db->prepare("SELECT id, first_name, last_name, date_of_birth FROM patients
-                                   WHERE first_name LIKE :term OR last_name LIKE :term OR id LIKE :term
+                                   WHERE first_name LIKE :term_fn OR last_name LIKE :term_ln OR id LIKE :term_id_like
                                    ORDER BY last_name, first_name LIMIT 20");
-    $db->execute($stmt_patients, [':term' => "%" . $searchTerm . "%"]);
+    $db->execute($stmt_patients, [
+        ':term_fn' => "%" . $searchTerm . "%",
+        ':term_ln' => "%" . $searchTerm . "%",
+        ':term_id_like' => "%" . $searchTerm . "%"
+    ]);
     $patients = $db->fetchAll($stmt_patients);
 } elseif (!$selected_patient_id) { // If no specific patient is selected yet, and no search, fetch all for dropdown initially (can be slow)
     // To prevent loading all patients by default, let's require a search or explicit selection.
