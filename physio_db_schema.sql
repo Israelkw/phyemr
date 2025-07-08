@@ -163,8 +163,8 @@ CREATE TABLE IF NOT EXISTS payments (
     payment_date DATETIME NOT NULL,
     amount_paid DECIMAL(10, 2) NOT NULL,
     payment_method VARCHAR(50) NOT NULL,
-    manual_receipt_number VARCHAR(50) NULLABLE,
-    payment_notes TEXT NULLABLE,
+    manual_receipt_number VARCHAR(50) NULL, -- Corrected
+    payment_notes TEXT NULL, -- Corrected
     recorded_by_user_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_payments_invoice_id (invoice_id),
