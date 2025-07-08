@@ -36,7 +36,7 @@ try {
             procedure_id INT NOT NULL,
             clinician_id INT NOT NULL,
             date_performed DATE NOT NULL,
-            notes TEXT NULLABLE,
+            notes TEXT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT fk_pp_patient FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
             CONSTRAINT fk_pp_procedure FOREIGN KEY (procedure_id) REFERENCES procedures(id) ON DELETE RESTRICT,
