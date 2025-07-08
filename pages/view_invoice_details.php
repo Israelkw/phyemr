@@ -113,13 +113,13 @@ require_once $path_to_root . 'includes/header.php';
                     ?>
                     <span class="<?php echo $status_class; ?>"><?php echo ucfirst(str_replace('_', ' ', $invoice_details['payment_status'])); ?></span>
                 </p>
-                <?php if ($invoice_details['payment_date']): ?>
+                <?php if (isset($invoice_details['payment_date']) && $invoice_details['payment_date']): ?>
                 <p><strong>Last Payment Date:</strong> <?php echo htmlspecialchars(date('M d, Y H:i', strtotime($invoice_details['payment_date']))); ?></p>
                 <?php endif; ?>
-                <?php if ($invoice_details['payment_method']): ?>
+                <?php if (isset($invoice_details['payment_method']) && $invoice_details['payment_method']): ?>
                 <p><strong>Last Payment Method:</strong> <?php echo htmlspecialchars($invoice_details['payment_method']); ?></p>
                 <?php endif; ?>
-                 <?php if ($invoice_details['payment_notes']): ?>
+                 <?php if (isset($invoice_details['payment_notes']) && !empty(trim($invoice_details['payment_notes']))): ?>
                 <p><strong>Payment Notes:</strong> <?php echo nl2br(htmlspecialchars($invoice_details['payment_notes'])); ?></p>
                 <?php endif; ?>
             </div>
