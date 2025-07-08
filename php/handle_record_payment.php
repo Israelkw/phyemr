@@ -35,6 +35,7 @@ $amount_being_paid_str = isset($_POST['amount_being_paid']) ? trim($_POST['amoun
 $payment_date_str = isset($_POST['payment_date']) ? trim($_POST['payment_date']) : ''; // This is datetime-local
 $payment_method = isset($_POST['payment_method']) ? trim($_POST['payment_method']) : '';
 $payment_notes_new = isset($_POST['payment_notes']) ? trim($_POST['payment_notes']) : '';
+$manual_receipt_number = isset($_POST['manual_receipt_number']) ? trim($_POST['manual_receipt_number']) : '';
 
 // Store old input in session for repopulation
 $old_input = $_POST;
@@ -118,8 +119,8 @@ try {
     }
 
     // Insert new payment record into 'payments' table
-    $sql_insert_payment = "INSERT INTO payments (invoice_id, payment_date, amount_paid, payment_method, payment_notes, recorded_by_user_id)
-                           VALUES (:invoice_id, :payment_date, :amount_paid, :payment_method, :payment_notes, :recorded_by_user_id)";
+    $sql_insert_payment = "INSERT INTO payments (invoice_id, payment_date, amount_paid, payment_method, payment_notes, manual_receipt_number, recorded_by_user_id)
+                           VALUES (:invoice_id, :payment_date, :amount_paid, :payment_method, :payment_notes, :manual_receipt_number, :recorded_by_user_id)";
     $stmt_insert_payment = $db->prepare($sql_insert_payment);
     $db->execute($stmt_insert_payment, [
         ':invoice_id' => $invoice_id,
@@ -127,6 +128,7 @@ try {
         ':amount_paid' => $amount_being_paid, // The actual amount of this specific payment
         ':payment_method' => $payment_method,
         ':payment_notes' => !empty($payment_notes_new) ? trim($payment_notes_new) : null, // Notes from form, or null
+        ':manual_receipt_number' => !empty($manual_receipt_number) ? $manual_receipt_number : null, // Store as NULL if empty
         ':recorded_by_user_id' => $user_id
     ]);
 
