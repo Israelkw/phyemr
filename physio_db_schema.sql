@@ -128,13 +128,11 @@ CREATE TABLE IF NOT EXISTS invoices (
     patient_id INT NOT NULL,
     invoice_number VARCHAR(50) NOT NULL UNIQUE,
     invoice_date DATE NOT NULL,
-    due_date DATE NULL, -- Corrected
+    due_date DATE NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
-    amount_paid DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    amount_paid DECIMAL(10, 2) NOT NULL DEFAULT 0.00, -- This will be sum of payments
     payment_status ENUM('unpaid', 'paid', 'partially_paid', 'void') NOT NULL DEFAULT 'unpaid',
-    payment_date DATETIME NULL, -- Corrected
-    payment_method VARCHAR(50) NULL, -- Corrected
-    payment_notes TEXT NULL, -- Corrected
+    -- payment_date, payment_method, payment_notes removed, moved to 'payments' table
     created_by_user_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -156,4 +154,21 @@ CREATE TABLE IF NOT EXISTS invoice_items (
     INDEX idx_invoiceitems_patient_procedure_id (patient_procedure_id),
     CONSTRAINT fk_invoiceitems_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
     CONSTRAINT fk_invoiceitems_patient_procedure FOREIGN KEY (patient_procedure_id) REFERENCES patient_procedures(id) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+-- Payments Table
+CREATE TABLE IF NOT EXISTS payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_id INT NOT NULL,
+    payment_date DATETIME NOT NULL,
+    amount_paid DECIMAL(10, 2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    manual_receipt_number VARCHAR(50) NULLABLE,
+    payment_notes TEXT NULLABLE,
+    recorded_by_user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_payments_invoice_id (invoice_id),
+    INDEX idx_payments_payment_date (payment_date),
+    CONSTRAINT fk_payments_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
+    CONSTRAINT fk_payments_recorded_by FOREIGN KEY (recorded_by_user_id) REFERENCES users(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;

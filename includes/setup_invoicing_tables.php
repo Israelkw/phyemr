@@ -21,11 +21,9 @@ try {
         invoice_date DATE NOT NULL,
         due_date DATE NULL,
         total_amount DECIMAL(10, 2) NOT NULL,
-        amount_paid DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+        amount_paid DECIMAL(10, 2) NOT NULL DEFAULT 0.00, /* This will be sum of payments */
         payment_status ENUM('unpaid', 'paid', 'partially_paid', 'void') NOT NULL DEFAULT 'unpaid',
-        payment_date DATETIME NULL,
-        payment_method VARCHAR(50) NULL,
-        payment_notes TEXT NULL,
+        /* payment_date, payment_method, payment_notes removed, will be in 'payments' table */
         created_by_user_id INT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -54,7 +52,43 @@ try {
     $pdo->exec($sqlCreateInvoiceItemsTable);
     echo "<p>Table 'invoice_items' created successfully or already exists.</p>";
 
-    // 3. Modify 'patient_procedures' table to add 'invoice_id'
+    // 3. Create 'payments' table
+    $sqlCreatePaymentsTable = "
+    CREATE TABLE IF NOT EXISTS payments (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        invoice_id INT NOT NULL,
+        payment_date DATETIME NOT NULL,
+        amount_paid DECIMAL(10, 2) NOT NULL,
+        payment_method VARCHAR(50) NOT NULL,
+        manual_receipt_number VARCHAR(50) NULLABLE,
+        payment_notes TEXT NULLABLE,
+        recorded_by_user_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_payments_invoice_id (invoice_id),
+        INDEX idx_payments_payment_date (payment_date),
+        CONSTRAINT fk_payments_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
+        CONSTRAINT fk_payments_recorded_by FOREIGN KEY (recorded_by_user_id) REFERENCES users(id) ON DELETE RESTRICT
+    ) ENGINE=InnoDB;";
+    $pdo->exec($sqlCreatePaymentsTable);
+    echo "<p>Table 'payments' created successfully or already exists.</p>";
+
+    // 4. Modify 'invoices' table to remove old payment fields (if they exist)
+    $invoiceTableColumnsToDrop = ['payment_date', 'payment_method', 'payment_notes'];
+    foreach ($invoiceTableColumnsToDrop as $column) {
+        $stmtCheckInvoiceColumn = $pdo->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+                                                 WHERE TABLE_SCHEMA = DATABASE()
+                                                 AND TABLE_NAME = 'invoices' AND COLUMN_NAME = :column_name");
+        $stmtCheckInvoiceColumn->execute([':column_name' => $column]);
+        if ($stmtCheckInvoiceColumn->fetchColumn() > 0) {
+            $pdo->exec("ALTER TABLE invoices DROP COLUMN `$column`");
+            echo "<p>Column '$column' dropped from 'invoices' table.</p>";
+        } else {
+            echo "<p>Column '$column' does not exist in 'invoices' table (no action taken).</p>";
+        }
+    }
+
+
+    // 5. Modify 'patient_procedures' table to add 'invoice_id'
     // Check if column exists before adding
     $stmtCheckColumn = $pdo->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
                                       WHERE TABLE_SCHEMA = DATABASE()
