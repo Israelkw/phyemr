@@ -83,6 +83,13 @@ if (!in_array($payment_method, $allowed_payment_methods)) {
     exit;
 }
 
+// Validate Manual Receipt Number (must not be empty)
+if (empty($manual_receipt_number)) {
+    SessionManager::set('message', 'Manual Receipt Number is required.');
+    header("Location: " . $redirect_url);
+    exit;
+}
+
 
 try {
     $pdo->beginTransaction();
