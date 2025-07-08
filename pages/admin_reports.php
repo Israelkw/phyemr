@@ -70,8 +70,12 @@ if (isset($_GET['report_name']) && $_GET['report_name'] === 'total_collected') {
         $end_date = date('Y-m-d 23:59:59', strtotime($dpl_end_date_val));
 
         if ($end_date < $start_date) {
+            // This error message will be displayed on the HTML page if dates are invalid,
+            // preventing CSV generation attempt with bad dates if generate_html is also set (typical case)
+            // or if only export_csv was somehow triggered with bad dates.
             $report_output_detailed_payment_log = "<p class='text-danger'>Error: End date cannot be before start date.</p>";
         } else {
+            // Dates are valid, proceed to fetch data
             try {
                 $sql = "SELECT
                             p.payment_date,
@@ -94,29 +98,55 @@ if (isset($_GET['report_name']) && $_GET['report_name'] === 'total_collected') {
                 $db->execute($stmt, [':start_date' => $start_date, ':end_date' => $end_date]);
                 $payments_log = $db->fetchAll($stmt);
 
-                $report_output_detailed_payment_log = "<h5 class='mt-3'>Detailed Payment Log from " . htmlspecialchars($dpl_start_date_val) . " to " . htmlspecialchars($dpl_end_date_val) . ":</h5>";
-                if (empty($payments_log)) {
-                    $report_output_detailed_payment_log .= "<p>No payments found in this period.</p>";
-                } else {
-                    $report_output_detailed_payment_log .= "<table class='table table-striped table-sm mt-2'>";
-                    $report_output_detailed_payment_log .= "<thead><tr><th>Payment Date</th><th>Patient</th><th>Invoice #</th><th class='text-end'>Amount Paid</th><th>Method</th><th>Receipt #</th><th>Recorded By</th></tr></thead><tbody>";
-                    foreach ($payments_log as $log_entry) {
-                        $patient_name = htmlspecialchars($log_entry['patient_first_name'] . ' ' . $log_entry['patient_last_name']);
-                        // Link to patient details if a page exists, for now just name
-                        // $patient_link = $path_to_root . "pages/patient_details.php?patient_id=" . $log_entry['patient_id'];
-                        $invoice_link = $path_to_root . "pages/view_invoice_details.php?invoice_id=" . $log_entry['invoice_id'];
+                // Check if CSV export was requested for this report
+                if (isset($_GET['export_csv']) && $_GET['export_csv'] === 'detailed_payment_log') {
+                    ob_start(); // Start output buffering
+                    header('Content-Type: text/csv; charset=utf-8');
+                    header('Content-Disposition: attachment; filename="detailed_payment_log_' . date('Ymd_His') . '.csv"');
+                    $output = fopen('php://output', 'w');
 
-                        $report_output_detailed_payment_log .= "<tr>";
-                        $report_output_detailed_payment_log .= "<td>" . htmlspecialchars(date('M d, Y H:i', strtotime($log_entry['payment_date']))) . "</td>";
-                        $report_output_detailed_payment_log .= "<td>" . $patient_name . " (ID: " . $log_entry['patient_id'] . ")</td>";
-                        $report_output_detailed_payment_log .= "<td><a href='" . $invoice_link . "'>" . htmlspecialchars($log_entry['invoice_number']) . "</a></td>";
-                        $report_output_detailed_payment_log .= "<td class='text-end'>" . htmlspecialchars(number_format($log_entry['amount_paid'], 2)) . "</td>";
-                        $report_output_detailed_payment_log .= "<td>" . htmlspecialchars($log_entry['payment_method']) . "</td>";
-                        $report_output_detailed_payment_log .= "<td>" . htmlspecialchars($log_entry['manual_receipt_number'] ?? 'N/A') . "</td>";
-                        $report_output_detailed_payment_log .= "<td>" . htmlspecialchars($log_entry['recorded_by_username']) . "</td>";
-                        $report_output_detailed_payment_log .= "</tr>";
+                    // CSV Header
+                    fputcsv($output, ['Payment Date', 'Patient ID', 'Patient Name', 'Invoice #', 'Amount Paid', 'Payment Method', 'Receipt #', 'Recorded By']);
+
+                    foreach ($payments_log as $log_entry) {
+                        fputcsv($output, [
+                            date('Y-m-d H:i:s', strtotime($log_entry['payment_date'])),
+                            $log_entry['patient_id'],
+                            $log_entry['patient_first_name'] . ' ' . $log_entry['patient_last_name'],
+                            $log_entry['invoice_number'],
+                            $log_entry['amount_paid'],
+                            $log_entry['payment_method'],
+                            $log_entry['manual_receipt_number'] ?? '', // Output empty string for NULL
+                            $log_entry['recorded_by_username']
+                        ]);
                     }
-                    $report_output_detailed_payment_log .= "</tbody></table>";
+                    fclose($output);
+                    ob_end_flush(); // Send buffer and turn off buffering
+                    exit;
+                } else {
+                    // Generate HTML report output
+                    $report_output_detailed_payment_log = "<h5 class='mt-3'>Detailed Payment Log from " . htmlspecialchars($dpl_start_date_val) . " to " . htmlspecialchars($dpl_end_date_val) . ":</h5>";
+                    if (empty($payments_log)) {
+                        $report_output_detailed_payment_log .= "<p>No payments found in this period.</p>";
+                    } else {
+                        $report_output_detailed_payment_log .= "<table class='table table-striped table-sm mt-2'>";
+                        $report_output_detailed_payment_log .= "<thead><tr><th>Payment Date</th><th>Patient</th><th>Invoice #</th><th class='text-end'>Amount Paid</th><th>Method</th><th>Receipt #</th><th>Recorded By</th></tr></thead><tbody>";
+                        foreach ($payments_log as $log_entry) {
+                            $patient_name = htmlspecialchars($log_entry['patient_first_name'] . ' ' . $log_entry['patient_last_name']);
+                            $invoice_link = $path_to_root . "pages/view_invoice_details.php?invoice_id=" . $log_entry['invoice_id'];
+
+                            $report_output_detailed_payment_log .= "<tr>";
+                            $report_output_detailed_payment_log .= "<td>" . htmlspecialchars(date('M d, Y H:i', strtotime($log_entry['payment_date']))) . "</td>";
+                            $report_output_detailed_payment_log .= "<td>" . $patient_name . " (ID: " . $log_entry['patient_id'] . ")</td>";
+                            $report_output_detailed_payment_log .= "<td><a href='" . $invoice_link . "'>" . htmlspecialchars($log_entry['invoice_number']) . "</a></td>";
+                            $report_output_detailed_payment_log .= "<td class='text-end'>" . htmlspecialchars(number_format($log_entry['amount_paid'], 2)) . "</td>";
+                            $report_output_detailed_payment_log .= "<td>" . htmlspecialchars($log_entry['payment_method']) . "</td>";
+                            $report_output_detailed_payment_log .= "<td>" . htmlspecialchars($log_entry['manual_receipt_number'] ?? 'N/A') . "</td>";
+                            $report_output_detailed_payment_log .= "<td>" . htmlspecialchars($log_entry['recorded_by_username']) . "</td>";
+                            $report_output_detailed_payment_log .= "</tr>";
+                        }
+                        $report_output_detailed_payment_log .= "</tbody></table>";
+                    }
                 }
             } catch (PDOException $e) {
                 error_log("Error generating Detailed Payment Log: " . $e->getMessage());
@@ -124,6 +154,7 @@ if (isset($_GET['report_name']) && $_GET['report_name'] === 'total_collected') {
             }
         }
     } else {
+        // This error is for invalid date format, should prevent CSV attempt as well.
         $report_output_detailed_payment_log = "<p class='text-danger'>Error: Invalid date format provided.</p>";
     }
 } elseif (isset($_GET['report_name']) && $_GET['report_name'] === 'new_patients_registered') {
@@ -320,8 +351,9 @@ require_once $path_to_root . 'includes/header.php';
                                     <label for="dpl_end_date" class="form-label">End Date:</label>
                                     <input type="date" class="form-control" id="dpl_end_date" name="dpl_end_date" value="<?php echo htmlspecialchars($_GET['dpl_end_date'] ?? date('Y-m-d')); ?>" required>
                                 </div>
-                                <div class="col-md-2 align-self-end mb-2">
-                                    <button type="submit" class="btn btn-primary w-100">Generate</button>
+                                <div class="col-md-2 align-self-end mb-2 btn-group">
+                                    <button type="submit" name="generate_html" value="detailed_payment_log" class="btn btn-primary">View</button>
+                                    <button type="submit" name="export_csv" value="detailed_payment_log" class="btn btn-success">CSV</button>
                                 </div>
                             </div>
                         </form>
