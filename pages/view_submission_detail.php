@@ -191,9 +191,9 @@ include_once $path_to_root . 'includes/header.php';
         </div>
     </div>
 
+    <?php if ($form_data_array && !empty($form_data_array)): ?>
     <fieldset class="mt-4 mb-3">
         <legend>Patient clinical Data</legend>
-        <?php if ($form_data_array && !empty($form_data_array)): ?>
         <table class="table table-bordered table-striped">
             <thead class="thead-light">
                 <tr>
@@ -260,10 +260,10 @@ include_once $path_to_root . 'includes/header.php';
                 <?php endforeach; ?>
             </tbody>
         </table>
+    </fieldset>
     <?php elseif (empty($error_message)): // No specific error message, but form_data_array is empty or null
             echo "<div class='alert alert-info'>No detailed form data to display or data was empty.</div>";
         endif; ?>
-    </fieldset>
 
     <div class="mt-4">
         <a href="view_patient_history.php?patient_id=<?php echo htmlspecialchars($patient_details['id']); ?>"
