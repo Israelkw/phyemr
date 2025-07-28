@@ -191,18 +191,19 @@ include_once $path_to_root . 'includes/header.php';
         </div>
     </div>
 
-    <h4 class="mt-4 mb-3">Patient clinical Data</h4>
-    <?php if ($form_data_array && !empty($form_data_array)): ?>
-    <table class="table table-bordered table-striped">
-        <thead class="thead-light">
-            <tr>
-                <th>Clinical Examination type</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($form_data_array as $field_object): ?>
-            <?php
+    <fieldset class="mt-4 mb-3">
+        <legend>Patient clinical Data</legend>
+        <?php if ($form_data_array && !empty($form_data_array)): ?>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>Clinical Examination type</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($form_data_array as $field_object): ?>
+                <?php
                         // $field_object is expected to be an array like ['name' => ..., 'value' => ..., 'label' => ...]
                         $displayLabel = htmlspecialchars($field_object['label'] ?? ucwords(str_replace('_', ' ', $field_object['name'] ?? 'Unknown Field')));
                         $rawValue = $field_object['value'] ?? null;
@@ -250,18 +251,19 @@ include_once $path_to_root . 'includes/header.php';
                             }
                         }
                         ?>
-            <?php if ($shouldDisplayRow): ?>
-            <tr>
-                <td><?php echo $displayLabel; ?></td>
-                <td><?php echo $displayValue; ?></td>
-            </tr>
-            <?php endif; ?>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+                <?php if ($shouldDisplayRow): ?>
+                <tr>
+                    <td><?php echo $displayLabel; ?></td>
+                    <td><?php echo $displayValue; ?></td>
+                </tr>
+                <?php endif; ?>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     <?php elseif (empty($error_message)): // No specific error message, but form_data_array is empty or null
             echo "<div class='alert alert-info'>No detailed form data to display or data was empty.</div>";
         endif; ?>
+    </fieldset>
 
     <div class="mt-4">
         <a href="view_patient_history.php?patient_id=<?php echo htmlspecialchars($patient_details['id']); ?>"
