@@ -66,7 +66,7 @@ $allowed_directories = ['patient_evaluation_form', 'patient_general_info'];
 if (!in_array($form_directory_from_url, $allowed_directories)) {
     $_SESSION['message'] = "Invalid form directory specified.";
     // Note: $patient_id_from_session was used here before, ensure $selected_patient_id is used if that's the correct variable now
-    header("Location: " . $select_form_page . '?patient_id=' . htmlspecialchars($selected_patient_id)); 
+    header("Location: " . $select_form_page . '?patient_id=' . htmlspecialchars($selected_patient_id));
     exit();
 }
 
@@ -167,11 +167,11 @@ include_once $path_to_root . 'includes/header.php';
 
 <!-- Inject JavaScript variables for patient_id and clinician_id (user_id) -->
 <script>
-window.currentPatientId = <?php echo json_encode($selected_patient_id); ?>;
-window.currentClinicianId = <?php echo json_encode($current_user_id); ?>;
-// Also make form_name available if js/form_handler.js needs it directly, though it's also in hidden field
-window.currentFormName = <?php echo json_encode($form_file_basename); ?>;
-window.csrfToken = <?php echo json_encode($csrf_token); ?>; // Inject CSRF token
+    window.currentPatientId = <?php echo json_encode($selected_patient_id); ?>;
+    window.currentClinicianId = <?php echo json_encode($current_user_id); ?>;
+    // Also make form_name available if js/form_handler.js needs it directly, though it's also in hidden field
+    window.currentFormName = <?php echo json_encode($form_file_basename); ?>;
+    window.csrfToken = <?php echo json_encode($csrf_token); ?>; // Inject CSRF token
 </script>
 
 <?php
@@ -188,48 +188,48 @@ window.csrfToken = <?php echo json_encode($csrf_token); ?>; // Inject CSRF token
 // ---- START: Display Recent General Info ----
 if ($recent_general_info_data && $_SESSION['role'] === 'clinician' && $form_directory_from_url === 'patient_evaluation_form') :
 ?>
-<div class="card mb-4">
-    <div class="card-header bg-info text-white">
-        <strong>Most Recent General Information (Read-Only)</strong>
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <strong>Most Recent General Information </strong>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <?php
+                // Iterate through the decoded JSON data. Assuming it's an array of field objects {name, value, label}.
+                // You might need to adjust this based on the actual structure of 'general-information.html' form_data.
+                if (is_array($recent_general_info_data)) {
+                    foreach ($recent_general_info_data as $field) :
+                        if (isset($field['label']) && isset($field['value']) && !empty(trim($field['value']))):
+                ?>
+                            <dt class="col-sm-4"><?php echo htmlspecialchars($field['label']); ?>:</dt>
+                            <dd class="col-sm-8"><?php echo nl2br(htmlspecialchars($field['value'])); ?></dd>
+                <?php
+                        endif;
+                    endforeach;
+                } else {
+                    echo "<dd class='col-sm-12'>General information data is not in the expected format.</dd>";
+                }
+                ?>
+            </dl>
+        </div>
     </div>
-    <div class="card-body">
-        <dl class="row">
-            <?php
-            // Iterate through the decoded JSON data. Assuming it's an array of field objects {name, value, label}.
-            // You might need to adjust this based on the actual structure of 'general-information.html' form_data.
-            if (is_array($recent_general_info_data)) {
-                foreach ($recent_general_info_data as $field) :
-                    if (isset($field['label']) && isset($field['value']) && !empty(trim($field['value']))):
-            ?>
-                <dt class="col-sm-4"><?php echo htmlspecialchars($field['label']); ?>:</dt>
-                <dd class="col-sm-8"><?php echo nl2br(htmlspecialchars($field['value'])); ?></dd>
-            <?php
-                    endif;
-                endforeach;
-            } else {
-                echo "<dd class='col-sm-12'>General information data is not in the expected format.</dd>";
-            }
-            ?>
-        </dl>
-    </div>
-</div>
 <?php
 endif;
 // ---- END: Display Recent General Info ----
 ?>
 
 <?php
-    // 9. Read the content of the selected HTML form file
-    $form_content = file_get_contents($form_file_path);
-    if ($form_content === false) {
-        echo "<div class='alert alert-danger'>Error: Could not read the form content.</div>";
-    } else {
-        // Echo the raw form content directly.
-        // The static HTML forms should be designed to use js/form_handler.js
-        // and pick up window.currentPatientId, window.currentClinicianId, window.currentFormName.
-        echo $form_content;
-    }
-    ?>
+// 9. Read the content of the selected HTML form file
+$form_content = file_get_contents($form_file_path);
+if ($form_content === false) {
+    echo "<div class='alert alert-danger'>Error: Could not read the form content.</div>";
+} else {
+    // Echo the raw form content directly.
+    // The static HTML forms should be designed to use js/form_handler.js
+    // and pick up window.currentPatientId, window.currentClinicianId, window.currentFormName.
+    echo $form_content;
+}
+?>
 
 <!-- 13. Navigation links -->
 <div class="mt-4 mb-4">

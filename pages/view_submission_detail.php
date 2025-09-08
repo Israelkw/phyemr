@@ -69,8 +69,10 @@ if (!isset($_GET['submission_id']) || empty($_GET['submission_id']) || !is_numer
 
                     // ---- START: Fetch Contextual General Info ----
                     // This should only run if the main submission is successfully fetched and authorized
-                    if ($submission_details && $patient_details && empty($error_message) &&
-                        $submission_details['form_name'] !== 'general-information.html') {
+                    if (
+                        $submission_details && $patient_details && empty($error_message) &&
+                        $submission_details['form_name'] !== 'general-information.html'
+                    ) {
 
                         try {
                             $sql_context_gen_info = "SELECT form_data
@@ -97,8 +99,8 @@ if (!isset($_GET['submission_id']) || empty($_GET['submission_id']) || !is_numer
                                 }
                             }
                         } catch (PDOException $e_context) {
-                             error_log("DB error fetching contextual general info (view_submission_detail): " . $e_context->getMessage());
-                             // $contextual_general_info_data remains null, don't break the page
+                            error_log("DB error fetching contextual general info (view_submission_detail): " . $e_context->getMessage());
+                            // $contextual_general_info_data remains null, don't break the page
                         }
                     }
                     // ---- END: Fetch Contextual General Info ----
@@ -123,11 +125,11 @@ include_once $path_to_root . 'includes/header.php';
     <h2 class="mb-4"><?php echo htmlspecialchars($page_title); ?></h2>
 
     <?php if (!empty($error_message)): ?>
-    <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
     <?php endif; ?>
     <?php if (!empty($db_error_message)): ?>
-    <div class="alert alert-danger">Database error: <?php echo htmlspecialchars($db_error_message); ?> Please contact
-        support.</div>
+        <div class="alert alert-danger">Database error: <?php echo htmlspecialchars($db_error_message); ?> Please contact
+            support.</div>
     <?php endif; ?>
 
     <?php
@@ -135,74 +137,74 @@ include_once $path_to_root . 'includes/header.php';
     // This should only display if the main submission is also being displayed successfully
     if ($submission_details && $patient_details && empty($error_message) && empty($db_error_message) && $contextual_general_info_data):
     ?>
-    <div class="card mb-4 border-info">
-        <div class="card-header bg-info text-white">
-            <strong>Contextual General Information (Read-Only, from just before this submission)</strong>
-        </div>
-        <div class="card-body">
-            <dl class="row">
-                <?php
-                if (is_array($contextual_general_info_data)) {
-                    $has_content = false;
-                    foreach ($contextual_general_info_data as $field) {
-                        // Ensure field 'name' is checked and converted to lowercase for 'csrf_token' comparison
-                        if (isset($field['label']) && isset($field['value']) && trim($field['value']) !== '' && (!isset($field['name']) || strtolower($field['name']) !== 'csrf_token') ) {
-                            $has_content = true;
-                ?>
-                    <dt class="col-sm-4"><?php echo htmlspecialchars($field['label']); ?>:</dt>
-                    <dd class="col-sm-8"><?php echo nl2br(htmlspecialchars($field['value'])); ?></dd>
-                <?php
+        <div class="card mb-4 border-info">
+            <div class="card-header bg-info text-white">
+                <strong>Contextual General Information </strong>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <?php
+                    if (is_array($contextual_general_info_data)) {
+                        $has_content = false;
+                        foreach ($contextual_general_info_data as $field) {
+                            // Ensure field 'name' is checked and converted to lowercase for 'csrf_token' comparison
+                            if (isset($field['label']) && isset($field['value']) && trim($field['value']) !== '' && (!isset($field['name']) || strtolower($field['name']) !== 'csrf_token')) {
+                                $has_content = true;
+                    ?>
+                                <dt class="col-sm-4"><?php echo htmlspecialchars($field['label']); ?>:</dt>
+                                <dd class="col-sm-8"><?php echo nl2br(htmlspecialchars($field['value'])); ?></dd>
+                    <?php
+                            }
                         }
+                        if (!$has_content) {
+                            echo "<dd class='col-sm-12'><em>No specific details recorded in this general info submission.</em></dd>";
+                        }
+                    } else {
+                        echo "<dd class='col-sm-12'><em>General information data is not in the expected format.</em></dd>";
                     }
-                    if (!$has_content) {
-                        echo "<dd class='col-sm-12'><em>No specific details recorded in this general info submission.</em></dd>";
-                    }
-                } else {
-                    echo "<dd class='col-sm-12'><em>General information data is not in the expected format.</em></dd>";
-                }
-                ?>
-            </dl>
+                    ?>
+                </dl>
+            </div>
         </div>
-    </div>
     <?php
     endif;
     // ---- END: Display Contextual General Info ----
     ?>
 
     <?php if ($submission_details && $patient_details && empty($error_message) && empty($db_error_message)): ?>
-    <div class="card mb-4">
-        <div class="card-header">
-            Submission Overview
-        </div>
-        <div class="card-body">
-            <p><strong>Patient:</strong>
-                <?php echo htmlspecialchars($patient_details['first_name'] . ' ' . $patient_details['last_name']); ?>
-                (ID: <?php echo htmlspecialchars($patient_details['id']); ?>)</p>
-            <p><strong>Examination form:</strong>
-                <?php echo htmlspecialchars(ucwords(str_replace(['_', '-'], ' ', pathinfo($submission_details['form_name'], PATHINFO_FILENAME)))); ?>
-            </p>
-            <!-- <p><strong>Form Directory:</strong>
+        <div class="card mb-4">
+            <div class="card-header">
+                Submission Overview
+            </div>
+            <div class="card-body">
+                <p><strong>Patient:</strong>
+                    <?php echo htmlspecialchars($patient_details['first_name'] . ' ' . $patient_details['last_name']); ?>
+                    (ID: <?php echo htmlspecialchars($patient_details['id']); ?>)</p>
+                <p><strong>Examination form:</strong>
+                    <?php echo htmlspecialchars(ucwords(str_replace(['_', '-'], ' ', pathinfo($submission_details['form_name'], PATHINFO_FILENAME)))); ?>
+                </p>
+                <!-- <p><strong>Form Directory:</strong>
                 <?php echo htmlspecialchars(ucwords(str_replace(['_', '-'], ' ', $submission_details['form_directory']))); ?>
             </p> -->
-            <p><strong>Data entry Date and time:</strong>
-                <?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($submission_details['submission_timestamp']))); ?>
-            </p>
-            <p><strong>Submission ID:</strong> <?php echo htmlspecialchars($submission_id); ?></p>
+                <p><strong>Data entry Date and time:</strong>
+                    <?php echo htmlspecialchars(date('Y-m-d H:i:s', strtotime($submission_details['submission_timestamp']))); ?>
+                </p>
+                <p><strong>Submission ID:</strong> <?php echo htmlspecialchars($submission_id); ?></p>
+            </div>
         </div>
-    </div>
 
-    <h4 class="mt-4 mb-3">Patient clinical Data</h4>
-    <?php if ($form_data_array && !empty($form_data_array)): ?>
-    <table class="table table-bordered table-striped">
-        <thead class="thead-light">
-            <tr>
-                <th>Clinical Examination type</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($form_data_array as $field_object): ?>
-            <?php
+        <h4 class="mt-4 mb-3">Patient clinical Data</h4>
+        <?php if ($form_data_array && !empty($form_data_array)): ?>
+            <table class="table table-bordered table-striped">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Clinical Examination type</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($form_data_array as $field_object): ?>
+                        <?php
                         // $field_object is expected to be an array like ['name' => ..., 'value' => ..., 'label' => ...]
                         $displayLabel = htmlspecialchars($field_object['label'] ?? ucwords(str_replace('_', ' ', $field_object['name'] ?? 'Unknown Field')));
                         $rawValue = $field_object['value'] ?? null;
@@ -212,7 +214,9 @@ include_once $path_to_root . 'includes/header.php';
                         if (is_array($rawValue)) {
                             // For arrays (e.g., multi-selects)
                             if (!empty($rawValue)) {
-                                $filtered_values = array_filter($rawValue, function($item) { return $item !== null && $item !== ''; });
+                                $filtered_values = array_filter($rawValue, function ($item) {
+                                    return $item !== null && $item !== '';
+                                });
                                 if (!empty($filtered_values)) {
                                     $displayValue = nl2br(htmlspecialchars(implode(', ', $filtered_values)));
                                 } else {
@@ -223,8 +227,7 @@ include_once $path_to_root . 'includes/header.php';
                             }
                         } elseif ($rawValue === null) {
                             $shouldDisplayRow = false; // Don't display if value is null
-                        }
-                        else {
+                        } else {
                             // For scalar values (text, select-one, radio, checked checkbox value etc.)
                             $trimmedValue = trim((string)$rawValue);
 
@@ -233,7 +236,7 @@ include_once $path_to_root . 'includes/header.php';
                             $truthyValues = ["1", "true", "yes", "on", "checked"]; // "checked" is a common value for checkboxes
 
                             if ($trimmedValue === '') {
-                                 $shouldDisplayRow = false;
+                                $shouldDisplayRow = false;
                             } elseif (in_array(strtolower($trimmedValue), $truthyValues, true)) {
                                 // For values like "checked", "true", "yes", "on"
                                 $displayValue = "<em>Yes</em>"; // Or "Checked", or use the label itself if appropriate
@@ -243,31 +246,30 @@ include_once $path_to_root . 'includes/header.php';
                                 // This case might not be hit if form_handler.js doesn't send unchecked boxes
                                 // or if they are not assigned these explicit falsey string values.
                                 $displayValue = "<em>No</em>";
-                            }
-                             else {
+                            } else {
                                 // Regular text data
                                 $displayValue = nl2br(htmlspecialchars($trimmedValue));
                             }
                         }
                         ?>
-            <?php if ($shouldDisplayRow): ?>
-            <tr>
-                <td><?php echo $displayLabel; ?></td>
-                <td><?php echo $displayValue; ?></td>
-            </tr>
-            <?php endif; ?>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <?php elseif (empty($error_message)): // No specific error message, but form_data_array is empty or null
+                        <?php if ($shouldDisplayRow): ?>
+                            <tr>
+                                <td><?php echo $displayLabel; ?></td>
+                                <td><?php echo $displayValue; ?></td>
+                            </tr>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php elseif (empty($error_message)): // No specific error message, but form_data_array is empty or null
             echo "<div class='alert alert-info'>No detailed form data to display or data was empty.</div>";
         endif; ?>
 
-    <div class="mt-4">
-        <a href="view_patient_history.php?patient_id=<?php echo htmlspecialchars($patient_details['id']); ?>"
-            class="btn btn-secondary">Back to Patient History</a>
-        <a href="dashboard.php" class="btn btn-info">Back to Dashboard</a>
-    </div>
+        <div class="mt-4">
+            <a href="view_patient_history.php?patient_id=<?php echo htmlspecialchars($patient_details['id']); ?>"
+                class="btn btn-secondary">Back to Patient History</a>
+            <a href="dashboard.php" class="btn btn-info">Back to Dashboard</a>
+        </div>
 
     <?php elseif (empty($error_message) && empty($db_error_message)): // Fallback if data is missing but no explicit error was set
         echo "<div class='alert alert-warning'>Could not retrieve submission details. Ensure the submission ID is correct and you are authorized.</div>";
