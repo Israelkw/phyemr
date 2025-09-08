@@ -1,131 +1,115 @@
-
 <div class="container py-4">
-
-<form action="#" method="post" id="pediatricAssessmentForm" novalidate>
-
-    <fieldset class="expanded mt-0"> <!-- First fieldset expanded by default -->
-        <legend>Pediatric Assessment - Patient Information</legend>
-
-        <div class="mb-2">
-            <label for="PA_P1_B1_Name" class="form-label">Name:</label>
-            <input type="text" id="PA_P1_B1_Name" name="PA_P1_B1_Name" class="form-control form-control-sm" placeholder="B1 details...">
-        </div>
-
-        <div class="mb-2">
-            <label for="PA_P1_B2_Sex" class="form-label">Sex:</label>
-            <input type="text" id="PA_P1_B2_Sex" name="PA_P1_B2_Sex" class="form-control form-control-sm" placeholder="B2 details...">
-        </div>
-
-        <div class="mb-2">
-            <label for="PA_P1_B3_Age" class="form-label">Age:</label>
-            <input type="text" id="PA_P1_B3_Age" name="PA_P1_B3_Age" class="form-control form-control-sm" placeholder="B3 details...">
-        </div>
-
-        <div class="mb-2">
-            <label for="PA_P1_B5_TreatingClinician" class="form-label">Treating Clinician:</label>
-            <input type="text" id="PA_P1_B5_TreatingClinician" name="PA_P1_B5_TreatingClinician" class="form-control form-control-sm" placeholder="B5 details...">
-        </div>
-
-        <p class="fw-bold mb-1">Vital Sign</p>
-        
-    </fieldset>
-
-    <fieldset class="mt-4">
-        <legend>Medical History & Examination</legend>
-
-        <p class="fw-bold mb-1">Physical Examination</p>
-        <div class="mb-2">
-            <label for="PA_P2_B2_PhysExamOverall" class="form-label">Overall Physical Examination (B2):</label>
-            <input type="text" id="PA_P2_B2_PhysExamOverall" name="PA_P2_B2_PhysExamOverall" class="form-control form-control-sm" placeholder="B2 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B3_HEENT" class="form-label">HEENT (B3):</label>
-            <input type="text" id="PA_P2_B3_HEENT" name="PA_P2_B3_HEENT" class="form-control form-control-sm" placeholder="B3 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B4_LGS" class="form-label">LGS (B4):</label>
-            <input type="text" id="PA_P2_B4_LGS" name="PA_P2_B4_LGS" class="form-control form-control-sm" placeholder="B4 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B5_Chest" class="form-label">Chest (B5):</label>
-            <input type="text" id="PA_P2_B5_Chest" name="PA_P2_B5_Chest" class="form-control form-control-sm" placeholder="B5 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B6_CVS" class="form-label">CVS (B6):</label>
-            <input type="text" id="PA_P2_B6_CVS" name="PA_P2_B6_CVS" class="form-control form-control-sm" placeholder="B6 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B7_Abdomen" class="form-label">Abdomen (B7):</label>
-            <input type="text" id="PA_P2_B7_Abdomen" name="PA_P2_B7_Abdomen" class="form-control form-control-sm" placeholder="B7 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B8_GUS" class="form-label">GUS (B8):</label>
-            <input type="text" id="PA_P2_B8_GUS" name="PA_P2_B8_GUS" class="form-control form-control-sm" placeholder="B8 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B9_MSS" class="form-label">MSS (B9):</label>
-            <input type="text" id="PA_P2_B9_MSS" name="PA_P2_B9_MSS" class="form-control form-control-sm" placeholder="B9 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B10_Integumentary" class="form-label">Integumentary (B10):</label>
-            <input type="text" id="PA_P2_B10_Integumentary" name="PA_P2_B10_Integumentary" class="form-control form-control-sm" placeholder="B10 details...">
-        </div>
-
-        <p class="fw-bold mb-1">Neurology</p>
-        <div class="mb-2">
-            <label for="PA_P2_B11_Consciousness" class="form-label">Consciousness (B11):</label>
-            <input type="text" id="PA_P2_B11_Consciousness" name="PA_P2_B11_Consciousness" class="form-control form-control-sm" placeholder="B11 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B12_CranialNerves" class="form-label">Cranial nerves (B12):</label>
-            <input type="text" id="PA_P2_B12_CranialNerves" name="PA_P2_B12_CranialNerves" class="form-control form-control-sm" placeholder="B12 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B13_Motor" class="form-label">Motor (B13):</label>
-            <input type="text" id="PA_P2_B13_Motor" name="PA_P2_B13_Motor" class="form-control form-control-sm" placeholder="B13 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B14_Sensory" class="form-label">Sensory (B14):</label>
-            <input type="text" id="PA_P2_B14_Sensory" name="PA_P2_B14_Sensory" class="form-control form-control-sm" placeholder="B14 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B15_Coordination" class="form-label">Coordination (B15):</label>
-            <input type="text" id="PA_P2_B15_Coordination" name="PA_P2_B15_Coordination" class="form-control form-control-sm" placeholder="B15 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B16_Gait" class="form-label">Gait (B16):</label>
-            <input type="text" id="PA_P2_B16_Gait" name="PA_P2_B16_Gait" class="form-control form-control-sm" placeholder="B16 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P2_B17_NeuroOther" class="form-label">Other (B17):</label>
-            <input type="text" id="PA_P2_B17_NeuroOther" name="PA_P2_B17_NeuroOther" class="form-control form-control-sm" placeholder="B17 details...">
-        </div>
-    </fieldset>
-
-    <fieldset class="mt-4">
-        <legend>Assessment, Treatment, and Plan</legend>
-        <div class="mb-2">
-            <label for="PA_P3_B1_Assessment" class="form-label">Assessment (B1):</label>
-            <input type="text" id="PA_P3_B1_Assessment" name="PA_P3_B1_Assessment" class="form-control form-control-sm" placeholder="B1 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P3_B2_Treatment" class="form-label">Treatment (B2):</label>
-            <input type="text" id="PA_P3_B2_Treatment" name="PA_P3_B2_Treatment" class="form-control form-control-sm" placeholder="B2 details...">
-        </div>
-        <div class="mb-2">
-            <label for="PA_P3_B3_Plan" class="form-label">Plan (B3):</label>
-            <input type="text" id="PA_P3_B3_Plan" name="PA_P3_B3_Plan" class="form-control form-control-sm" placeholder="B3 details...">
-        </div>
-    </fieldset>
-
-    <div id="pediatricAssessmentForm-message" class="mt-3"></div>
-    <div class="form-group mt-3">
-        <button type="submit" class="btn btn-success">Submit Data</button>
-        <button type="reset" class="btn btn-danger">Reset</button>
-    </div>
-
+<form action="#" id="pediatricAssessmentForm" method="post" novalidate="">
+<fieldset class="expanded mt-0"> <!-- First fieldset expanded by default -->
+<legend>Pediatric Assessment - Patient Information</legend>
+<div class="mb-2">
+<label class="form-label" for="Pediatric Assessment - Patient Information Name">Name:</label>
+<input class="form-control form-control-sm" id="Pediatric Assessment - Patient Information Name" name="Pediatric Assessment - Patient Information Name" placeholder="B1 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Pediatric Assessment - Patient Information Sex">Sex:</label>
+<input class="form-control form-control-sm" id="Pediatric Assessment - Patient Information Sex" name="Pediatric Assessment - Patient Information Sex" placeholder="B2 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Pediatric Assessment - Patient Information Age">Age:</label>
+<input class="form-control form-control-sm" id="Pediatric Assessment - Patient Information Age" name="Pediatric Assessment - Patient Information Age" placeholder="B3 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Pediatric Assessment - Patient Information Treating Clinician">Treating Clinician:</label>
+<input class="form-control form-control-sm" id="Pediatric Assessment - Patient Information Treating Clinician" name="Pediatric Assessment - Patient Information Treating Clinician" placeholder="B5 details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">Vital Sign</p>
+</fieldset>
+<fieldset class="mt-4">
+<legend>Medical History &amp; Examination</legend>
+<p class="fw-bold mb-1">Physical Examination</p>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Physical Examination Overall Physical Examination (B2)">Overall Physical Examination (B2):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Physical Examination Overall Physical Examination (B2)" name="Medical History &amp; Examination Physical Examination Overall Physical Examination (B2)" placeholder="B2 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Physical Examination HEENT (B3)">HEENT (B3):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Physical Examination HEENT (B3)" name="Medical History &amp; Examination Physical Examination HEENT (B3)" placeholder="B3 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Physical Examination LGS (B4)">LGS (B4):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Physical Examination LGS (B4)" name="Medical History &amp; Examination Physical Examination LGS (B4)" placeholder="B4 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Physical Examination Chest (B5)">Chest (B5):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Physical Examination Chest (B5)" name="Medical History &amp; Examination Physical Examination Chest (B5)" placeholder="B5 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Physical Examination CVS (B6)">CVS (B6):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Physical Examination CVS (B6)" name="Medical History &amp; Examination Physical Examination CVS (B6)" placeholder="B6 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Physical Examination Abdomen (B7)">Abdomen (B7):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Physical Examination Abdomen (B7)" name="Medical History &amp; Examination Physical Examination Abdomen (B7)" placeholder="B7 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Physical Examination GUS (B8)">GUS (B8):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Physical Examination GUS (B8)" name="Medical History &amp; Examination Physical Examination GUS (B8)" placeholder="B8 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Physical Examination MSS (B9)">MSS (B9):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Physical Examination MSS (B9)" name="Medical History &amp; Examination Physical Examination MSS (B9)" placeholder="B9 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Physical Examination Integumentary (B10)">Integumentary (B10):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Physical Examination Integumentary (B10)" name="Medical History &amp; Examination Physical Examination Integumentary (B10)" placeholder="B10 details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">Neurology</p>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Neurology Consciousness (B11)">Consciousness (B11):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Neurology Consciousness (B11)" name="Medical History &amp; Examination Neurology Consciousness (B11)" placeholder="B11 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Neurology Cranial nerves (B12)">Cranial nerves (B12):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Neurology Cranial nerves (B12)" name="Medical History &amp; Examination Neurology Cranial nerves (B12)" placeholder="B12 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Neurology Motor (B13)">Motor (B13):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Neurology Motor (B13)" name="Medical History &amp; Examination Neurology Motor (B13)" placeholder="B13 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Neurology Sensory (B14)">Sensory (B14):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Neurology Sensory (B14)" name="Medical History &amp; Examination Neurology Sensory (B14)" placeholder="B14 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Neurology Coordination (B15)">Coordination (B15):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Neurology Coordination (B15)" name="Medical History &amp; Examination Neurology Coordination (B15)" placeholder="B15 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Neurology Gait (B16)">Gait (B16):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Neurology Gait (B16)" name="Medical History &amp; Examination Neurology Gait (B16)" placeholder="B16 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Medical History &amp; Examination Neurology Other (B17)">Other (B17):</label>
+<input class="form-control form-control-sm" id="Medical History &amp; Examination Neurology Other (B17)" name="Medical History &amp; Examination Neurology Other (B17)" placeholder="B17 details..." type="text"/>
+</div>
+</fieldset>
+<fieldset class="mt-4">
+<legend>Assessment, Treatment, and Plan</legend>
+<div class="mb-2">
+<label class="form-label" for="Assessment, Treatment, and Plan Assessment (B1)">Assessment (B1):</label>
+<input class="form-control form-control-sm" id="Assessment, Treatment, and Plan Assessment (B1)" name="Assessment, Treatment, and Plan Assessment (B1)" placeholder="B1 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Assessment, Treatment, and Plan Treatment (B2)">Treatment (B2):</label>
+<input class="form-control form-control-sm" id="Assessment, Treatment, and Plan Treatment (B2)" name="Assessment, Treatment, and Plan Treatment (B2)" placeholder="B2 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Assessment, Treatment, and Plan Plan (B3)">Plan (B3):</label>
+<input class="form-control form-control-sm" id="Assessment, Treatment, and Plan Plan (B3)" name="Assessment, Treatment, and Plan Plan (B3)" placeholder="B3 details..." type="text"/>
+</div>
+</fieldset>
+<div class="mt-3" id="pediatricAssessmentForm-message"></div>
+<div class="form-group mt-3">
+<button class="btn btn-success" type="submit">Submit Data</button>
+<button class="btn btn-danger" type="reset">Reset</button>
+</div>
 </form>
-
 <script>
     // Toggle each fieldset on legend click
     document.querySelectorAll("fieldset").forEach((fieldset) => {

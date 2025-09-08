@@ -1,94 +1,76 @@
-
 <div class="container py-4">
-
-<form action="#" method="post" id="generalAssessmentForm" novalidate>
-
-    <fieldset class="expanded mt-0">
-        <legend>General Assessment Form</legend>
-
-        <div class="mb-2">
-            <label for="GA_B1_Name" class="form-label">Name:</label>
-            <input type="text" id="GA_B1_Name" name="GA_B1_Name" class="form-control form-control-sm" placeholder="B1 details...">
-        </div>
-
-        <div class="mb-2">
-            <label for="GA_B2_Sex" class="form-label">Sex:</label>
-            <input type="text" id="GA_B2_Sex" name="GA_B2_Sex" class="form-control form-control-sm" placeholder="B2 details...">
-        </div>
-
-        <div class="mb-2">
-            <label for="GA_B3_Age" class="form-label">Age:</label>
-            <input type="text" id="GA_B3_Age" name="GA_B3_Age" class="form-control form-control-sm" placeholder="B3 details...">
-        </div>
-
-        <div class="mb-2">
-            <label for="GA_B5_TreatingClinician" class="form-label">Treating Clinician:</label>
-            <input type="text" id="GA_B5_TreatingClinician" name="GA_B5_TreatingClinician" class="form-control form-control-sm" placeholder="B5 details...">
-        </div>
-        
-        <p class="fw-bold mb-1">Vital Sign</p>
-        
-    </fieldset>
-
-    <fieldset class="mt-4">
-        <legend>Additional Assessment Details</legend>
-
-        <p class="fw-bold mb-1">Physical Examination</p>
-        <div class="mb-2">
-            <label for="GA2_B2_Observation" class="form-label">Observation (B2):</label>
-            <input type="text" id="GA2_B2_Observation" name="GA2_B2_Observation" class="form-control form-control-sm" placeholder="B2 details...">
-        </div>
-        <div class="mb-2">
-            <label for="GA2_B3_Palpation" class="form-label">Palpation (B3):</label>
-            <input type="text" id="GA2_B3_Palpation" name="GA2_B3_Palpation" class="form-control form-control-sm" placeholder="B3 details...">
-        </div>
-        <div class="mb-2">
-            <label for="GA2_B4_MuscleTone" class="form-label">Muscle tone (B4):</label>
-            <input type="text" id="GA2_B4_MuscleTone" name="GA2_B4_MuscleTone" class="form-control form-control-sm" placeholder="B4 details...">
-        </div>
-        <div class="mb-2">
-            <label for="GA2_B5_MusclePower" class="form-label">Muscle power (B5):</label>
-            <input type="text" id="GA2_B5_MusclePower" name="GA2_B5_MusclePower" class="form-control form-control-sm" placeholder="B5 details...">
-        </div>
-        <div class="mb-2">
-            <label for="GA2_B6_Reflex" class="form-label">Reflex (B6):</label>
-            <input type="text" id="GA2_B6_Reflex" name="GA2_B6_Reflex" class="form-control form-control-sm" placeholder="B6 details...">
-        </div>
-        
-        <div class="mb-2">
-            <label for="GA2_B7_SpecialTests" class="form-label">Special Tests (B7):</label>
-            <input type="text" id="GA2_B7_SpecialTests" name="GA2_B7_SpecialTests" class="form-control form-control-sm" placeholder="B7 details...">
-        </div>
-        
-        <div class="mb-2">
-            <label for="GA2_B8_PtDiagnosis" class="form-label">Pt Diagnosis (B8):</label>
-            <input type="text" id="GA2_B8_PtDiagnosis" name="GA2_B8_PtDiagnosis" class="form-control form-control-sm" placeholder="B8 details...">
-        </div>
-        
-        <p class="fw-bold mb-1">Goal</p>
-        <div class="mb-2">
-            <label for="GA2_B9_GoalShort" class="form-label">Short (B9):</label>
-            <input type="text" id="GA2_B9_GoalShort" name="GA2_B9_GoalShort" class="form-control form-control-sm" placeholder="B9 details...">
-        </div>
-        <div class="mb-2">
-            <label for="GA2_B10_GoalLong" class="form-label">Long (B10):</label>
-            <input type="text" id="GA2_B10_GoalLong" name="GA2_B10_GoalLong" class="form-control form-control-sm" placeholder="B10 details...">
-        </div>
-        
-        <div class="mb-2">
-            <label for="GA2_B11_Plan" class="form-label">Plan (B11):</label>
-            <input type="text" id="GA2_B11_Plan" name="GA2_B11_Plan" class="form-control form-control-sm" placeholder="B11 details...">
-        </div>
-    </fieldset>
-
-    <div id="generalAssessmentForm-message" class="mt-3"></div>
-    <div class="form-group mt-3">
-        <button type="submit" class="btn btn-success">Submit Data</button>
-        <button type="reset" class="btn btn-danger">Reset</button>
-    </div>
-
+<form action="#" id="generalAssessmentForm" method="post" novalidate="">
+<fieldset class="expanded mt-0">
+<legend>General Assessment Form</legend>
+<div class="mb-2">
+<label class="form-label" for="General Assessment Form Name">Name:</label>
+<input class="form-control form-control-sm" id="General Assessment Form Name" name="General Assessment Form Name" placeholder="B1 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="General Assessment Form Sex">Sex:</label>
+<input class="form-control form-control-sm" id="General Assessment Form Sex" name="General Assessment Form Sex" placeholder="B2 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="General Assessment Form Age">Age:</label>
+<input class="form-control form-control-sm" id="General Assessment Form Age" name="General Assessment Form Age" placeholder="B3 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="General Assessment Form Treating Clinician">Treating Clinician:</label>
+<input class="form-control form-control-sm" id="General Assessment Form Treating Clinician" name="General Assessment Form Treating Clinician" placeholder="B5 details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">Vital Sign</p>
+</fieldset>
+<fieldset class="mt-4">
+<legend>Additional Assessment Details</legend>
+<p class="fw-bold mb-1">Physical Examination</p>
+<div class="mb-2">
+<label class="form-label" for="Additional Assessment Details Physical Examination Observation (B2)">Observation (B2):</label>
+<input class="form-control form-control-sm" id="Additional Assessment Details Physical Examination Observation (B2)" name="Additional Assessment Details Physical Examination Observation (B2)" placeholder="B2 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Additional Assessment Details Physical Examination Palpation (B3)">Palpation (B3):</label>
+<input class="form-control form-control-sm" id="Additional Assessment Details Physical Examination Palpation (B3)" name="Additional Assessment Details Physical Examination Palpation (B3)" placeholder="B3 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Additional Assessment Details Physical Examination Muscle tone (B4)">Muscle tone (B4):</label>
+<input class="form-control form-control-sm" id="Additional Assessment Details Physical Examination Muscle tone (B4)" name="Additional Assessment Details Physical Examination Muscle tone (B4)" placeholder="B4 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Additional Assessment Details Physical Examination Muscle power (B5)">Muscle power (B5):</label>
+<input class="form-control form-control-sm" id="Additional Assessment Details Physical Examination Muscle power (B5)" name="Additional Assessment Details Physical Examination Muscle power (B5)" placeholder="B5 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Additional Assessment Details Physical Examination Reflex (B6)">Reflex (B6):</label>
+<input class="form-control form-control-sm" id="Additional Assessment Details Physical Examination Reflex (B6)" name="Additional Assessment Details Physical Examination Reflex (B6)" placeholder="B6 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Additional Assessment Details Physical Examination Special Tests (B7)">Special Tests (B7):</label>
+<input class="form-control form-control-sm" id="Additional Assessment Details Physical Examination Special Tests (B7)" name="Additional Assessment Details Physical Examination Special Tests (B7)" placeholder="B7 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Additional Assessment Details Physical Examination Pt Diagnosis (B8)">Pt Diagnosis (B8):</label>
+<input class="form-control form-control-sm" id="Additional Assessment Details Physical Examination Pt Diagnosis (B8)" name="Additional Assessment Details Physical Examination Pt Diagnosis (B8)" placeholder="B8 details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">Goal</p>
+<div class="mb-2">
+<label class="form-label" for="Additional Assessment Details Goal Short (B9)">Short (B9):</label>
+<input class="form-control form-control-sm" id="Additional Assessment Details Goal Short (B9)" name="Additional Assessment Details Goal Short (B9)" placeholder="B9 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Additional Assessment Details Goal Long (B10)">Long (B10):</label>
+<input class="form-control form-control-sm" id="Additional Assessment Details Goal Long (B10)" name="Additional Assessment Details Goal Long (B10)" placeholder="B10 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Additional Assessment Details Goal Plan (B11)">Plan (B11):</label>
+<input class="form-control form-control-sm" id="Additional Assessment Details Goal Plan (B11)" name="Additional Assessment Details Goal Plan (B11)" placeholder="B11 details..." type="text"/>
+</div>
+</fieldset>
+<div class="mt-3" id="generalAssessmentForm-message"></div>
+<div class="form-group mt-3">
+<button class="btn btn-success" type="submit">Submit Data</button>
+<button class="btn btn-danger" type="reset">Reset</button>
+</div>
 </form>
-
 <script>
     // Toggle each fieldset on legend click
     document.querySelectorAll("fieldset").forEach((fieldset) => {
