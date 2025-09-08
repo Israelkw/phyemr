@@ -1,572 +1,549 @@
-
 <div class="container py-4">
-
-<form action="#" method="post" id="thoracicAssessmentForm">
-
-    <fieldset class="expanded mt-0"> <!-- First fieldset, expanded by default, no top margin -->
-        <legend>Thoracic - Strength</legend>
-
-        <p class="fw-bold mb-1">C8 Finger Flexion (Grip strength)</p>
-        <div class="mb-2">
-            <label for="P1_B1" class="form-label">Right:</label>
-            <select id="P1_B1" name="P1_B1" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B2" class="form-label">Left:</label>
-            <select id="P1_B2" name="P1_B2" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B13" class="form-label">Remark:</label>
-            <input type="text" id="P1_B13" name="P1_B13" class="form-control form-control-sm" placeholder="Enter details...">
-        </div>
-
-        <p class="fw-bold mb-1">T1 Interossei</p>
-        <div class="mb-2">
-            <label for="P1_B3" class="form-label">Right:</label>
-            <select id="P1_B3" name="P1_B3" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B4" class="form-label">Left:</label>
-            <select id="P1_B4" name="P1_B4" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B14" class="form-label">Remark:</label>
-            <input type="text" id="P1_B14" name="P1_B14" class="form-control form-control-sm" placeholder="Enter details...">
-        </div>
-
-        <p class="fw-bold mb-1">C5 Deltoid</p>
-        <div class="mb-2">
-            <label for="P1_B5" class="form-label">Right:</label>
-            <select id="P1_B5" name="P1_B5" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B6" class="form-label">Left:</label>
-            <select id="P1_B6" name="P1_B6" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B15" class="form-label">Remark:</label>
-            <input type="text" id="P1_B15" name="P1_B15" class="form-control form-control-sm" placeholder="Enter details...">
-        </div>
-
-        <p class="fw-bold mb-1">C5-C6 Biceps</p>
-        <div class="mb-2">
-            <label for="P1_B7" class="form-label">Right:</label>
-            <select id="P1_B7" name="P1_B7" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B8" class="form-label">Left:</label>
-            <select id="P1_B8" name="P1_B8" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B16" class="form-label">Remark:</label>
-            <input type="text" id="P1_B16" name="P1_B16" class="form-control form-control-sm" placeholder="Enter details...">
-        </div>
-
-        <p class="fw-bold mb-1">C6 Wrist ext</p>
-        <div class="mb-2">
-            <label for="P1_B9" class="form-label">Right:</label>
-            <select id="P1_B9" name="P1_B9" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B10" class="form-label">Left:</label>
-            <select id="P1_B10" name="P1_B10" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B17" class="form-label">Remark:</label>
-            <input type="text" id="P1_B17" name="P1_B17" class="form-control form-control-sm" placeholder="Enter details...">
-        </div>
-
-        <p class="fw-bold mb-1">C7 Wrist Fix</p>
-        <div class="mb-2">
-            <label for="P1_B11_strength" class="form-label">Right:</label>
-            <select id="P1_B11_strength" name="P1_B11_strength" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B12_strength" class="form-label">Left:</label>
-            <select id="P1_B12_strength" name="P1_B12_strength" class="form-select form-select-sm">
-                <option value="" selected disabled hidden>Select</option>
-                <option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
-                <option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
-            </select>
-        </div>
-        <div class="mb-2">
-            <label for="P1_B18_strength" class="form-label">Remark:</label>
-            <input type="text" id="P1_B18_strength" name="P1_B18_strength" class="form-control form-control-sm" placeholder="Enter details...">
-        </div>
-        
-        <div class="mb-2">
-            <label for="P1_B19_strength_remark" class="form-label">Overall Strength Remark:</label>
-            <input type="text" id="P1_B19_strength_remark" name="P1_B19_strength_remark" class="form-control form-control-sm" placeholder="B19 details...">
-        </div>
-    </fieldset>
-
-    <fieldset class="mt-4">
-        <legend>ROM Cervical</legend>
-        <div class="mb-2">
-            <label for="P1_B20" class="form-label">Forward Bend (N=60°):</label>
-            <input type="text" id="P1_B20" name="P1_B20" class="form-control form-control-sm" placeholder="B20 details...">
-        </div>
-        <div class="mb-2">
-            <label for="P1_B21" class="form-label">Backward Bend (N=60°):</label>
-            <input type="text" id="P1_B21" name="P1_B21" class="form-control form-control-sm" placeholder="B21 details...">
-        </div>
-
-        <p class="fw-bold mb-1">Rotation (N=90°)</p>
-        <div class="mb-2">
-            <label for="P1_B22" class="form-label">Right:</label>
-            <input type="text" id="P1_B22" name="P1_B22" class="form-control form-control-sm" placeholder="B22 details...">
-        </div>
-        <div class="mb-2">
-            <label for="P1_B24" class="form-label">Left:</label>
-            <input type="text" id="P1_B24" name="P1_B24" class="form-control form-control-sm" placeholder="B24 details...">
-        </div>
-        <div class="mb-2">
-            <label for="P1_B26" class="form-label">Remark:</label>
-            <input type="text" id="P1_B26" name="P1_B26" class="form-control form-control-sm" placeholder="B26 details...">
-        </div>
-
-        <p class="fw-bold mb-1">Sidebend (N=45°)</p>
-        <div class="mb-2">
-            <label for="P1_B23" class="form-label">Right:</label>
-            <input type="text" id="P1_B23" name="P1_B23" class="form-control form-control-sm" placeholder="B23 details...">
-        </div>
-        <div class="mb-2">
-            <label for="P1_B25" class="form-label">Left:</label>
-            <input type="text" id="P1_B25" name="P1_B25" class="form-control form-control-sm" placeholder="B25 details...">
-        </div>
-        <div class="mb-2">
-            <label for="P1_B27" class="form-label">Remark:</label>
-            <input type="text" id="P1_B27" name="P1_B27" class="form-control form-control-sm" placeholder="B27 details...">
-        </div>
-        
-        <div class="mb-2">
-            <label for="P1_B28_rom_remark" class="form-label">Overall ROM Cervical Remark:</label>
-            <input type="text" id="P1_B28_rom_remark" name="P1_B28_rom_remark" class="form-control form-control-sm" placeholder="B28 details...">
-        </div>
-    </fieldset>
-
-    <fieldset class="mt-4">
-        <legend>Biomechanical Thoracic</legend>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B1" name="P2_B1" value="checked">
-                <label class="form-check-label" for="P2_B1">Normal mobility</label>
-            </div>
-            <input type="text" id="P2_B5" name="P2_B5" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B2" name="P2_B2" value="checked">
-                <label class="form-check-label" for="P2_B2">Stiff throughout</label>
-            </div>
-            <input type="text" id="P2_B6" name="P2_B6" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-    </fieldset>
-
-    <fieldset class="mt-4">
-        <legend>Lumbar</legend>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B3" name="P2_B3" value="checked">
-                <label class="form-check-label" for="P2_B3">Normal mobility</label>
-            </div>
-            <input type="text" id="P2_B7" name="P2_B7" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B4" name="P2_B4" value="checked">
-                <label class="form-check-label" for="P2_B4">Stiff throughout</label>
-            </div>
-            <input type="text" id="P2_B8" name="P2_B8" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <label for="P2_B9" class="form-label">Restricted Rotation on:</label>
-            <input type="text" id="P2_B9" name="P2_B9" class="form-control form-control-sm" placeholder="B9 details...">
-        </div>
-        <div class="mb-2">
-            <label for="P2_B10" class="form-label">Hypermobility noted on:</label>
-            <input type="text" id="P2_B10" name="P2_B10" class="form-control form-control-sm" placeholder="B10 details...">
-        </div>
-    </fieldset>
-
-    <fieldset class="mt-4">
-        <legend>Thoracic (Restricted/Hypermobility)</legend>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B11" name="P2_B11" value="checked">
-                <label class="form-check-label" for="P2_B11">Restricted Rotation on</label>
-            </div>
-            <input type="text" id="P2_B13" name="P2_B13" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B12" name="P2_B12" value="checked">
-                <label class="form-check-label" for="P2_B12">Hypermobility noted on</label>
-            </div>
-            <input type="text" id="P2_B14" name="P2_B14" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-    </fieldset>
-
-    <fieldset class="mt-4">
-        <legend>Palpation - Muscles Presented Tender</legend>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B15" name="P2_B15" value="checked">
-                <label class="form-check-label" for="P2_B15">Erector Spinea</label>
-            </div>
-            <input type="text" id="P2_B21" name="P2_B21" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B16" name="P2_B16" value="checked">
-                <label class="form-check-label" for="P2_B16">Rhomboid</label>
-            </div>
-            <input type="text" id="P2_B22" name="P2_B22" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B17" name="P2_B17" value="checked">
-                <label class="form-check-label" for="P2_B17">Mid Traps.</label>
-            </div>
-            <input type="text" id="P2_B23" name="P2_B23" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B18_palpation" name="P2_B18_palpation" value="checked">
-                <label class="form-check-label" for="P2_B18_palpation">Inter-Costal Muscle</label>
-            </div>
-            <input type="text" id="P2_B24_palpation_text" name="P2_B24_palpation_text" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B19_palpation" name="P2_B19_palpation" value="checked">
-                <label class="form-check-label" for="P2_B19_palpation">Upper Traps.</label>
-            </div>
-            <input type="text" id="P2_B25_palpation_text" name="P2_B25_palpation_text" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P2_B20_palpation" name="P2_B20_palpation" value="checked">
-                <label class="form-check-label" for="P2_B20_palpation">Inter. Sp</label>
-            </div>
-            <input type="text" id="P2_B26_palpation_text" name="P2_B26_palpation_text" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <label for="P2_B27_palpation_remark" class="form-label">Remark (Palpation):</label>
-            <input type="text" id="P2_B27_palpation_remark" name="P2_B27_palpation_remark" class="form-control form-control-sm" placeholder="B27 details...">
-        </div>
-    </fieldset>
-
-    <fieldset class="mt-4">
-        <legend>Clinical Impression: Mechanical deficits Impairments Found on Examination</legend>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B1" name="P3_B1" value="checked">
-                <label class="form-check-label" for="P3_B1">Postural Imbalance</label>
-            </div>
-            <input type="text" id="P3_B16" name="P3_B16" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B2" name="P3_B2" value="checked">
-                <label class="form-check-label" for="P3_B2">Decreased AROM</label>
-            </div>
-            <input type="text" id="P3_B17" name="P3_B17" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B3" name="P3_B3" value="checked">
-                <label class="form-check-label" for="P3_B3">Decreased passive Inter-Vertebral motion</label>
-            </div>
-            <input type="text" id="P3_B18" name="P3_B18" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B4" name="P3_B4" value="checked">
-                <label class="form-check-label" for="P3_B4">Decreased strength</label>
-            </div>
-            <input type="text" id="P3_B19" name="P3_B19" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B5" name="P3_B5" value="checked">
-                <label class="form-check-label" for="P3_B5">Hypertonic upper Quadrant Musculature</label>
-            </div>
-            <input type="text" id="P3_B20" name="P3_B20" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B6" name="P3_B6" value="checked">
-                <label class="form-check-label" for="P3_B6">Adaptive Shortening of Muscles</label>
-            </div>
-            <input type="text" id="P3_B21" name="P3_B21" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B7" name="P3_B7" value="checked">
-                <label class="form-check-label" for="P3_B7">Adverse neural tension</label>
-            </div>
-            <input type="text" id="P3_B22" name="P3_B22" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B8" name="P3_B8" value="checked">
-                <label class="form-check-label" for="P3_B8">Decreased facet Joint Mobility</label>
-            </div>
-            <input type="text" id="P3_B23" name="P3_B23" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B9" name="P3_B9" value="checked">
-                <label class="form-check-label" for="P3_B9">Decreased Costo-Vertebral Mobility</label>
-            </div>
-            <input type="text" id="P3_B24" name="P3_B24" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B10" name="P3_B10" value="checked">
-                <label class="form-check-label" for="P3_B10">Rib Dysfunction</label>
-            </div>
-            <input type="text" id="P3_B25" name="P3_B25" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B11" name="P3_B11" value="checked">
-                <label class="form-check-label" for="P3_B11">Decreased Mobility of Spine</label>
-            </div>
-            <input type="text" id="P3_B26" name="P3_B26" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B12" name="P3_B12" value="checked">
-                <label class="form-check-label" for="P3_B12">Sensitive thoracic and lumbar vertebra to P-a oscilation</label>
-            </div>
-            <input type="text" id="P3_B27" name="P3_B27" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B13" name="P3_B13" value="checked">
-                <label class="form-check-label" for="P3_B13">Rotoscoliosis</label>
-            </div>
-            <input type="text" id="P3_B28" name="P3_B28" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B14" name="P3_B14" value="checked">
-                <label class="form-check-label" for="P3_B14">Scapulothoracic Dysfunction</label>
-            </div>
-            <input type="text" id="P3_B29" name="P3_B29" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P3_B15" name="P3_B15" value="checked">
-                <label class="form-check-label" for="P3_B15">Sterno-costal dysfunction</label>
-            </div>
-            <input type="text" id="P3_B30" name="P3_B30" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <label for="P3_B31_clinical_remark" class="form-label">Remark (Clinical Impression):</label>
-            <input type="text" id="P3_B31_clinical_remark" name="P3_B31_clinical_remark" class="form-control form-control-sm" placeholder="B31 details...">
-        </div>
-    </fieldset>
-
-    <fieldset class="mt-4">
-        <legend>Recommendation - Outline of Initial Plan of care</legend>
-        <div class="mb-2">
-            <label for="thoracic_specific_diagnosis" class="form-label">Thoracic Specific Diagnosis:</label>
-            <textarea id="thoracic_specific_diagnosis" name="thoracic_specific_diagnosis" class="form-control form-control-sm" rows="3" placeholder="Enter specific diagnosis..."></textarea>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B1" name="P4_B1" value="checked">
-                <label class="form-check-label" for="P4_B1">Modalities as Indicated</label>
-            </div>
-            <input type="text" id="P4_B20" name="P4_B20" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B2" name="P4_B2" value="checked">
-                <label class="form-check-label" for="P4_B2">Postural Education and awareness training</label>
-            </div>
-            <input type="text" id="P4_B21" name="P4_B21" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B3" name="P4_B3" value="checked">
-                <label class="form-check-label" for="P4_B3">Inhibition tecniques to reduce hyper-tonicity</label>
-            </div>
-            <input type="text" id="P4_B22" name="P4_B22" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B4" name="P4_B4" value="checked">
-                <label class="form-check-label" for="P4_B4">Graded Streaching of Involved Muscles</label>
-            </div>
-            <input type="text" id="P4_B23" name="P4_B23" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B5" name="P4_B5" value="checked">
-                <label class="form-check-label" for="P4_B5">ROM exercise for Cervical/thoracic spine</label>
-            </div>
-            <input type="text" id="P4_B24" name="P4_B24" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B6" name="P4_B6" value="checked">
-                <label class="form-check-label" for="P4_B6">Manual or Mechanical traction</label>
-            </div>
-            <input type="text" id="P4_B25" name="P4_B25" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B7" name="P4_B7" value="checked">
-                <label class="form-check-label" for="P4_B7">Soft tissue Mobilization</label>
-            </div>
-            <input type="text" id="P4_B26" name="P4_B26" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B8" name="P4_B8" value="checked">
-                <label class="form-check-label" for="P4_B8">Joint Mobilization</label>
-            </div>
-            <input type="text" id="P4_B27" name="P4_B27" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B9" name="P4_B9" value="checked">
-                <label class="form-check-label" for="P4_B9">Cervical Stabilization traning</label>
-            </div>
-            <input type="text" id="P4_B28" name="P4_B28" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B10" name="P4_B10" value="checked">
-                <label class="form-check-label" for="P4_B10">Neural Mobilization</label>
-            </div>
-            <input type="text" id="P4_B29" name="P4_B29" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B11" name="P4_B11" value="checked">
-                <label class="form-check-label" for="P4_B11">Upper Extrimity strengethening</label>
-            </div>
-            <input type="text" id="P4_B30" name="P4_B30" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B12" name="P4_B12" value="checked">
-                <label class="form-check-label" for="P4_B12">Thoracic Strengethening</label>
-            </div>
-            <input type="text" id="P4_B31" name="P4_B31" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B13" name="P4_B13" value="checked">
-                <label class="form-check-label" for="P4_B13">General Cardio/pulomonary Conditioning</label>
-            </div>
-            <input type="text" id="P4_B32" name="P4_B32" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B14" name="P4_B14" value="checked">
-                <label class="form-check-label" for="P4_B14">Instruction in home Exercise program</label>
-            </div>
-            <input type="text" id="P4_B33" name="P4_B33" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B15" name="P4_B15" value="checked">
-                <label class="form-check-label" for="P4_B15">Imaging studies</label>
-            </div>
-            <input type="text" id="P4_B34" name="P4_B34" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B16" name="P4_B16" value="checked">
-                <label class="form-check-label" for="P4_B16">Trigger point Injection</label>
-            </div>
-            <input type="text" id="P4_B35" name="P4_B35" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B17" name="P4_B17" value="checked">
-                <label class="form-check-label" for="P4_B17">Intra-articular Joint Injection</label>
-            </div>
-            <input type="text" id="P4_B36" name="P4_B36" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B18_recommendation_dry_needling" name="P4_B18_recommendation_dry_needling" value="checked">
-                <label class="form-check-label" for="P4_B18_recommendation_dry_needling">Dry-needling procidure</label>
-            </div>
-            <input type="text" id="P4_B37" name="P4_B37" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="P4_B19_recommendation_stropping" name="P4_B19_recommendation_stropping" value="checked">
-                <label class="form-check-label" for="P4_B19_recommendation_stropping">Joint Stropping</label>
-            </div>
-            <input type="text" id="P4_B38" name="P4_B38" class="form-control form-control-sm mt-1" placeholder="Details..." disabled>
-        </div>
-        <div class="mb-2">
-            <label for="P4_B39_recommendation_remark" class="form-label">Remark (Recommendation):</label>
-            <input type="text" id="P4_B39_recommendation_remark" name="P4_B39_recommendation_remark" class="form-control form-control-sm" placeholder="B39 details...">
-        </div>
-    </fieldset>
-
-    <div id="thoracicAssessmentForm-message" class="mt-3"></div>
-    <div class="form-group mt-3">
-        <button type="submit" class="btn btn-success">Submit Data</button>
-        <button type="reset" class="btn btn-danger">Reset</button>
-    </div>
-
+<form action="#" id="thoracicAssessmentForm" method="post">
+<fieldset class="expanded mt-0"> <!-- First fieldset, expanded by default, no top margin -->
+<legend>Thoracic - Strength</legend>
+<p class="fw-bold mb-1">C8 Finger Flexion (Grip strength)</p>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C8 Finger Flexion (Grip strength) Right">Right:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength C8 Finger Flexion (Grip strength) Right" name="Thoracic - Strength C8 Finger Flexion (Grip strength) Right">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C8 Finger Flexion (Grip strength) Left">Left:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength C8 Finger Flexion (Grip strength) Left" name="Thoracic - Strength C8 Finger Flexion (Grip strength) Left">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C8 Finger Flexion (Grip strength) Remark">Remark:</label>
+<input class="form-control form-control-sm" id="Thoracic - Strength C8 Finger Flexion (Grip strength) Remark" name="Thoracic - Strength C8 Finger Flexion (Grip strength) Remark" placeholder="Enter details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">T1 Interossei</p>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength T1 Interossei Right">Right:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength T1 Interossei Right" name="Thoracic - Strength T1 Interossei Right">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength T1 Interossei Left">Left:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength T1 Interossei Left" name="Thoracic - Strength T1 Interossei Left">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength T1 Interossei Remark">Remark:</label>
+<input class="form-control form-control-sm" id="Thoracic - Strength T1 Interossei Remark" name="Thoracic - Strength T1 Interossei Remark" placeholder="Enter details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">C5 Deltoid</p>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C5 Deltoid Right">Right:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength C5 Deltoid Right" name="Thoracic - Strength C5 Deltoid Right">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C5 Deltoid Left">Left:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength C5 Deltoid Left" name="Thoracic - Strength C5 Deltoid Left">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C5 Deltoid Remark">Remark:</label>
+<input class="form-control form-control-sm" id="Thoracic - Strength C5 Deltoid Remark" name="Thoracic - Strength C5 Deltoid Remark" placeholder="Enter details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">C5-C6 Biceps</p>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C5-C6 Biceps Right">Right:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength C5-C6 Biceps Right" name="Thoracic - Strength C5-C6 Biceps Right">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C5-C6 Biceps Left">Left:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength C5-C6 Biceps Left" name="Thoracic - Strength C5-C6 Biceps Left">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C5-C6 Biceps Remark">Remark:</label>
+<input class="form-control form-control-sm" id="Thoracic - Strength C5-C6 Biceps Remark" name="Thoracic - Strength C5-C6 Biceps Remark" placeholder="Enter details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">C6 Wrist ext</p>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C6 Wrist ext Right">Right:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength C6 Wrist ext Right" name="Thoracic - Strength C6 Wrist ext Right">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C6 Wrist ext Left">Left:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength C6 Wrist ext Left" name="Thoracic - Strength C6 Wrist ext Left">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C6 Wrist ext Remark">Remark:</label>
+<input class="form-control form-control-sm" id="Thoracic - Strength C6 Wrist ext Remark" name="Thoracic - Strength C6 Wrist ext Remark" placeholder="Enter details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">C7 Wrist Fix</p>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C7 Wrist Fix Right">Right:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength C7 Wrist Fix Right" name="Thoracic - Strength C7 Wrist Fix Right">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C7 Wrist Fix Left">Left:</label>
+<select class="form-select form-select-sm" id="Thoracic - Strength C7 Wrist Fix Left" name="Thoracic - Strength C7 Wrist Fix Left">
+<option disabled="" hidden="" selected="" value="">Select</option>
+<option value="0/5">0/5</option><option value="1/5">1/5</option><option value="2/5">2/5</option>
+<option value="3/5">3/5</option><option value="4/5">4/5</option><option value="5/5">5/5</option>
+</select>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength C7 Wrist Fix Remark">Remark:</label>
+<input class="form-control form-control-sm" id="Thoracic - Strength C7 Wrist Fix Remark" name="Thoracic - Strength C7 Wrist Fix Remark" placeholder="Enter details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Thoracic - Strength Overall Strength Remark">Overall Strength Remark:</label>
+<input class="form-control form-control-sm" id="Thoracic - Strength Overall Strength Remark" name="Thoracic - Strength Overall Strength Remark" placeholder="B19 details..." type="text"/>
+</div>
+</fieldset>
+<fieldset class="mt-4">
+<legend>ROM Cervical</legend>
+<div class="mb-2">
+<label class="form-label" for="ROM Cervical Forward Bend (N=60°)">Forward Bend (N=60°):</label>
+<input class="form-control form-control-sm" id="ROM Cervical Forward Bend (N=60°)" name="ROM Cervical Forward Bend (N=60°)" placeholder="B20 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="ROM Cervical Backward Bend (N=60°)">Backward Bend (N=60°):</label>
+<input class="form-control form-control-sm" id="ROM Cervical Backward Bend (N=60°)" name="ROM Cervical Backward Bend (N=60°)" placeholder="B21 details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">Rotation (N=90°)</p>
+<div class="mb-2">
+<label class="form-label" for="ROM Cervical Rotation (N=90°) Right">Right:</label>
+<input class="form-control form-control-sm" id="ROM Cervical Rotation (N=90°) Right" name="ROM Cervical Rotation (N=90°) Right" placeholder="B22 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="ROM Cervical Rotation (N=90°) Left">Left:</label>
+<input class="form-control form-control-sm" id="ROM Cervical Rotation (N=90°) Left" name="ROM Cervical Rotation (N=90°) Left" placeholder="B24 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="ROM Cervical Rotation (N=90°) Remark">Remark:</label>
+<input class="form-control form-control-sm" id="ROM Cervical Rotation (N=90°) Remark" name="ROM Cervical Rotation (N=90°) Remark" placeholder="B26 details..." type="text"/>
+</div>
+<p class="fw-bold mb-1">Sidebend (N=45°)</p>
+<div class="mb-2">
+<label class="form-label" for="ROM Cervical Sidebend (N=45°) Right">Right:</label>
+<input class="form-control form-control-sm" id="ROM Cervical Sidebend (N=45°) Right" name="ROM Cervical Sidebend (N=45°) Right" placeholder="B23 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="ROM Cervical Sidebend (N=45°) Left">Left:</label>
+<input class="form-control form-control-sm" id="ROM Cervical Sidebend (N=45°) Left" name="ROM Cervical Sidebend (N=45°) Left" placeholder="B25 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="ROM Cervical Sidebend (N=45°) Remark">Remark:</label>
+<input class="form-control form-control-sm" id="ROM Cervical Sidebend (N=45°) Remark" name="ROM Cervical Sidebend (N=45°) Remark" placeholder="B27 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="ROM Cervical Overall ROM Cervical Remark">Overall ROM Cervical Remark:</label>
+<input class="form-control form-control-sm" id="ROM Cervical Overall ROM Cervical Remark" name="ROM Cervical Overall ROM Cervical Remark" placeholder="B28 details..." type="text"/>
+</div>
+</fieldset>
+<fieldset class="mt-4">
+<legend>Biomechanical Thoracic</legend>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Biomechanical Thoracic Normal mobility" name="Biomechanical Thoracic Normal mobility" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Biomechanical Thoracic Normal mobility">Normal mobility</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B5" name="P2_B5" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Biomechanical Thoracic Stiff throughout" name="Biomechanical Thoracic Stiff throughout" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Biomechanical Thoracic Stiff throughout">Stiff throughout</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B6" name="P2_B6" placeholder="Details..." type="text"/>
+</div>
+</fieldset>
+<fieldset class="mt-4">
+<legend>Lumbar</legend>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Lumbar Normal mobility" name="Lumbar Normal mobility" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Lumbar Normal mobility">Normal mobility</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B7" name="P2_B7" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Lumbar Stiff throughout" name="Lumbar Stiff throughout" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Lumbar Stiff throughout">Stiff throughout</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B8" name="P2_B8" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Lumbar Restricted Rotation on">Restricted Rotation on:</label>
+<input class="form-control form-control-sm" id="Lumbar Restricted Rotation on" name="Lumbar Restricted Rotation on" placeholder="B9 details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Lumbar Hypermobility noted on">Hypermobility noted on:</label>
+<input class="form-control form-control-sm" id="Lumbar Hypermobility noted on" name="Lumbar Hypermobility noted on" placeholder="B10 details..." type="text"/>
+</div>
+</fieldset>
+<fieldset class="mt-4">
+<legend>Thoracic (Restricted/Hypermobility)</legend>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Thoracic (Restricted/Hypermobility) Restricted Rotation on" name="Thoracic (Restricted/Hypermobility) Restricted Rotation on" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Thoracic (Restricted/Hypermobility) Restricted Rotation on">Restricted Rotation on</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B13" name="P2_B13" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Thoracic (Restricted/Hypermobility) Hypermobility noted on" name="Thoracic (Restricted/Hypermobility) Hypermobility noted on" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Thoracic (Restricted/Hypermobility) Hypermobility noted on">Hypermobility noted on</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B14" name="P2_B14" placeholder="Details..." type="text"/>
+</div>
+</fieldset>
+<fieldset class="mt-4">
+<legend>Palpation - Muscles Presented Tender</legend>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Palpation - Muscles Presented Tender Erector Spinea" name="Palpation - Muscles Presented Tender Erector Spinea" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Palpation - Muscles Presented Tender Erector Spinea">Erector Spinea</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B21" name="P2_B21" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Palpation - Muscles Presented Tender Rhomboid" name="Palpation - Muscles Presented Tender Rhomboid" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Palpation - Muscles Presented Tender Rhomboid">Rhomboid</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B22" name="P2_B22" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Palpation - Muscles Presented Tender Mid Traps." name="Palpation - Muscles Presented Tender Mid Traps." type="checkbox" value="checked"/>
+<label class="form-check-label" for="Palpation - Muscles Presented Tender Mid Traps.">Mid Traps.</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B23" name="P2_B23" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Palpation - Muscles Presented Tender Inter-Costal Muscle" name="Palpation - Muscles Presented Tender Inter-Costal Muscle" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Palpation - Muscles Presented Tender Inter-Costal Muscle">Inter-Costal Muscle</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B24_palpation_text" name="P2_B24_palpation_text" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Palpation - Muscles Presented Tender Upper Traps." name="Palpation - Muscles Presented Tender Upper Traps." type="checkbox" value="checked"/>
+<label class="form-check-label" for="Palpation - Muscles Presented Tender Upper Traps.">Upper Traps.</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B25_palpation_text" name="P2_B25_palpation_text" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Palpation - Muscles Presented Tender Inter. Sp" name="Palpation - Muscles Presented Tender Inter. Sp" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Palpation - Muscles Presented Tender Inter. Sp">Inter. Sp</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P2_B26_palpation_text" name="P2_B26_palpation_text" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Palpation - Muscles Presented Tender Remark (Palpation)">Remark (Palpation):</label>
+<input class="form-control form-control-sm" id="Palpation - Muscles Presented Tender Remark (Palpation)" name="Palpation - Muscles Presented Tender Remark (Palpation)" placeholder="B27 details..." type="text"/>
+</div>
+</fieldset>
+<fieldset class="mt-4">
+<legend>Clinical Impression: Mechanical deficits Impairments Found on Examination</legend>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Postural Imbalance" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Postural Imbalance" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Postural Imbalance">Postural Imbalance</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B16" name="P3_B16" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased AROM" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased AROM" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased AROM">Decreased AROM</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B17" name="P3_B17" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased passive Inter-Vertebral motion" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased passive Inter-Vertebral motion" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased passive Inter-Vertebral motion">Decreased passive Inter-Vertebral motion</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B18" name="P3_B18" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased strength" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased strength" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased strength">Decreased strength</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B19" name="P3_B19" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Hypertonic upper Quadrant Musculature" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Hypertonic upper Quadrant Musculature" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Hypertonic upper Quadrant Musculature">Hypertonic upper Quadrant Musculature</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B20" name="P3_B20" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Adaptive Shortening of Muscles" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Adaptive Shortening of Muscles" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Adaptive Shortening of Muscles">Adaptive Shortening of Muscles</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B21" name="P3_B21" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Adverse neural tension" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Adverse neural tension" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Adverse neural tension">Adverse neural tension</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B22" name="P3_B22" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased facet Joint Mobility" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased facet Joint Mobility" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased facet Joint Mobility">Decreased facet Joint Mobility</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B23" name="P3_B23" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased Costo-Vertebral Mobility" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased Costo-Vertebral Mobility" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased Costo-Vertebral Mobility">Decreased Costo-Vertebral Mobility</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B24" name="P3_B24" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Rib Dysfunction" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Rib Dysfunction" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Rib Dysfunction">Rib Dysfunction</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B25" name="P3_B25" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased Mobility of Spine" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased Mobility of Spine" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Decreased Mobility of Spine">Decreased Mobility of Spine</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B26" name="P3_B26" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Sensitive thoracic and lumbar vertebra to P-a oscilation" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Sensitive thoracic and lumbar vertebra to P-a oscilation" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Sensitive thoracic and lumbar vertebra to P-a oscilation">Sensitive thoracic and lumbar vertebra to P-a oscilation</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B27" name="P3_B27" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Rotoscoliosis" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Rotoscoliosis" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Rotoscoliosis">Rotoscoliosis</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B28" name="P3_B28" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Scapulothoracic Dysfunction" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Scapulothoracic Dysfunction" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Scapulothoracic Dysfunction">Scapulothoracic Dysfunction</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B29" name="P3_B29" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Sterno-costal dysfunction" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Sterno-costal dysfunction" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Sterno-costal dysfunction">Sterno-costal dysfunction</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P3_B30" name="P3_B30" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Clinical Impression: Mechanical deficits Impairments Found on Examination Remark (Clinical Impression)">Remark (Clinical Impression):</label>
+<input class="form-control form-control-sm" id="Clinical Impression: Mechanical deficits Impairments Found on Examination Remark (Clinical Impression)" name="Clinical Impression: Mechanical deficits Impairments Found on Examination Remark (Clinical Impression)" placeholder="B31 details..." type="text"/>
+</div>
+</fieldset>
+<fieldset class="mt-4">
+<legend>Recommendation - Outline of Initial Plan of care</legend>
+<div class="mb-2">
+<label class="form-label" for="Recommendation - Outline of Initial Plan of care Thoracic Specific Diagnosis">Thoracic Specific Diagnosis:</label>
+<textarea class="form-control form-control-sm" id="Recommendation - Outline of Initial Plan of care Thoracic Specific Diagnosis" name="Recommendation - Outline of Initial Plan of care Thoracic Specific Diagnosis" placeholder="Enter specific diagnosis..." rows="3"></textarea>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Modalities as Indicated" name="Recommendation - Outline of Initial Plan of care Modalities as Indicated" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Modalities as Indicated">Modalities as Indicated</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B20" name="P4_B20" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Postural Education and awareness training" name="Recommendation - Outline of Initial Plan of care Postural Education and awareness training" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Postural Education and awareness training">Postural Education and awareness training</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B21" name="P4_B21" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Inhibition tecniques to reduce hyper-tonicity" name="Recommendation - Outline of Initial Plan of care Inhibition tecniques to reduce hyper-tonicity" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Inhibition tecniques to reduce hyper-tonicity">Inhibition tecniques to reduce hyper-tonicity</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B22" name="P4_B22" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Graded Streaching of Involved Muscles" name="Recommendation - Outline of Initial Plan of care Graded Streaching of Involved Muscles" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Graded Streaching of Involved Muscles">Graded Streaching of Involved Muscles</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B23" name="P4_B23" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care ROM exercise for Cervical/thoracic spine" name="Recommendation - Outline of Initial Plan of care ROM exercise for Cervical/thoracic spine" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care ROM exercise for Cervical/thoracic spine">ROM exercise for Cervical/thoracic spine</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B24" name="P4_B24" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Manual or Mechanical traction" name="Recommendation - Outline of Initial Plan of care Manual or Mechanical traction" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Manual or Mechanical traction">Manual or Mechanical traction</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B25" name="P4_B25" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Soft tissue Mobilization" name="Recommendation - Outline of Initial Plan of care Soft tissue Mobilization" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Soft tissue Mobilization">Soft tissue Mobilization</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B26" name="P4_B26" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Joint Mobilization" name="Recommendation - Outline of Initial Plan of care Joint Mobilization" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Joint Mobilization">Joint Mobilization</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B27" name="P4_B27" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Cervical Stabilization traning" name="Recommendation - Outline of Initial Plan of care Cervical Stabilization traning" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Cervical Stabilization traning">Cervical Stabilization traning</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B28" name="P4_B28" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Neural Mobilization" name="Recommendation - Outline of Initial Plan of care Neural Mobilization" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Neural Mobilization">Neural Mobilization</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B29" name="P4_B29" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Upper Extrimity strengethening" name="Recommendation - Outline of Initial Plan of care Upper Extrimity strengethening" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Upper Extrimity strengethening">Upper Extrimity strengethening</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B30" name="P4_B30" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Thoracic Strengethening" name="Recommendation - Outline of Initial Plan of care Thoracic Strengethening" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Thoracic Strengethening">Thoracic Strengethening</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B31" name="P4_B31" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care General Cardio/pulomonary Conditioning" name="Recommendation - Outline of Initial Plan of care General Cardio/pulomonary Conditioning" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care General Cardio/pulomonary Conditioning">General Cardio/pulomonary Conditioning</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B32" name="P4_B32" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Instruction in home Exercise program" name="Recommendation - Outline of Initial Plan of care Instruction in home Exercise program" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Instruction in home Exercise program">Instruction in home Exercise program</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B33" name="P4_B33" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Imaging studies" name="Recommendation - Outline of Initial Plan of care Imaging studies" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Imaging studies">Imaging studies</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B34" name="P4_B34" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Trigger point Injection" name="Recommendation - Outline of Initial Plan of care Trigger point Injection" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Trigger point Injection">Trigger point Injection</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B35" name="P4_B35" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Intra-articular Joint Injection" name="Recommendation - Outline of Initial Plan of care Intra-articular Joint Injection" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Intra-articular Joint Injection">Intra-articular Joint Injection</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B36" name="P4_B36" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Dry-needling procidure" name="Recommendation - Outline of Initial Plan of care Dry-needling procidure" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Dry-needling procidure">Dry-needling procidure</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B37" name="P4_B37" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<div class="form-check">
+<input class="form-check-input" id="Recommendation - Outline of Initial Plan of care Joint Stropping" name="Recommendation - Outline of Initial Plan of care Joint Stropping" type="checkbox" value="checked"/>
+<label class="form-check-label" for="Recommendation - Outline of Initial Plan of care Joint Stropping">Joint Stropping</label>
+</div>
+<input class="form-control form-control-sm mt-1" disabled="" id="P4_B38" name="P4_B38" placeholder="Details..." type="text"/>
+</div>
+<div class="mb-2">
+<label class="form-label" for="Recommendation - Outline of Initial Plan of care Remark (Recommendation)">Remark (Recommendation):</label>
+<input class="form-control form-control-sm" id="Recommendation - Outline of Initial Plan of care Remark (Recommendation)" name="Recommendation - Outline of Initial Plan of care Remark (Recommendation)" placeholder="B39 details..." type="text"/>
+</div>
+</fieldset>
+<div class="mt-3" id="thoracicAssessmentForm-message"></div>
+<div class="form-group mt-3">
+<button class="btn btn-success" type="submit">Submit Data</button>
+<button class="btn btn-danger" type="reset">Reset</button>
+</div>
 </form>
-
 <script>
     // Toggle each fieldset on legend click
     document.querySelectorAll("fieldset").forEach((fieldset) => {
