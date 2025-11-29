@@ -15,6 +15,7 @@ SessionManager::startSession(); // Centralized session start
 
 
     <link rel="stylesheet" href="<?php echo isset($path_to_root) ? $path_to_root : ''; ?>css/style.css">
+    <link rel="stylesheet" href="<?php echo isset($path_to_root) ? $path_to_root : ''; ?>css/new_style.css">
 </head>
 
 <body>
